@@ -10,8 +10,15 @@ python:
   - "3.5-dev"
   - "nightly"
 
+os:
+  - linux
+  - osx
+
 # command to install dependencies
 install: "pip install -r requirements.txt"
 
 # command to run tests
-script: unittest
+script:
+  - cd pybotics/ut
+  - pytest pybotics/ut/test_geometry.py
+  - pytest pybotics/ut/test_kinematics.py
