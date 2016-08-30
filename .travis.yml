@@ -7,9 +7,13 @@ python:
   - "3.5-dev"
 
 # command to install dependencies
-install: "pip install -r requirements.txt"
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
 
 # command to run tests
 script:
   - cd pybotics/ut
-  - python run_tests.py
+  - coverage run --source=pybotics run_tests.py
+
+after_success: coveralls
