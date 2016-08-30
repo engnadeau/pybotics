@@ -7,6 +7,7 @@ class Robot:
     def __init__(self):
         self.robot_model = None
         self.tool = np.eye(4)
+        self.world_frame = np.eye(4)
         self.current_joints = []
 
     def num_dof(self):
