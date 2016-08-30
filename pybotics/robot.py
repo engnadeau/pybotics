@@ -36,3 +36,12 @@ class Robot:
         transform = np.dot(transform, self.tool)
 
         return transform
+
+    def impair_robot_model(self, relative_error=0.05):
+        error_attenuation = 2 * np.random.rand(self.robot_model.shape[0], self.robot_model.shape[1])
+        error_attenuation -= 1
+        error_attenuation *= relative_error
+
+        error_delta = np.multiply(self.robot_model, error_attenuation)
+
+        self.robot_model += error_delta
