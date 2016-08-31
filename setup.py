@@ -8,5 +8,7 @@ setup(
     license='MIT',
     author='Nicholas Nadeau',
     author_email='',
-    description='Python Toolbox for Robotics'
+    description='Python Toolbox for Robotics',
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest']
 )
