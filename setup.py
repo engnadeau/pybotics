@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='pybotics',
     version='0.1.0',
-    packages=['examples', 'pybotics', 'pybotics.ut'],
+    packages=['examples', 'pybotics', 'tests'],
     url='https://github.com/nnadeau/pybotics',
     license='MIT',
     author='Nicholas Nadeau',
