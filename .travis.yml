@@ -17,3 +17,7 @@ script:
   - python setup.py test
 
 after_success: coveralls
+
+# notification settings
+notifications:
+    on_failure: change
