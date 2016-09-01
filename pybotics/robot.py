@@ -19,6 +19,10 @@ class Robot:
         if joints is None:
             joints = self.current_joints
 
+            # if current joints are empty, assign zero
+            if not joints:
+                joints = [0] * self.num_dof()
+
         # define transform identity matrix to carry multiplications
         transform = np.eye(4)
 
