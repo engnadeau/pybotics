@@ -13,33 +13,45 @@ class Robot:
     def num_dof(self):
         return len(self.robot_model)
 
-    def fk(self, joints=None):
+    def fk(self, joint_list=None):
+
+        # define output
+        transforms = []
 
         # load current robot joints if none given
-        if joints is None:
-            joints = self.current_joints
+        if joint_list is None:
 
             # if current joints are empty, assign zero
-            if not joints:
-                joints = [0] * self.num_dof()
+            if not self.current_joints:
+                self.current_joints = [0] * self.num_dof()
 
-        # define transform identity matrix to carry multiplications
-        transform = np.eye(4)
+            joint_list = [self.current_joints]
 
-        # multiply through the forward transforms of the joints
-        for i in range(self.num_dof()):
-            # add the current joint pose to the forward transform
-            current_link = self.robot_model[i].copy()
-            current_link[3] += np.deg2rad(joints[i])
+        # iterate through input
+        for joints in joint_list:
 
-            # get the transform step
-            current_link_transform = kinematics.forward_transform(current_link)
-            transform = np.dot(transform, current_link_transform)
+            # define transform identity matrix to carry multiplications
+            transform = np.eye(4)
 
-        # add tool transform
-        transform = np.dot(transform, self.tool)
+            # multiply through the forward transforms of the joints
+            for i in range(self.num_dof()):
+                # add the current joint pose to the forward transform
+                current_link = self.robot_model[i].copy()
+                current_link[3] += np.deg2rad(joints[i])
 
-        return transform
+                # get the transform step
+                current_link_transform = kinematics.forward_transform(current_link)
+                transform = np.dot(transform, current_link_transform)
+
+            # add tool transform
+            transform = np.dot(transform, self.tool)
+            transforms.append(transform)
+
+        # return only transform if only one joint config is given
+        if len(transforms) == 1:
+            transforms = transforms[0]
+
+        return transforms
 
     def impair_robot_model(self, relative_error=0.05):
         # random error multiplier between [-1,1]

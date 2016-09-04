@@ -14,13 +14,32 @@ class TestRobot(TestCase):
         # ur10 has 6 DOF
         assert self.robot.num_dof() == 6
 
-    def test_fk(self):
+    def test_fk_single(self):
         transform = self.robot.fk()
 
         # assert 4x4 transform
         assert transform.shape[0] == 4
         assert transform.shape[1] == 4
         assert transform.size == 16
+
+    def test_fk_list(self):
+
+        # number of configs to test
+        num_configs = 10
+
+        # list of joint configs
+        joint_list = np.random.rand(num_configs, self.robot.num_dof())
+
+        transforms = self.robot.fk(joint_list)
+
+        # assert same number out as in
+        assert len(transforms) == num_configs
+
+        # assert 4x4 transform
+        for transform in transforms:
+            assert transform.shape[0] == 4
+            assert transform.shape[1] == 4
+            assert transform.size == 16
 
     def test_impair_robot_model(self):
         impaired_robot = Robot()
