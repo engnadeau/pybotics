@@ -14,32 +14,42 @@ class TestRobot(TestCase):
         # ur10 has 6 DOF
         assert self.robot.num_dof() == 6
 
-    def test_fk_single(self):
-        transform = self.robot.fk()
+    def test_fk(self):
+        # define test values
+        joints = [0, -90, 90, 0, 90, 0]
 
-        # assert 4x4 transform
-        assert transform.shape[0] == 4
-        assert transform.shape[1] == 4
-        assert transform.size == 16
+        expected_transform = np.array([
+            [0, 0, -1, -663.8],
+            [-1, 0, -0, -163.9],
+            [-0, 1, 0, 615],
+            [0, 0, 0, 1]
 
-    def test_fk_list(self):
+        ])
 
-        # number of configs to test
+        # test single transform
+        actual_transform = self.robot.fk(joints)
+
+        assert actual_transform.shape[0] == expected_transform.shape[0]
+        assert actual_transform.shape[1] == expected_transform.shape[1]
+        assert actual_transform.size == expected_transform.size
+        np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
+
+        # test multiple joint configs
         num_configs = 10
+        joint_list = joints * num_configs
 
-        # list of joint configs
-        joint_list = np.random.rand(num_configs, self.robot.num_dof())
+        actual_transforms = self.robot.fk(joint_list)
 
-        transforms = self.robot.fk(joint_list)
+        assert len(actual_transforms) == num_configs
 
-        # assert same number out as in
-        assert len(transforms) == num_configs
+        for actual_transform in actual_transforms:
+            assert actual_transform.shape[0] == expected_transform.shape[0]
+            assert actual_transform.shape[1] == expected_transform.shape[1]
+            assert actual_transform.size == expected_transform.size
+            np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
 
-        # assert 4x4 transform
-        for transform in transforms:
-            assert transform.shape[0] == 4
-            assert transform.shape[1] == 4
-            assert transform.size == 16
+
+            # TODO: test up to n-th joint
 
     def test_impair_robot_model(self):
         impaired_robot = Robot()
