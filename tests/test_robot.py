@@ -36,7 +36,7 @@ class TestRobot(TestCase):
 
         # test multiple joint configs
         num_configs = 10
-        joint_list = joints * num_configs
+        joint_list = [joints] * num_configs
 
         actual_transforms = self.robot.fk(joint_list)
 
