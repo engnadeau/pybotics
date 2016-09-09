@@ -1,7 +1,6 @@
 import copy
 
-from pybotics import robot_model
-from pybotics.robot import Robot
+import pybotics as py
 import numpy as np
 
 # set numpy print options
@@ -9,8 +8,8 @@ np.set_printoptions(precision=3)
 np.set_printoptions(suppress=True)
 
 # create robot
-ideal_robot = Robot()
-ideal_robot.robot_model = robot_model.ur10()
+ideal_robot = py.Robot()
+ideal_robot.robot_model = py.robot_model.ur10()
 
 # create pseudo-realistic robot with kinematic errors
 real_robot = copy.deepcopy(ideal_robot)
