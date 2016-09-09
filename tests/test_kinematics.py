@@ -7,7 +7,7 @@ from pybotics.kinematics import forward_transform
 
 class TestKinematics(TestCase):
     def test_forward_transform(self):
-        mdh = [math.pi, 100, 200, math.pi / 2]
+        mdh = [math.pi, 100, math.pi / 2, 200]
 
         expected_transform = np.array([
             [0, - 1, 0, 100],
