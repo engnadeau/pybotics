@@ -13,7 +13,7 @@ class Robot:
     def num_dof(self):
         return len(self.robot_model)
 
-    def fk(self, joint_list=None):
+    def fk(self, joint_list=None, joint_limit=None, is_radians=False):
 
         # define output
         transforms = []
@@ -27,6 +27,21 @@ class Robot:
 
             joint_list = [self.current_joints]
 
+        # make sure joints are contained in a list
+        elif not isinstance(joint_list[0], list):
+            joint_list = [joint_list]
+
+        # convert joints to radians
+        if not is_radians:
+            joint_list = np.deg2rad(joint_list)
+
+        # define joint limit, transform up to n-th joint
+        tool_transform = np.eye(4)
+        if joint_limit is None:
+            joint_limit = self.num_dof()
+        else:
+            tool_transform = self.tool
+
         # iterate through input
         for joints in joint_list:
 
@@ -34,17 +49,17 @@ class Robot:
             transform = np.eye(4)
 
             # multiply through the forward transforms of the joints
-            for i in range(self.num_dof()):
+            for i in range(joint_limit):
                 # add the current joint pose to the forward transform
                 current_link = self.robot_model[i].copy()
-                current_link[3] += np.deg2rad(joints[i])
+                current_link[3] += joints[i]
 
                 # get the transform step
                 current_link_transform = kinematics.forward_transform(current_link)
                 transform = np.dot(transform, current_link_transform)
 
             # add tool transform
-            transform = np.dot(transform, self.tool)
+            transform = np.dot(transform, tool_transform)
             transforms.append(transform)
 
         # return only transform if only one joint config is given
@@ -62,7 +77,6 @@ class Robot:
         error_attenuation *= relative_error
 
         # create error delta
-        # TODO: what about zero values? Take the average of the column?
         error_delta = np.multiply(self.robot_model, error_attenuation)
 
         bit_mask = np.isclose(error_delta, np.zeros(error_delta.shape))
