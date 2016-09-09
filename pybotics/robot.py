@@ -39,7 +39,6 @@ class Robot:
         tool_transform = np.eye(4)
         if joint_limit is None:
             joint_limit = self.num_dof()
-        else:
             tool_transform = self.tool
 
         # iterate through input
@@ -52,7 +51,7 @@ class Robot:
             for i in range(joint_limit):
                 # add the current joint pose to the forward transform
                 current_link = self.robot_model[i].copy()
-                current_link[3] += joints[i]
+                current_link[2] += joints[i]
 
                 # get the transform step
                 current_link_transform = kinematics.forward_transform(current_link)
