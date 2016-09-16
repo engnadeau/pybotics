@@ -16,7 +16,7 @@ install:
 
 # command to run tests
 script:
-  - python setup.py test --cov=./
+  - python setup.py test
 
 after_success:
   - coveralls
