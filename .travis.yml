@@ -11,12 +11,15 @@ install:
   - pip install -e .
   - pip install -r requirements.txt
   - pip install coveralls
+  - pip install codecov
 
 # command to run tests
 script:
   - python setup.py test
 
-after_success: coveralls
+after_success:
+  - coveralls
+  - codecov
 
 # notification settings
 notifications:
