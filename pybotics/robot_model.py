@@ -1,7 +1,7 @@
 import numpy as np
 
 '''
-Modified DH parameter matrices of various robots (rx, tx, rz, tz)
+Modified DH parameter matrices of various robots (rx, tx, rz, tz) aka (alpha, a, theta, d)
 '''
 
 
