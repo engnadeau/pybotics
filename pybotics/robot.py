@@ -4,16 +4,21 @@ from pybotics import kinematics, robot_model
 
 
 class Robot:
-    def __init__(self):
-        self.robot_model = None
+    def __init__(self, robot_model):
+        self.robot_model = robot_model
         self.tool = np.eye(4)
         self.world_frame = np.eye(4)
-        self.current_joints = []
+        self.current_joints = [0] * self.num_dof()
+        self.joint_stiffness = [0] * self.num_dof()
 
     def num_dof(self):
         return len(self.robot_model)
 
-    def fk(self, joint_list=None, joint_limit=None, is_radians=False):
+    def fk(self, joint_list=None, joint_limit=None, is_radians=False, torques=None):
+
+        # validate input
+        if torques is not None:
+            assert len(torques) == self.num_dof()
 
         # define output
         transforms = []
@@ -52,6 +57,9 @@ class Robot:
                 # add the current joint pose to the forward transform
                 current_link = self.robot_model[i].copy()
                 current_link[2] += joints[i]
+
+                if torques is not None:
+                    current_link[2] += torques[i] * self.joint_stiffness[i]
 
                 # get the transform step
                 current_link_transform = kinematics.forward_transform(current_link)
