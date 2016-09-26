@@ -1,6 +1,7 @@
-import numpy as np
+from copy import copy
 
-from pybotics import kinematics, robot_model
+import numpy as np
+from pybotics import kinematics, robot_model, geometry
 
 
 class Robot:
