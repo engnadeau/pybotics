@@ -15,7 +15,7 @@ class Robot:
     def num_dof(self):
         return len(self.robot_model)
 
-    def fk(self, joint_list=None, joint_limit=None, is_radians=False, torques=None):
+    def fk(self, joint_list=None, joint_limit=None, is_radians=False, torques=None, reference_frame=None):
 
         # validate input
         if torques is not None:
@@ -47,11 +47,18 @@ class Robot:
             joint_limit = self.num_dof()
             tool_transform = self.tool
 
+        # define reference frame
+        if reference_frame is None:
+            reference_frame = np.eye(4)
+
         # iterate through input
         for joints in joint_list:
 
             # define transform identity matrix to carry multiplications
             transform = np.eye(4)
+
+            # multiply wrt reference frame
+            transform = np.dot(reference_frame, transform)
 
             # multiply through the forward transforms of the joints
             for i in range(joint_limit):
