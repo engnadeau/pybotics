@@ -4,14 +4,14 @@ import numpy as np
 
 def forward_transform(rx, tx=None, rz=None, tz=None, is_radians=True):
     """
-    Returns the Denavit-Hartenberg Modified 4x4 matrix for a robot link (Craig 1986).
+    Returns the Modified Denavit-Hartenberg 4x4 matrix for a robot link (Craig 1986).
     Angular arguments are in radians.
     Calling forward_transform(rx,tx,tz,rz) is the same as using rotx(rx)*transl(tx,0,tx)*rotz(rz)
 
-    :param rx: DHM alpha
-    :param tx: DHM a
-    :param rz: DHM theta
-    :param tz: DHM d
+    :param rx: MDH alpha
+    :param tx: MDH a
+    :param rz: MDH theta
+    :param tz: MDH d
     :return:
     """
 
