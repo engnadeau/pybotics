@@ -5,12 +5,13 @@ from pybotics import kinematics, robot_model, geometry
 
 
 class Robot:
-    def __init__(self, robot_model):
+    def __init__(self, robot_model, name='Pybot'):
         self.robot_model = robot_model
         self.tool = np.eye(4)
         self.world_frame = np.eye(4)
         self.current_joints = [0] * self.num_dof()
         self.joint_stiffness = [0] * self.num_dof()
+        self.name = name
 
     def num_dof(self):
         return len(self.robot_model)
