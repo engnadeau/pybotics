@@ -110,3 +110,127 @@ class Robot:
             error_delta += error_adjustment
 
         self.robot_model += error_delta
+
+    def set_tool_xyz(self, xyz):
+        for i, parameter in enumerate(xyz):
+            self.tool[i, -1] = parameter
+
+    def generate_optimization_vector(self, optimization_mask):
+        optimization_mask = copy(optimization_mask)
+        vector = []
+
+        # get world frame
+        world_vector = geometry.pose_2_xyzrpw(self.world_frame)
+        for parameter in world_vector:
+            truth = optimization_mask.pop(0)
+            if truth:
+                vector.append(parameter)
+
+        # get MDH parameters
+        parameters = np.reshape(self.robot_model, self.robot_model.size)
+        for parameter in parameters:
+            truth = optimization_mask.pop(0)
+            if truth:
+                vector.append(parameter)
+
+        # get tool frame
+        tool_vector = geometry.pose_2_xyzrpw(self.tool)
+        for parameter in tool_vector:
+            truth = optimization_mask.pop(0)
+            if truth:
+                vector.append(parameter)
+
+        # get joint stiffness parameters
+        for parameter in self.joint_stiffness:
+            truth = optimization_mask.pop(0)
+            if truth:
+                vector.append(parameter)
+
+        return vector
+
+    def apply_optimization_vector(self, optimization_vector, optimization_mask):
+        optimization_mask = copy(optimization_mask)
+
+        # set world frame
+        world_vector = geometry.pose_2_xyzrpw(self.world_frame)
+        for i in range(len(world_vector)):
+            truth = optimization_mask.pop(0)
+            if truth:
+                parameter = optimization_vector.pop(0)
+                world_vector[i] = parameter
+        self.world_frame = geometry.xyzrpw_2_pose(world_vector)
+
+        # set MDH parameters
+        for i in range(self.robot_model.size):
+            truth = optimization_mask.pop(0)
+            if truth:
+                parameter = optimization_vector.pop(0)
+                row = int(i / 4)
+                col = int(i % 4)
+                self.robot_model[row, col] = parameter
+
+        # set tool frame
+        tool_vector = geometry.pose_2_xyzrpw(self.tool)
+        for i in range(len(tool_vector)):
+            truth = optimization_mask.pop(0)
+            if truth:
+                parameter = optimization_vector.pop(0)
+                tool_vector[i] = parameter
+        self.tool = geometry.xyzrpw_2_pose(tool_vector)
+
+        # get joint stiffness parameters
+        for i in range(len(self.joint_stiffness)):
+            truth = optimization_mask.pop(0)
+            if truth:
+                parameter = optimization_vector.pop(0)
+                self.joint_stiffness[i] = parameter
+
+    def generate_optimization_mask(self, world_mask=None, robot_model_mask=None, tool_mask=None,
+                                   joint_stiffness_mask=None):
+        if world_mask is None:
+            world_mask = [True] * 6
+
+        if robot_model_mask is None:
+            robot_model_mask = [True] * 4 * self.num_dof()
+
+        if tool_mask is None:
+            tool_mask = [True] * 6
+
+        if joint_stiffness_mask is None:
+            joint_stiffness_mask = [True] * self.num_dof()
+
+        mask = []
+        mask.extend(world_mask)
+        mask.extend(robot_model_mask)
+        mask.extend(tool_mask)
+        mask.extend(joint_stiffness_mask)
+
+        return mask
+
+    def generate_parameter_bounds(self, optimization_mask, world_bounds=None, robot_model_bounds=None, tool_bounds=None,
+                                  joint_stiffness_bounds=None):
+
+        if world_bounds is None:
+            world_bounds = [(None, None)] * 6
+
+        if robot_model_bounds is None:
+            robot_model_bounds = [(None, None)] * 4 * self.num_dof()
+
+        if tool_bounds is None:
+            tool_bounds = [(None, None)] * 6
+
+        if joint_stiffness_bounds is None:
+            joint_stiffness_bounds = [(None, None)] * self.num_dof()
+
+        glob_bounds = []
+        glob_bounds.extend(world_bounds)
+        glob_bounds.extend(robot_model_bounds)
+        glob_bounds.extend(tool_bounds)
+        glob_bounds.extend(joint_stiffness_bounds)
+
+        bounds = []
+        for i, truth in enumerate(optimization_mask):
+            if truth:
+                bounds.append(glob_bounds[i])
+
+        return bounds
