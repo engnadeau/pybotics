@@ -7,8 +7,7 @@ import numpy as np
 
 class TestRobot(TestCase):
     def setUp(self):
-        self.robot = Robot()
-        self.robot.robot_model = robot_model.ur10()
+        self.robot = Robot(robot_model.ur10())
 
     def test_num_dof(self):
         # ur10 has 6 DOF
@@ -52,8 +51,7 @@ class TestRobot(TestCase):
             # TODO: test up to n-th joint
 
     def test_impair_robot_model(self):
-        impaired_robot = Robot()
-        impaired_robot.robot_model = robot_model.ur10()
+        impaired_robot = Robot(robot_model.ur10())
         impaired_robot.impair_robot_model(0.1)
 
         model_diff = impaired_robot.robot_model - self.robot.robot_model
