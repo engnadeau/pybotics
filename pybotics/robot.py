@@ -186,19 +186,20 @@ class Robot:
                 parameter = optimization_vector.pop(0)
                 self.joint_stiffness[i] = parameter
 
-    def generate_optimization_mask(self, world_mask=None, robot_model_mask=None, tool_mask=None,
-                                   joint_stiffness_mask=None):
-        if world_mask is None:
-            world_mask = [True] * 6
+    def generate_optimization_mask(self, world_mask=False, robot_model_mask=False, tool_mask=False,
+                                   joint_stiffness_mask=False):
 
-        if robot_model_mask is None:
-            robot_model_mask = [True] * 4 * self.num_dof()
+        if not isinstance(world_mask, list):
+            world_mask = [world_mask] * 6
 
-        if tool_mask is None:
-            tool_mask = [True] * 6
+        if not isinstance(robot_model_mask, list):
+            robot_model_mask = [robot_model_mask] * 4 * self.num_dof()
 
-        if joint_stiffness_mask is None:
-            joint_stiffness_mask = [True] * self.num_dof()
+        if not isinstance(tool_mask, list):
+            tool_mask = [tool_mask] * 6
+
+        if not isinstance(joint_stiffness_mask, list):
+            joint_stiffness_mask = [joint_stiffness_mask] * self.num_dof()
 
         mask = []
         mask.extend(world_mask)
