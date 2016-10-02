@@ -1,7 +1,7 @@
 from unittest import TestCase
 import numpy as np
 
-from pybotics.geometry import xyzrpw_2_pose
+from pybotics.geometry import xyzrpw_2_pose, pose_2_xyzrpw
 
 
 class TestGeometry(TestCase):
@@ -17,3 +17,10 @@ class TestGeometry(TestCase):
 
         actual_transform = xyzrpw_2_pose(xyzrpw)
         np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
+
+    def test_xyzrpw_2_pose_2_xyzrpw(self):
+        xyzrpw_original = [100, 200, 300, -30, 50, 90]
+        pose = xyzrpw_2_pose(xyzrpw_original)
+        xyzrpw_result = pose_2_xyzrpw(pose)
+
+        np.testing.assert_allclose(actual=xyzrpw_result, desired=xyzrpw_original, rtol=1e-6, atol=1e-6)
