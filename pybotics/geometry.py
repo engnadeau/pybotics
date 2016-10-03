@@ -41,23 +41,35 @@ def pose_2_xyzrpw(pose, is_radians=False):
     """
     Calculates the equivalent position and euler angles ([x,y,z,r,p,w] vector) of the given pose
     Note: transl(x,y,z)*rotz(w*pi/180)*roty(p*pi/180)*rotx(r*pi/180)
+    Extract rotation from Rx * Ry * Rz order. From: Craig, John J. Introduction to robotics: mechanics and control, 2005
     """
+
     x = pose[0, 3]
     y = pose[1, 3]
     z = pose[2, 3]
 
-    if pose[2, 0] > (1.0 - 1e-6):
-        p = -math.pi / 2
+    # solution degenerates near p = +/- 90deg
+    cos_p = math.sqrt(pose[1, 2] ** 2 + pose[2, 2] ** 2)
+    sin_p = pose[0, 2]
+
+    if np.isclose(cos_p, 0):
         r = 0
-        w = math.atan2(-pose[1, 2], pose[1, 1])
-    elif pose[2, 0] < -1.0 + 1e-6:
-        p = math.pi / 2
-        r = 0
-        w = math.atan2(pose[1, 2], pose[1, 1])
+        if sin_p > 0:
+            p = math.pi / 2
+            w = math.atan2(pose[1, 0], -pose[2, 0])
+        else:
+            p = -math.pi / 2
+            w = math.atan2(pose[1, 0], pose[2, 0])
     else:
-        p = math.atan2(-pose[2, 0], math.sqrt(pose[0, 0] * pose[0, 0] + pose[1, 0] * pose[1, 0]))
-        w = math.atan2(pose[1, 0], pose[0, 0])
-        r = math.atan2(pose[2, 1], pose[2, 2])
+        sin_r = -pose[1, 2] / cos_p
+        cos_r = pose[2, 2] / cos_p
+        r = math.atan2(sin_r, cos_r)
+
+        p = math.atan2(sin_p, cos_p)
+
+        sin_w = -pose[0, 1] / cos_p
+        cos_w = pose[0, 0] / cos_p
+        w = math.atan2(sin_w, cos_w)
 
     if not is_radians:
         r = np.rad2deg(r)
