@@ -1,4 +1,6 @@
 from unittest import TestCase
+
+import math
 import numpy as np
 
 from pybotics.geometry import xyzrpw_2_pose, pose_2_xyzrpw
@@ -18,9 +20,37 @@ class TestGeometry(TestCase):
         actual_transform = xyzrpw_2_pose(xyzrpw)
         np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
 
-    def test_xyzrpw_2_pose_2_xyzrpw(self):
-        xyzrpw_original = [100, 200, 300, -30, 50, 90]
-        pose = xyzrpw_2_pose(xyzrpw_original)
-        xyzrpw_result = pose_2_xyzrpw(pose)
+    def test_xyzrpw_2_pose_2_xyzrpw_2_pose(self):
+        """
+        We can only compare 4x4 transform matrices, rpw combinations are arbitrary.
+        """
+        x = 1.1
+        y = 2.2
+        z = 3.3
 
-        np.testing.assert_allclose(actual=xyzrpw_result, desired=xyzrpw_original, rtol=1e-6, atol=1e-6)
+        angles = np.linspace(-math.pi, math.pi, 25)
+
+        # test radians
+        for r in angles:
+            for p in angles:
+                for w in angles:
+                    xyzrpw_original = [x, y, z, r, p, w]
+                    pose_original = xyzrpw_2_pose(xyzrpw_original, is_radians=True)
+
+                    xyzrpw_result = pose_2_xyzrpw(pose_original, is_radians=True)
+                    pose_result = xyzrpw_2_pose(xyzrpw_result, is_radians=True)
+
+                    np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
+
+        angles = np.rad2deg(angles)
+        # test degrees
+        for r in angles:
+            for p in angles:
+                for w in angles:
+                    xyzrpw_original = [x, y, z, r, p, w]
+                    pose_original = xyzrpw_2_pose(xyzrpw_original)
+
+                    xyzrpw_result = pose_2_xyzrpw(pose_original)
+                    pose_result = xyzrpw_2_pose(xyzrpw_result)
+
+                    np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
