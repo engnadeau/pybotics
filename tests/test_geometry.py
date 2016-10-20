@@ -3,7 +3,7 @@ from unittest import TestCase
 import math
 import numpy as np
 
-from pybotics.geometry import xyzrpw_2_pose, pose_2_xyzrpw
+from pybotics.geometry import xyzrpw_2_pose, pose_2_xyzrpw, wrap_2_pi
 
 
 class TestGeometry(TestCase):
@@ -35,10 +35,10 @@ class TestGeometry(TestCase):
             for p in angles:
                 for w in angles:
                     xyzrpw_original = [x, y, z, r, p, w]
-                    pose_original = xyzrpw_2_pose(xyzrpw_original, is_radians=True)
+                    pose_original = xyzrpw_2_pose(xyzrpw_original)
 
-                    xyzrpw_result = pose_2_xyzrpw(pose_original, is_radians=True)
-                    pose_result = xyzrpw_2_pose(xyzrpw_result, is_radians=True)
+                    xyzrpw_result = pose_2_xyzrpw(pose_original)
+                    pose_result = xyzrpw_2_pose(xyzrpw_result)
 
                     np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
 
