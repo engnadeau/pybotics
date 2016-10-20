@@ -65,5 +65,5 @@ def pose_2_xyzrpw(pose):
         cos_w = pose[0, 0] / cos_p
         w = math.atan2(sin_w, cos_w)
 
+    return np.array([x, y, z, r, p, w])
 
-    return [x, y, z, r, p, w]
