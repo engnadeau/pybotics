@@ -54,3 +54,26 @@ class TestGeometry(TestCase):
                     pose_result = xyzrpw_2_pose(xyzrpw_result)
 
                     np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
+
+    def test_wrap_2_pi(self):
+        angles = np.array([
+            [0, 0],
+            [-np.pi, -np.pi],
+            [np.pi, -np.pi],
+            [2 * np.pi, 0],
+            [-2 * np.pi, 0]
+        ])
+
+        test_angles = angles[:, 0]
+        expected_angles = angles[:, 1]
+
+        # test whole array
+        actual_angles = wrap_2_pi(test_angles)
+        assert len(test_angles) == len(expected_angles)
+        assert len(actual_angles) == len(expected_angles)
+        np.testing.assert_allclose(actual_angles, expected_angles)
+
+        # test single elements
+        for i in range(len(expected_angles)):
+            actual_angle = wrap_2_pi(test_angles[i])
+            np.testing.assert_allclose(actual_angle, expected_angles[i])

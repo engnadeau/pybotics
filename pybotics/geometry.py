@@ -67,3 +67,10 @@ def pose_2_xyzrpw(pose):
 
     return np.array([x, y, z, r, p, w])
 
+
+def wrap_2_pi(angles):
+    if type(angles) is not np.array:
+        angles = np.array(angles)
+
+    angles = (angles + np.pi) % (2 * np.pi) - np.pi
+    return angles
