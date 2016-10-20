@@ -1,6 +1,7 @@
 from copy import copy
 
 import numpy as np
+import scipy.optimize
 from pybotics import kinematics, robot_model, geometry
 
 
@@ -16,7 +17,7 @@ class Robot:
     def num_dof(self):
         return len(self.robot_model)
 
-    def fk(self, joint_list=None, joint_limit=None, is_radians=False, torques=None, reference_frame=None):
+    def fk(self, joint_angles=None, link_limit=None, torques=None, reference_frame=None):
 
         # validate input
         if torques is not None:
@@ -26,26 +27,22 @@ class Robot:
         transforms = []
 
         # load current robot joints if none given
-        if joint_list is None:
+        if joint_angles is None:
 
             # if current joints are empty, assign zero
             if not self.current_joints:
                 self.current_joints = [0] * self.num_dof()
 
-            joint_list = [self.current_joints]
+            joint_angles = [self.current_joints]
 
         # make sure joints are contained in a list
-        elif not isinstance(joint_list[0], list):
-            joint_list = [joint_list]
-
-        # convert joints to radians
-        if not is_radians:
-            joint_list = np.deg2rad(joint_list)
+        elif not isinstance(joint_angles[0], list):
+            joint_angles = [joint_angles]
 
         # define joint limit, transform up to n-th joint
         tool_transform = np.eye(4)
-        if joint_limit is None:
-            joint_limit = self.num_dof()
+        if link_limit is None:
+            link_limit = self.num_dof()
             tool_transform = self.tool
 
         # define reference frame
@@ -53,7 +50,7 @@ class Robot:
             reference_frame = np.eye(4)
 
         # iterate through input
-        for joints in joint_list:
+        for joints in joint_angles:
 
             # define transform identity matrix to carry multiplications
             transform = np.eye(4)
@@ -62,7 +59,7 @@ class Robot:
             transform = np.dot(reference_frame, transform)
 
             # multiply through the forward transforms of the joints
-            for i in range(joint_limit):
+            for i in range(link_limit):
                 # add the current joint pose to the forward transform
                 current_link = self.robot_model[i].copy()
                 current_link[2] += joints[i]
@@ -236,3 +233,85 @@ class Robot:
                 bounds.append(glob_bounds[i])
 
         return bounds
+
+    def ik(self, pose, joint_angles=None):
+        # set initial joints
+        if joint_angles is not None:
+            assert len(joint_angles) == self.num_dof()
+        else:
+            joint_angles = self.current_joints
+
+        bounds = [(-np.pi, np.pi)] * self.num_dof()
+
+        is_success = False
+        while not is_success:
+            optimize_result = scipy.optimize.minimize(ik_fit_func,
+                                                      joint_angles,
+                                                      args=(pose, self),
+                                                      method='TNC',
+                                                      bounds=bounds,
+                                                      options={
+                                                          'maxiter': int(1e6),
+                                                      }
+                                                      )
+
+            if optimize_result.fun < 1e-1:
+                is_success = True
+            else:
+                joint_angles = np.random.rand(1, self.num_dof())
+                joint_angles -= 0.5
+                joint_angles *= 2 * np.pi
+
+        return optimize_result.x
+
+    def jacobian_world(self, joint_angles=None):
+        # set initial joints
+        if joint_angles is not None:
+            assert len(joint_angles) == self.num_dof()
+        else:
+            joint_angles = self.current_joints
+
+        jacobian_flange = self.jacobian_flange(joint_angles)
+        pose = self.fk(joint_angles)
+        rotation = pose[0:3, 0:3]
+        jacobian_transform = np.zeros((6, 6))
+        jacobian_transform[:3, :3] = rotation
+        jacobian_transform[3:, 3:] = rotation
+        jacobian_world = np.dot(jacobian_transform, jacobian_flange)
+
+        return jacobian_world
+
+    def jacobian_flange(self, joint_angles=None):
+        # set initial joints
+        if joint_angles is not None:
+            assert len(joint_angles) == self.num_dof()
+        else:
+            joint_angles = self.current_joints
+
+        # init Cartesian jacobian (6-dof in space)
+        jacobian_flange = np.zeros((6, self.num_dof()))
+        current_transform = copy(self.tool)
+
+        for i in reversed(range(self.num_dof())):
+            d = np.array([
+                -current_transform[0, 0] * current_transform[1, 3] + current_transform[1, 0] * current_transform[0, 3],
+                - current_transform[0, 1] * current_transform[1, 3] + current_transform[1, 1] * current_transform[0, 3],
+                - current_transform[0, 2] * current_transform[1, 3] + current_transform[1, 2] * current_transform[0, 3],
+            ])
+            delta = current_transform[2, 0:3]
+            jacobian_flange[:, i] = np.hstack((d, delta))
+            current_link = self.robot_model[i]
+            current_link_transform = kinematics.forward_transform(current_link, joint_angle=joint_angles[i])
+            current_transform = np.dot(current_link_transform, current_transform)
+
+        return jacobian_flange
+
+
+def ik_fit_func(joints_angles, pose, robot):
+    geometry.wrap_2_pi(joints_angles)
+    actual_pose = robot.fk(joints_angles)
+
+    error = actual_pose - pose
+    error = np.square(error)
+    error = np.sum(error)
+    return error
