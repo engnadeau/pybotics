@@ -244,7 +244,12 @@ class Robot:
         bounds = [(-np.pi, np.pi)] * self.num_dof()
 
         is_success = False
-        while not is_success:
+        max_iterations = 5
+        current_iteration = 0
+        result = None
+        current_best_result = None
+        while not is_success and current_iteration < max_iterations:
+            current_iteration += 1
             optimize_result = scipy.optimize.minimize(ik_fit_func,
                                                       joint_angles,
                                                       args=(pose, self),
@@ -257,12 +262,19 @@ class Robot:
 
             if optimize_result.fun < 1e-1:
                 is_success = True
+                result = optimize_result.x
             else:
+                if current_best_result is None or optimize_result.fun < current_best_result[0]:
+                    current_best_result = (optimize_result.fun, optimize_result.x)
+
                 joint_angles = np.random.rand(1, self.num_dof())
                 joint_angles -= 0.5
                 joint_angles *= 2 * np.pi
 
-        return optimize_result.x
+        if not is_success:
+            result = current_best_result[1]
+
+        return result
 
     def jacobian_world(self, joint_angles=None):
         # set initial joints
