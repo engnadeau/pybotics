@@ -13,6 +13,18 @@ class Robot:
         self.current_joints = [0] * self.num_dof()
         self.joint_stiffness = [0] * self.num_dof()
         self.name = name
+        self.joint_angle_limits = None
+
+    def validate_joint_angles(self, joint_angles):
+
+        is_success = True
+        if self.joint_angle_limits is not None:
+            for i, joint_angle in joint_angles:
+                if joint_angle > max(self.joint_angle_limits[i]) or joint_angle < min(self.joint_angle_limits[i]):
+                    is_success = False
+                    break
+
+        return is_success
 
     def num_dof(self):
         return len(self.robot_model)
@@ -247,7 +259,6 @@ class Robot:
         max_iterations = 5
         current_iteration = 0
         result = None
-        current_best_result = None
         while not is_success and current_iteration < max_iterations:
             current_iteration += 1
             optimize_result = scipy.optimize.minimize(ik_fit_func,
@@ -260,19 +271,16 @@ class Robot:
                                                       }
                                                       )
 
-            if optimize_result.fun < 1e-1:
+            result = optimize_result.x
+            if optimize_result.fun < 1e-1 and self.validate_joint_angles(result):
                 is_success = True
-                result = optimize_result.x
             else:
-                if current_best_result is None or optimize_result.fun < current_best_result[0]:
-                    current_best_result = (optimize_result.fun, optimize_result.x)
-
                 joint_angles = np.random.rand(1, self.num_dof())
                 joint_angles -= 0.5
                 joint_angles *= 2 * np.pi
 
         if not is_success:
-            result = current_best_result[1]
+            result = None
 
         return result
 
@@ -327,3 +335,10 @@ def ik_fit_func(joints_angles, pose, robot):
     error = np.square(error)
     error = np.sum(error)
     return error
+
+
+def random_joints(joint_angle_limits):
+    joint_angles = []
+    for limits in joint_angle_limits:
+        joint_angles.append(np.random.uniform(min(limits), max(limits)))
+    return np.array(joint_angles)
