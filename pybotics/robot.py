@@ -19,7 +19,7 @@ class Robot:
 
         is_success = True
         if self.joint_angle_limits is not None:
-            for i, joint_angle in joint_angles:
+            for i, joint_angle in enumerate(joint_angles):
                 if joint_angle > max(self.joint_angle_limits[i]) or joint_angle < min(self.joint_angle_limits[i]):
                     is_success = False
                     break
@@ -246,14 +246,15 @@ class Robot:
 
         return bounds
 
-    def ik(self, pose, joint_angles=None):
+    def ik(self, pose, joint_angles=None, reference_frame=None):
         # set initial joints
         if joint_angles is not None:
             assert len(joint_angles) == self.num_dof()
         else:
             joint_angles = self.current_joints
 
-        bounds = [(-np.pi, np.pi)] * self.num_dof()
+        bounds = np.array(self.joint_angle_limits)
+        bounds = tuple(map(tuple, bounds.transpose()))
 
         is_success = False
         max_iterations = 5
@@ -261,18 +262,14 @@ class Robot:
         result = None
         while not is_success and current_iteration < max_iterations:
             current_iteration += 1
-            optimize_result = scipy.optimize.minimize(ik_fit_func,
-                                                      joint_angles,
-                                                      args=(pose, self),
-                                                      method='TNC',
-                                                      bounds=bounds,
-                                                      options={
-                                                          'maxiter': int(1e6),
-                                                      }
-                                                      )
+            optimize_result = scipy.optimize.least_squares(fun=ik_fit_func,
+                                                           x0=joint_angles,
+                                                           args=(pose, self, reference_frame),
+                                                           bounds=bounds,
+                                                           )
 
             result = optimize_result.x
-            if optimize_result.fun < 1e-1 and self.validate_joint_angles(result):
+            if optimize_result.fun.max() < 1e-1 and self.validate_joint_angles(result):
                 is_success = True
             else:
                 joint_angles = np.random.rand(1, self.num_dof())
@@ -327,13 +324,14 @@ class Robot:
         return jacobian_flange
 
 
-def ik_fit_func(joints_angles, pose, robot):
-    geometry.wrap_2_pi(joints_angles)
-    actual_pose = robot.fk(joints_angles)
+def ik_fit_func(joint_angles, pose, robot, reference_frame):
+    geometry.wrap_2_pi(joint_angles)
+    actual_pose = robot.fk(joint_angles, reference_frame=reference_frame)
 
     error = actual_pose - pose
-    error = np.square(error)
-    error = np.sum(error)
+    # error = np.square(error)
+    # error = np.sum(error)
+    error = error.flatten()
     return error
 
 
