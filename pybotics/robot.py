@@ -272,9 +272,7 @@ class Robot:
             if optimize_result.fun.max() < 1e-1 and self.validate_joint_angles(result):
                 is_success = True
             else:
-                joint_angles = np.random.rand(1, self.num_dof())
-                joint_angles -= 0.5
-                joint_angles *= 2 * np.pi
+                joint_angles = random_joints(self.joint_angle_limits)
 
         if not is_success:
             result = None
