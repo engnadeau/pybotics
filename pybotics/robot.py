@@ -253,6 +253,9 @@ class Robot:
         else:
             joint_angles = self.current_joints
 
+        if not isinstance(joint_angles, np.ndarray):
+            joint_angles = np.array(joint_angles)
+
         bounds = np.array(self.joint_angle_limits)
         bounds = tuple(map(tuple, bounds.transpose()))
 
