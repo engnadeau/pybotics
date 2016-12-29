@@ -13,7 +13,7 @@ class Robot:
         self.current_joints = [0] * self.num_dof()
         self.joint_stiffness = [0] * self.num_dof()
         self.name = name
-        self.joint_angle_limits = None
+        self.joint_angle_limits = [(-np.pi, np.pi)] * self.num_dof()
 
     def validate_joint_angles(self, joint_angles):
 
