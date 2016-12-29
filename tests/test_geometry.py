@@ -8,7 +8,7 @@ from pybotics.geometry import xyzrpw_2_pose, pose_2_xyzrpw, wrap_2_pi
 
 class TestGeometry(TestCase):
     def test_xyzrpw_2_pose(self):
-        xyzrpw = [100, 200, 300, -30, 50, 90]
+        xyzrpw = [100, 200, 300, np.deg2rad(-30), np.deg2rad(50), np.deg2rad(90)]
 
         expected_transform = np.array([
             [0, -0.642788, 0.766044, 100],
