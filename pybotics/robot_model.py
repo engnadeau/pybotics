@@ -37,6 +37,6 @@ def kuka_lbr_iiwa_7():
         [np.pi / 2.0, 0, 0, 0],
         [-np.pi / 2.0, 0, 0, 400],
         [-np.pi / 2.0, 0, 0, 0],
-        [np.pi / 2.0, 0, 0, 126.0]
+        [np.pi / 2.0, 0, 0, 126]
     ])
     return model

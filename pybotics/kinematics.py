@@ -2,7 +2,7 @@ import math
 import numpy as np
 
 
-def forward_transform(rx, tx=None, rz=None, tz=None, is_radians=True):
+def forward_transform(mdh_parameters, joint_angle=0):
     """
     Returns the Modified Denavit-Hartenberg 4x4 matrix for a robot link (Craig 1986).
     Angular arguments are in radians.
@@ -16,13 +16,8 @@ def forward_transform(rx, tx=None, rz=None, tz=None, is_radians=True):
     """
 
     # if argument is a vector
-    if tx is None:
-        [rx, tx, rz, tz] = rx
-
-    # get angular elements
-    if not is_radians:
-        rx = np.deg2rad(rx)
-        rz = np.deg2rad(rz)
+    rx, tx, rz, tz = mdh_parameters
+    rz += joint_angle
 
     crx = math.cos(rx)
     srx = math.sin(rx)

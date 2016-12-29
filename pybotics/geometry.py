@@ -2,7 +2,7 @@ import math
 import numpy as np
 
 
-def xyzrpw_2_pose(xyzrpw, is_radians=False):
+def xyzrpw_2_pose(xyzrpw):
     """
     Calculates the pose from the position and euler angles ([x,y,z,r,p,w] vector)
     The result is the same as calling: H = transl(x,y,z)*rotz(w*pi/180)*roty(p*pi/180)*rotx(r*pi/180)
@@ -12,12 +12,6 @@ def xyzrpw_2_pose(xyzrpw, is_radians=False):
 
     # get individual variables
     [x, y, z, r, p, w] = xyzrpw
-
-    # convert to rads
-    if not is_radians:
-        r = np.deg2rad(r)
-        p = np.deg2rad(p)
-        w = np.deg2rad(w)
 
     # get trig values
     cr = math.cos(r)
@@ -37,7 +31,7 @@ def xyzrpw_2_pose(xyzrpw, is_radians=False):
     return np.array(transform)
 
 
-def pose_2_xyzrpw(pose, is_radians=False):
+def pose_2_xyzrpw(pose):
     """
     Calculates the equivalent position and euler angles ([x,y,z,r,p,w] vector) of the given pose
     Note: transl(x,y,z)*rotz(w*pi/180)*roty(p*pi/180)*rotx(r*pi/180)
@@ -71,9 +65,12 @@ def pose_2_xyzrpw(pose, is_radians=False):
         cos_w = pose[0, 0] / cos_p
         w = math.atan2(sin_w, cos_w)
 
-    if not is_radians:
-        r = np.rad2deg(r)
-        p = np.rad2deg(p)
-        w = np.rad2deg(w)
+    return np.array([x, y, z, r, p, w])
 
-    return [x, y, z, r, p, w]
+
+def wrap_2_pi(angles):
+    if type(angles) is not np.array:
+        angles = np.array(angles)
+
+    angles = (angles + np.pi) % (2 * np.pi) - np.pi
+    return angles

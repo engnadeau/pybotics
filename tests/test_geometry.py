@@ -3,12 +3,12 @@ from unittest import TestCase
 import math
 import numpy as np
 
-from pybotics.geometry import xyzrpw_2_pose, pose_2_xyzrpw
+from pybotics.geometry import xyzrpw_2_pose, pose_2_xyzrpw, wrap_2_pi
 
 
 class TestGeometry(TestCase):
     def test_xyzrpw_2_pose(self):
-        xyzrpw = [100, 200, 300, -30, 50, 90]
+        xyzrpw = [100, 200, 300, np.deg2rad(-30), np.deg2rad(50), np.deg2rad(90)]
 
         expected_transform = np.array([
             [0, -0.642788, 0.766044, 100],
@@ -35,10 +35,10 @@ class TestGeometry(TestCase):
             for p in angles:
                 for w in angles:
                     xyzrpw_original = [x, y, z, r, p, w]
-                    pose_original = xyzrpw_2_pose(xyzrpw_original, is_radians=True)
+                    pose_original = xyzrpw_2_pose(xyzrpw_original)
 
-                    xyzrpw_result = pose_2_xyzrpw(pose_original, is_radians=True)
-                    pose_result = xyzrpw_2_pose(xyzrpw_result, is_radians=True)
+                    xyzrpw_result = pose_2_xyzrpw(pose_original)
+                    pose_result = xyzrpw_2_pose(xyzrpw_result)
 
                     np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
 
@@ -54,3 +54,26 @@ class TestGeometry(TestCase):
                     pose_result = xyzrpw_2_pose(xyzrpw_result)
 
                     np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
+
+    def test_wrap_2_pi(self):
+        angles = np.array([
+            [0, 0],
+            [-np.pi, -np.pi],
+            [np.pi, -np.pi],
+            [2 * np.pi, 0],
+            [-2 * np.pi, 0]
+        ])
+
+        test_angles = angles[:, 0]
+        expected_angles = angles[:, 1]
+
+        # test whole array
+        actual_angles = wrap_2_pi(test_angles)
+        assert len(test_angles) == len(expected_angles)
+        assert len(actual_angles) == len(expected_angles)
+        np.testing.assert_allclose(actual_angles, expected_angles)
+
+        # test single elements
+        for i in range(len(expected_angles)):
+            actual_angle = wrap_2_pi(test_angles[i])
+            np.testing.assert_allclose(actual_angle, expected_angles[i])
