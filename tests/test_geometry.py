@@ -42,18 +42,6 @@ class TestGeometry(TestCase):
 
                     np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
 
-        angles = np.rad2deg(angles)
-        # test degrees
-        for r in angles:
-            for p in angles:
-                for w in angles:
-                    xyzrpw_original = [x, y, z, r, p, w]
-                    pose_original = xyzrpw_2_pose(xyzrpw_original)
-
-                    xyzrpw_result = pose_2_xyzrpw(pose_original)
-                    pose_result = xyzrpw_2_pose(xyzrpw_result)
-
-                    np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
 
     def test_wrap_2_pi(self):
         angles = np.array([
