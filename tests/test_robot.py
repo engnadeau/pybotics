@@ -1,15 +1,16 @@
 from unittest import TestCase
-import logging
-from pybotics import robot_model
+import copy
 from pybotics.robot import Robot
 import numpy as np
+import os
 
 
 class TestRobot(TestCase):
     def setUp(self):
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:\t%(message)s')
-        np.set_printoptions(suppress=True)
-        self.robot = Robot(robot_model.ur10())
+        model_path = os.getcwd().split(os.sep)[:-1]
+        model_path.append('examples')
+        model_path.append('ur10-mdh.csv')
+        self.robot = Robot(np.loadtxt(os.sep.join(model_path), delimiter=','))
 
     def test_num_dof(self):
         # ur10 has 6 DOF
@@ -35,7 +36,7 @@ class TestRobot(TestCase):
         np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
 
     def test_impair_robot_model(self):
-        impaired_robot = Robot(robot_model.ur10())
+        impaired_robot = copy.deepcopy(self.robot)
         impaired_robot.impair_robot_model(0.1)
 
         model_diff = impaired_robot.robot_model - self.robot.robot_model
