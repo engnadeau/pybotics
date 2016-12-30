@@ -8,8 +8,8 @@ np.set_printoptions(precision=3)
 np.set_printoptions(suppress=True)
 
 # create robot
-ideal_robot = py.Robot()
-ideal_robot.robot_model = py.robot_model.ur10()
+model = np.loadtxt('ur10-mdh.csv', delimiter=',')
+ideal_robot = py.Robot(model)
 
 # create pseudo-realistic robot with kinematic errors
 real_robot = copy.deepcopy(ideal_robot)
