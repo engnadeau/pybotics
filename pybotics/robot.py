@@ -2,7 +2,7 @@ from copy import copy
 
 import numpy as np
 import scipy.optimize
-from pybotics import kinematics, robot_model, geometry
+from pybotics import kinematics, geometry
 
 
 class Robot:
