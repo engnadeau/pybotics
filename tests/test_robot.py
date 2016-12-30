@@ -7,10 +7,16 @@ import os
 
 class TestRobot(TestCase):
     def setUp(self):
-        model_path = os.getcwd().split(os.sep)[:-1]
-        model_path.append('examples')
-        model_path.append('ur10-mdh.csv')
-        self.robot = Robot(np.loadtxt(os.sep.join(model_path), delimiter=','))
+        # load UR10 model for testing
+        model = np.array([
+            0, 0, 0, 118,
+            1.5707963267949, 0, 3.14159265358979, 0,
+            0, 612.7, 0, 0,
+            0, 571.6, 0, 163.9,
+            - 1.5707963267949, 0, 0, 115.7,
+            1.5707963267949, 0, 3.14159265358979, 92.2
+        ]).reshape((-1, 4))
+        self.robot = Robot(model)
 
     def test_num_dof(self):
         # ur10 has 6 DOF
