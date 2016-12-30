@@ -17,4 +17,5 @@ class TestKinematics(TestCase):
         ])
 
         actual_transform = forward_transform(mdh)
-        np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
+        self.assertIsNone(
+            np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6))

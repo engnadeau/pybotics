@@ -18,7 +18,10 @@ class TestGeometry(TestCase):
         ])
 
         actual_transform = xyzrpw_2_pose(xyzrpw)
-        np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
+        self.assertIsNone(
+            np.testing.assert_allclose(actual=actual_transform,
+                                       desired=expected_transform,
+                                       rtol=1e-6, atol=1e-6))
 
     def test_xyzrpw_2_pose_2_xyzrpw_2_pose(self):
         """
@@ -30,7 +33,6 @@ class TestGeometry(TestCase):
 
         angles = np.linspace(-math.pi, math.pi, 25)
 
-        # test radians
         for r in angles:
             for p in angles:
                 for w in angles:
@@ -40,8 +42,8 @@ class TestGeometry(TestCase):
                     xyzrpw_result = pose_2_xyzrpw(pose_original)
                     pose_result = xyzrpw_2_pose(xyzrpw_result)
 
-                    np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
-
+                    self.assertIsNone(
+                        np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6))
 
     def test_wrap_2_pi(self):
         angles = np.array([
@@ -64,4 +66,4 @@ class TestGeometry(TestCase):
         # test single elements
         for i, _ in enumerate(expected_angles):
             actual_angle = wrap_2_pi(test_angles[i])
-            np.testing.assert_allclose(actual_angle, expected_angles[i])
+            self.assertIsNone(np.testing.assert_allclose(actual_angle, expected_angles[i]))
