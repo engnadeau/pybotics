@@ -1,6 +1,5 @@
 import math
 import numpy as np
-from typing import Union
 
 
 def xyzrpw_2_pose(xyzrpw):
@@ -69,7 +68,7 @@ def pose_2_xyzrpw(pose):
     return np.array([x, y, z, r, p, w])
 
 
-def wrap_2_pi(angles: Union[list, float]):
+def wrap_2_pi(angles):
     '''
     Wrap given angles to +/- PI.
     :param angles: angles [rad]
