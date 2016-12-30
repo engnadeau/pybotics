@@ -9,6 +9,9 @@ python:
   - "nightly"
 
 # command to install dependencies
+before_install:
+  - sudo apt-get install -qq python-numpy python-scipy
+  
 install:
   - pip install -e .
   - pip install -r requirements.txt
