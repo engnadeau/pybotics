@@ -69,8 +69,14 @@ def pose_2_xyzrpw(pose):
 
 
 def wrap_2_pi(angles):
-    if type(angles) is not np.array:
-        angles = np.array(angles)
+    '''
+    Wrap given angles to +/- PI.
+    :param angles: angles [rad]
+    :return: wrapped angles [rad]
+    '''
+    if isinstance(angles, float):
+        angles = (angles + np.pi) % (2 * np.pi) - np.pi
+    else:
+        angles = list(map(wrap_2_pi, angles))
 
-    angles = (angles + np.pi) % (2 * np.pi) - np.pi
     return angles

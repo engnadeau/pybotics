@@ -2,7 +2,7 @@ from copy import copy
 
 import numpy as np
 import scipy.optimize
-from pybotics import kinematics, robot_model, geometry
+from pybotics import kinematics, geometry
 
 
 class Robot:
@@ -163,7 +163,7 @@ class Robot:
 
         # set world frame
         world_vector = geometry.pose_2_xyzrpw(self.world_frame)
-        for i in range(len(world_vector)):
+        for i, _ in enumerate(world_vector):
             truth = optimization_mask.pop(0)
             if truth:
                 parameter = optimization_vector.pop(0)
@@ -181,7 +181,7 @@ class Robot:
 
         # set tool frame
         tool_vector = geometry.pose_2_xyzrpw(self.tool)
-        for i in range(len(tool_vector)):
+        for i, _ in enumerate(tool_vector):
             truth = optimization_mask.pop(0)
             if truth:
                 parameter = optimization_vector.pop(0)
