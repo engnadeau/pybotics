@@ -74,6 +74,6 @@ class TestGeometry(TestCase):
         np.testing.assert_allclose(actual_angles, expected_angles)
 
         # test single elements
-        for i in range(len(expected_angles)):
+        for i, _ in enumerate(expected_angles):
             actual_angle = wrap_2_pi(test_angles[i])
             np.testing.assert_allclose(actual_angle, expected_angles[i])
