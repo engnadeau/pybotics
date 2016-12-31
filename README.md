@@ -10,6 +10,9 @@
 # pybotics
 Python Toolbox for Robotics
 
+## Context
+Inspired from [Peter Corke's Robotics Toolbox](http://www.petercorke.com/Robotics_Toolbox.html) for MATLAB. However, MATLAB is not necessarily widespread outside of academia (and I prefer Python), thus Pybotics was born.
+
 ## Requirements/Compatibility
 - Python 2.7, 3.4, 3.5
 - See [requirements.txt](requirements.txt) for package dependencies
@@ -28,6 +31,17 @@ See [examples](examples) for usage examples.
 1. Fork it!
 2. Create your feature branch
 3. Follow PEP 8 style guide
-3. Commit your changes
-4. Push to the branch
+1. Don't break the current codebase (without good reason)
+1. Have tests for all your code
 5. Submit a pull request :D
+
+## Limitations
+- Currently only supports [Modified Denavit–Hartenberg Parameters](https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters#Modified_DH_parameters)
+
+## References
+```
+Craig, John J. Introduction to robotics: mechanics and control. Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+```
+```
+Corke, Peter. Robotics, vision and control: fundamental algorithms in MATLAB. Vol. 73. Springer, 2011.
+```
