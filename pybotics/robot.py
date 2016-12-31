@@ -16,13 +16,11 @@ class Robot:
         self.joint_angle_limits = [(-np.pi, np.pi)] * self.num_dof()
 
     def validate_joint_angles(self, joint_angles):
-
         is_success = True
-        if self.joint_angle_limits is not None:
-            for i, joint_angle in enumerate(joint_angles):
-                if joint_angle > max(self.joint_angle_limits[i]) or joint_angle < min(self.joint_angle_limits[i]):
-                    is_success = False
-                    break
+        for limit, joint_angle in zip(self.joint_angle_limits, joint_angles):
+            if joint_angle > max(limit) or joint_angle < min(limit):
+                is_success = False
+                break
 
         return is_success
 

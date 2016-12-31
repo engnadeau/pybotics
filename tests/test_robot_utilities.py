@@ -12,5 +12,5 @@ class TestKinematics(TestCase):
         self.assertEqual(len(test_angle_limits), len(result_joints))
 
         for limit, joint in zip(test_angle_limits, result_joints):
-            self.assertTrue(limit[0] < joint)
-            self.assertTrue(limit[1] > joint)
+            self.assertTrue(min(limit) < joint)
+            self.assertTrue(max(limit) > joint)

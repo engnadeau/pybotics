@@ -57,3 +57,12 @@ class TestRobot(TestCase):
 
             assert len(ik_joints) == len(test_joints)
             np.testing.assert_allclose(actual=result_transform, desired=expected_transform, rtol=1e-1, atol=1e-1)
+
+    def test_validate_joint_angles(self):
+        test_joints_list = np.deg2rad([
+            [10, 90, 80, 20, 90, 123],
+            [-10, 20, -30, 40, -50, 191]
+        ])
+
+        self.assertTrue(self.robot.validate_joint_angles(test_joints_list[0]))
+        self.assertFalse(self.robot.validate_joint_angles(test_joints_list[1]))
