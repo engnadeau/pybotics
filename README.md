@@ -17,12 +17,14 @@
 # pybotics
 Python Toolbox for Robotics
 
-## Usage
+## Requirements/Compatibility
+- Python 2.7, 3.4, 3.5
+- See [requirements.txt](requirements.txt) for package dependencies
 
+## Usage
 - Robot kinematics
 
 ## Contributing
-
 1. Fork it!
 2. Create your feature branch
 3. Follow PEP 8 style guide
