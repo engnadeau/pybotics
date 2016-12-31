@@ -140,7 +140,7 @@ class Robot:
             world_bounds = [(None, None)] * 6
 
         if robot_model_bounds is None:
-            robot_model_bounds = [(None, None)] * 4 * self.num_dof()
+            robot_model_bounds = [(None, None)] * self.robot_model.size
 
         if tool_bounds is None:
             tool_bounds = [(None, None)] * 6
@@ -196,11 +196,12 @@ class Robot:
         return result
 
     def jacobian_world(self, joint_angles=None):
+        # TODO: fully implement and validate
         # set initial joints
         if joint_angles is not None:
             assert len(joint_angles) == self.num_dof()
         else:
-            joint_angles = self.current_joints
+            joint_angles = [0] * self.num_dof()
 
         jacobian_flange = self.jacobian_flange(joint_angles)
         pose = self.fk(joint_angles)
@@ -213,6 +214,7 @@ class Robot:
         return jacobian_world
 
     def jacobian_flange(self, joint_angles=None):
+        # TODO: fully implement and validate
         # set initial joints
         if joint_angles is not None:
             assert len(joint_angles) == self.num_dof()
@@ -238,7 +240,7 @@ class Robot:
         return jacobian_flange
 
     def ik_fit_func(self, joint_angles, pose, reference_frame):
-        geometry.wrap_2_pi(joint_angles)
+        joint_angles = geometry.wrap_2_pi(joint_angles)
         actual_pose = self.fk(joint_angles, reference_frame=reference_frame)
 
         error = actual_pose - pose
