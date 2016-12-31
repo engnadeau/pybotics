@@ -1,15 +1,22 @@
 from unittest import TestCase
-import logging
-from pybotics import robot_model
+import copy
 from pybotics.robot import Robot
 import numpy as np
+import os
 
 
 class TestRobot(TestCase):
     def setUp(self):
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:\t%(message)s')
-        np.set_printoptions(suppress=True)
-        self.robot = Robot(robot_model.ur10())
+        # load UR10 model for testing
+        model = np.array([
+            0, 0, 0, 118,
+            1.5707963267949, 0, 3.14159265358979, 0,
+            0, 612.7, 0, 0,
+            0, 571.6, 0, 163.9,
+            - 1.5707963267949, 0, 0, 115.7,
+            1.5707963267949, 0, 3.14159265358979, 92.2
+        ]).reshape((-1, 4))
+        self.robot = Robot(model)
 
     def test_num_dof(self):
         # ur10 has 6 DOF
@@ -35,7 +42,7 @@ class TestRobot(TestCase):
         np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
 
     def test_impair_robot_model(self):
-        impaired_robot = Robot(robot_model.ur10())
+        impaired_robot = copy.deepcopy(self.robot)
         impaired_robot.impair_robot_model(0.1)
 
         model_diff = impaired_robot.robot_model - self.robot.robot_model

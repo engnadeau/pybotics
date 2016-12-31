@@ -8,18 +8,17 @@ np.set_printoptions(precision=3)
 np.set_printoptions(suppress=True)
 
 # create robot
-ideal_robot = py.Robot()
-ideal_robot.robot_model = py.robot_model.ur10()
+model = np.loadtxt('ur10-mdh.csv', delimiter=',')
+robot = py.Robot(model)
 
-# create pseudo-realistic robot with kinematic errors
-real_robot = copy.deepcopy(ideal_robot)
-real_robot.impair_robot_model()
-
-print('Ideal Robot Model:\n', ideal_robot.robot_model, '\n')
-print('Pseudo-Real Robot Model:\n', real_robot.robot_model, '\n')
+print('Robot Model:\n{}\n'.format(robot.robot_model))
 
 # demonstrate forward kinematics
-joints = [0, 0, 0, 0, 0, 0]
+joints = [0] * robot.num_dof()
+pose = robot.fk(joints)
 
-print('Ideal Pose:\n', ideal_robot.fk(joints), '\n')
-print('Pseudo-Real Pose:\n', real_robot.fk(joints), '\n')
+print('Pose:\n{}\n'.format(pose))
+
+# demonstrate inverse kinematics
+new_joints = robot.ik(pose)
+print('Solved Joints:\n{}\n'.format(new_joints))
