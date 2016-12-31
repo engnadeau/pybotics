@@ -85,7 +85,7 @@ class Robot:
         ))
 
         # update vector wrt optimizations and mask
-        for i, truth in optimization_mask:
+        for i, truth in enumerate(optimization_mask):
             if truth:
                 parameters[i] = optimization_vector.pop(0)
 
