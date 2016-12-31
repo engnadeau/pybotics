@@ -1,7 +1,8 @@
 from copy import copy
-
+import itertools
 import numpy as np
 import scipy.optimize
+
 import robot_utilities
 from pybotics import kinematics, geometry
 
@@ -93,37 +94,15 @@ class Robot:
             self.tool[i, -1] = parameter
 
     def generate_optimization_vector(self, optimization_mask):
-        optimization_mask = copy(optimization_mask)
-        vector = []
+        parameters = itertools.chain(
+            geometry.pose_2_xyzrpw(self.world_frame),
+            np.reshape(self.robot_model, self.robot_model.size),
+            geometry.pose_2_xyzrpw(self.tool),
+            self.joint_stiffness
+        )
+        parameters = list(itertools.compress(parameters, optimization_mask))
 
-        # get world frame
-        world_vector = geometry.pose_2_xyzrpw(self.world_frame)
-        for parameter in world_vector:
-            truth = optimization_mask.pop(0)
-            if truth:
-                vector.append(parameter)
-
-        # get MDH parameters
-        parameters = np.reshape(self.robot_model, self.robot_model.size)
-        for parameter in parameters:
-            truth = optimization_mask.pop(0)
-            if truth:
-                vector.append(parameter)
-
-        # get tool frame
-        tool_vector = geometry.pose_2_xyzrpw(self.tool)
-        for parameter in tool_vector:
-            truth = optimization_mask.pop(0)
-            if truth:
-                vector.append(parameter)
-
-        # get joint stiffness parameters
-        for parameter in self.joint_stiffness:
-            truth = optimization_mask.pop(0)
-            if truth:
-                vector.append(parameter)
-
-        return vector
+        return parameters
 
     def apply_optimization_vector(self, optimization_vector, optimization_mask):
         optimization_mask = copy(optimization_mask)
@@ -164,7 +143,6 @@ class Robot:
 
     def generate_optimization_mask(self, world_mask=False, robot_model_mask=False, tool_mask=False,
                                    joint_stiffness_mask=False):
-
         if not isinstance(world_mask, list):
             world_mask = [world_mask] * 6
 
@@ -187,7 +165,6 @@ class Robot:
 
     def generate_parameter_bounds(self, optimization_mask, world_bounds=None, robot_model_bounds=None, tool_bounds=None,
                                   joint_stiffness_bounds=None):
-
         if world_bounds is None:
             world_bounds = [(None, None)] * 6
 
