@@ -166,16 +166,14 @@ class Robot:
         if joint_stiffness_bounds is None:
             joint_stiffness_bounds = [(None, None)] * self.num_dof()
 
-        glob_bounds = []
-        glob_bounds.extend(world_bounds)
-        glob_bounds.extend(robot_model_bounds)
-        glob_bounds.extend(tool_bounds)
-        glob_bounds.extend(joint_stiffness_bounds)
+        bounds = itertools.chain(
+            world_bounds,
+            robot_model_bounds,
+            tool_bounds,
+            joint_stiffness_bounds
+        )
 
-        bounds = []
-        for i, truth in enumerate(optimization_mask):
-            if truth:
-                bounds.append(glob_bounds[i])
+        bounds = list(itertools.compress(bounds, optimization_mask))
 
         return bounds
 
