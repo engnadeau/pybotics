@@ -290,20 +290,10 @@ class Robot:
 
         return jacobian_flange
 
+    def ik_fit_func(self, joint_angles, pose, reference_frame):
+        geometry.wrap_2_pi(joint_angles)
+        actual_pose = self.fk(joint_angles, reference_frame=reference_frame)
 
-def ik_fit_func(joint_angles, pose, robot, reference_frame):
-    geometry.wrap_2_pi(joint_angles)
-    actual_pose = robot.fk(joint_angles, reference_frame=reference_frame)
-
-    error = actual_pose - pose
-    # error = np.square(error)
-    # error = np.sum(error)
-    error = error.flatten()
-    return error
-
-
-def random_joints(joint_angle_limits):
-    joint_angles = []
-    for limits in joint_angle_limits:
-        joint_angles.append(np.random.uniform(min(limits), max(limits)))
-    return np.array(joint_angles)
+        error = actual_pose - pose
+        error = error.flatten()
+        return error
