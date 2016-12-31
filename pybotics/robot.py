@@ -104,23 +104,33 @@ class Robot:
 
     def generate_optimization_mask(self, world_mask=False, robot_model_mask=False, tool_mask=False,
                                    joint_stiffness_mask=False):
+
         if not isinstance(world_mask, list):
             world_mask = [world_mask] * 6
+        else:
+            assert len(world_mask) == 6
 
         if not isinstance(robot_model_mask, list):
-            robot_model_mask = [robot_model_mask] * 4 * self.num_dof()
+            robot_model_mask = [robot_model_mask] * self.robot_model.size
+        else:
+            assert len(robot_model_mask) == self.robot_model.size
 
         if not isinstance(tool_mask, list):
             tool_mask = [tool_mask] * 6
+        else:
+            assert len(tool_mask) == 6
 
         if not isinstance(joint_stiffness_mask, list):
             joint_stiffness_mask = [joint_stiffness_mask] * self.num_dof()
+        else:
+            assert len(joint_stiffness_mask) == self.num_dof()
 
-        mask = []
-        mask.extend(world_mask)
-        mask.extend(robot_model_mask)
-        mask.extend(tool_mask)
-        mask.extend(joint_stiffness_mask)
+        mask = list(itertools.chain(
+            world_mask,
+            robot_model_mask,
+            tool_mask,
+            joint_stiffness_mask
+        ))
 
         return mask
 
