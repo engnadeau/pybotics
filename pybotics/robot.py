@@ -60,34 +60,6 @@ class Robot:
 
         return transform
 
-    def impair_robot_model(self, relative_error=0.05):
-        # random error multiplier between [-1,1]
-        error_attenuation = 2 * np.random.rand(self.robot_model.shape[0], self.robot_model.shape[1])
-        error_attenuation -= 1
-
-        # attenuate the multiplier wrt user input (e.g., limit to 5% of nominal)
-        error_attenuation *= relative_error
-
-        # create error delta
-        error_delta = np.multiply(self.robot_model, error_attenuation)
-
-        bit_mask = np.isclose(error_delta, np.zeros(error_delta.shape))
-
-        if np.any(bit_mask):
-            error_adjustment = 2 * np.random.rand(self.robot_model.shape[0], self.robot_model.shape[1])
-            error_adjustment -= 1
-
-            error_adjustment[:, 0] *= abs(error_delta[:, 0]).max()
-            error_adjustment[:, 1] *= abs(error_delta[:, 1]).max()
-            error_adjustment[:, 2] *= abs(error_delta[:, 2]).max()
-            error_adjustment[:, 3] *= abs(error_delta[:, 3]).max()
-
-            error_adjustment = np.multiply(error_adjustment, bit_mask.astype(int))
-
-            error_delta += error_adjustment
-
-        self.robot_model += error_delta
-
     def set_tool_xyz(self, xyz):
         for i, parameter in enumerate(xyz):
             self.tool[i, -1] = parameter
