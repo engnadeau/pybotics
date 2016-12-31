@@ -74,6 +74,8 @@ class Robot:
         return parameters
 
     def apply_optimization_vector(self, optimization_vector, optimization_mask):
+        optimization_vector = copy(optimization_vector)
+
         # create parameter vector
         parameters = list(itertools.chain(
             geometry.pose_2_xyzrpw(self.world_frame),
