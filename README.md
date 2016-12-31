@@ -21,8 +21,13 @@ Python Toolbox for Robotics
 - Python 2.7, 3.4, 3.5
 - See [requirements.txt](requirements.txt) for package dependencies
 
+## Applications
+- Robot kinematics (forward and inverse)
+- Robot calibration
+- Trajectory/path planning
+
 ## Usage
-- Robot kinematics
+See [examples](examples) for usage examples.
 
 ## Contributing
 1. Fork it!
