@@ -33,6 +33,8 @@ class Robot:
         assert len(joint_angles) == self.num_dof()
         if torques is not None:
             assert len(torques) == self.num_dof()
+        else:
+            torques = [0] * self.num_dof()
 
         # define transform to carry matrix multiplications through joints
         if reference_frame is None:
@@ -45,9 +47,7 @@ class Robot:
             # add the current joint pose to the forward transform
             current_link = self.robot_model[i].copy()
             current_link[2] += joint
-
-            if torques is not None:
-                current_link[2] += torques[i] * self.joint_stiffness[i]
+            current_link[2] += torques[i] * self.joint_stiffness[i]
 
             # get the transform step
             current_link_transform = kinematics.forward_transform(current_link)
@@ -166,32 +166,24 @@ class Robot:
         else:
             joint_angles = [0] * self.num_dof()
 
-        if not isinstance(joint_angles, np.ndarray):
-            joint_angles = np.array(joint_angles)
-
+        # transpose joint angle limits to least_squares format
         bounds = np.array(self.joint_angle_limits)
         bounds = tuple(map(tuple, bounds.transpose()))
 
-        is_success = False
-        max_iterations = 5
-        current_iteration = 0
         result = None
-        while not is_success and current_iteration < max_iterations:
-            current_iteration += 1
+        for _ in range(5):
             optimize_result = scipy.optimize.least_squares(fun=self.ik_fit_func,
                                                            x0=joint_angles,
                                                            args=(pose, reference_frame),
                                                            bounds=bounds,
                                                            )
 
-            result = optimize_result.x
-            if optimize_result.fun.max() < 1e-1 and self.validate_joint_angles(result):
-                is_success = True
+            joint_angles = optimize_result.x
+            if optimize_result.fun.max() < 1e-1 and self.validate_joint_angles(joint_angles):
+                result = joint_angles
+                break
             else:
                 joint_angles = robot_utilities.random_joints(self.joint_angle_limits)
-
-        if not is_success:
-            result = None
 
         return result
 
