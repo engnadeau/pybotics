@@ -95,7 +95,7 @@ class Robot:
     def generate_optimization_vector(self, optimization_mask):
         parameters = itertools.chain(
             geometry.pose_2_xyzrpw(self.world_frame),
-            np.reshape(self.robot_model, self.robot_model.size),
+            self.robot_model.ravel(),
             geometry.pose_2_xyzrpw(self.tool),
             self.joint_stiffness
         )
@@ -104,41 +104,31 @@ class Robot:
         return parameters
 
     def apply_optimization_vector(self, optimization_vector, optimization_mask):
-        optimization_mask = copy(optimization_mask)
+        # create parameter vector
+        parameters = list(itertools.chain(
+            geometry.pose_2_xyzrpw(self.world_frame),
+            self.robot_model.ravel(),
+            geometry.pose_2_xyzrpw(self.tool),
+            self.joint_stiffness
+        ))
 
-        # set world frame
-        world_vector = geometry.pose_2_xyzrpw(self.world_frame)
-        for i, _ in enumerate(world_vector):
-            truth = optimization_mask.pop(0)
+        # update vector wrt optimizations and mask
+        for i, truth in optimization_mask:
             if truth:
-                parameter = optimization_vector.pop(0)
-                world_vector[i] = parameter
-        self.world_frame = geometry.xyzrpw_2_pose(world_vector)
+                parameters[i] = optimization_vector.pop(0)
 
-        # set MDH parameters
-        for i in range(self.robot_model.size):
-            truth = optimization_mask.pop(0)
-            if truth:
-                parameter = optimization_vector.pop(0)
-                row = int(i / 4)
-                col = int(i % 4)
-                self.robot_model[row, col] = parameter
+        # update self wrt new vector
+        self.world_frame = geometry.xyzrpw_2_pose(parameters[:6])
+        del parameters[:6]
 
-        # set tool frame
-        tool_vector = geometry.pose_2_xyzrpw(self.tool)
-        for i, _ in enumerate(tool_vector):
-            truth = optimization_mask.pop(0)
-            if truth:
-                parameter = optimization_vector.pop(0)
-                tool_vector[i] = parameter
-        self.tool = geometry.xyzrpw_2_pose(tool_vector)
+        self.robot_model = np.array(parameters[:self.robot_model.size]).reshape((-1, 4))
+        del parameters[:self.robot_model.size]
 
-        # get joint stiffness parameters
-        for i in range(len(self.joint_stiffness)):
-            truth = optimization_mask.pop(0)
-            if truth:
-                parameter = optimization_vector.pop(0)
-                self.joint_stiffness[i] = parameter
+        self.tool = geometry.xyzrpw_2_pose(parameters[:6])
+        del parameters[:6]
+
+        self.joint_stiffness = parameters[:self.num_dof()]
+        del parameters[:self.num_dof()]
 
     def generate_optimization_mask(self, world_mask=False, robot_model_mask=False, tool_mask=False,
                                    joint_stiffness_mask=False):
