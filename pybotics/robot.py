@@ -3,8 +3,7 @@ import itertools
 import numpy as np
 import scipy.optimize
 
-import robot_utilities
-from pybotics import kinematics, geometry
+from pybotics import kinematics, geometry, robot_utilities
 
 
 class Robot:
