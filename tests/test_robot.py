@@ -41,32 +41,21 @@ class TestRobot(TestCase):
         assert actual_transform.size == expected_transform.size
         np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
 
-    def test_impair_robot_model(self):
-        impaired_robot = copy.deepcopy(self.robot)
-        impaired_robot.impair_robot_model(0.1)
-
-        model_diff = impaired_robot.robot_model - self.robot.robot_model
-
-        for link_parameters in model_diff:
-            for parameter in link_parameters:
-                assert abs(parameter) > 1e-9
-
     def test_ik(self):
-        expected_joints_list = np.deg2rad([
+        test_joints_list = np.deg2rad([
             [0, -90, 90, 0, 90, 0],
             [10, 90, 80, 20, 90, 123],
             [20, -40, 90, 10, 20, 0],
             [-10, 20, -30, 40, -50, 60]
         ])
 
-        for expected_joints in expected_joints_list:
+        for test_joints in test_joints_list:
             # define test values
-
-            expected_transform = self.robot.fk(expected_joints)
+            expected_transform = self.robot.fk(test_joints)
 
             # test single transform
-            actual_joints = self.robot.ik(expected_transform)
-            actual_transform = self.robot.fk(actual_joints)
+            ik_joints = self.robot.ik(expected_transform)
+            result_transform = self.robot.fk(ik_joints)
 
-            assert len(actual_joints) == len(expected_joints)
-            np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-1, atol=1e-1)
+            assert len(ik_joints) == len(test_joints)
+            np.testing.assert_allclose(actual=result_transform, desired=expected_transform, rtol=1e-1, atol=1e-1)
