@@ -1,8 +1,6 @@
 from unittest import TestCase
-import copy
 from pybotics.robot import Robot
 import numpy as np
-import os
 
 
 class TestRobot(TestCase):
