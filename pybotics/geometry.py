@@ -74,7 +74,7 @@ def wrap_2_pi(angles):
     :param angles: angles [rad]
     :return: wrapped angles [rad]
     '''
-    if isinstance(angles, float):
+    if isinstance(angles, (int, float)):
         angles = (angles + np.pi) % (2 * np.pi) - np.pi
     else:
         angles = list(map(wrap_2_pi, angles))

@@ -16,13 +16,11 @@ class Robot:
         self.joint_angle_limits = [(-np.pi, np.pi)] * self.num_dof()
 
     def validate_joint_angles(self, joint_angles):
-
         is_success = True
-        if self.joint_angle_limits is not None:
-            for i, joint_angle in enumerate(joint_angles):
-                if joint_angle > max(self.joint_angle_limits[i]) or joint_angle < min(self.joint_angle_limits[i]):
-                    is_success = False
-                    break
+        for limit, joint_angle in zip(self.joint_angle_limits, joint_angles):
+            if joint_angle > max(limit) or joint_angle < min(limit):
+                is_success = False
+                break
 
         return is_success
 
@@ -76,6 +74,8 @@ class Robot:
         return parameters
 
     def apply_optimization_vector(self, optimization_vector, optimization_mask):
+        optimization_vector = copy(optimization_vector)
+
         # create parameter vector
         parameters = list(itertools.chain(
             geometry.pose_2_xyzrpw(self.world_frame),
@@ -85,7 +85,7 @@ class Robot:
         ))
 
         # update vector wrt optimizations and mask
-        for i, truth in optimization_mask:
+        for i, truth in enumerate(optimization_mask):
             if truth:
                 parameters[i] = optimization_vector.pop(0)
 
@@ -104,23 +104,33 @@ class Robot:
 
     def generate_optimization_mask(self, world_mask=False, robot_model_mask=False, tool_mask=False,
                                    joint_stiffness_mask=False):
+
         if not isinstance(world_mask, list):
             world_mask = [world_mask] * 6
+        else:
+            assert len(world_mask) == 6
 
         if not isinstance(robot_model_mask, list):
-            robot_model_mask = [robot_model_mask] * 4 * self.num_dof()
+            robot_model_mask = [robot_model_mask] * self.robot_model.size
+        else:
+            assert len(robot_model_mask) == self.robot_model.size
 
         if not isinstance(tool_mask, list):
             tool_mask = [tool_mask] * 6
+        else:
+            assert len(tool_mask) == 6
 
         if not isinstance(joint_stiffness_mask, list):
             joint_stiffness_mask = [joint_stiffness_mask] * self.num_dof()
+        else:
+            assert len(joint_stiffness_mask) == self.num_dof()
 
-        mask = []
-        mask.extend(world_mask)
-        mask.extend(robot_model_mask)
-        mask.extend(tool_mask)
-        mask.extend(joint_stiffness_mask)
+        mask = list(itertools.chain(
+            world_mask,
+            robot_model_mask,
+            tool_mask,
+            joint_stiffness_mask
+        ))
 
         return mask
 
@@ -130,7 +140,7 @@ class Robot:
             world_bounds = [(None, None)] * 6
 
         if robot_model_bounds is None:
-            robot_model_bounds = [(None, None)] * 4 * self.num_dof()
+            robot_model_bounds = [(None, None)] * self.robot_model.size
 
         if tool_bounds is None:
             tool_bounds = [(None, None)] * 6
@@ -186,11 +196,12 @@ class Robot:
         return result
 
     def jacobian_world(self, joint_angles=None):
+        # TODO: fully implement and validate
         # set initial joints
         if joint_angles is not None:
             assert len(joint_angles) == self.num_dof()
         else:
-            joint_angles = self.current_joints
+            joint_angles = [0] * self.num_dof()
 
         jacobian_flange = self.jacobian_flange(joint_angles)
         pose = self.fk(joint_angles)
@@ -203,6 +214,7 @@ class Robot:
         return jacobian_world
 
     def jacobian_flange(self, joint_angles=None):
+        # TODO: fully implement and validate
         # set initial joints
         if joint_angles is not None:
             assert len(joint_angles) == self.num_dof()
@@ -228,7 +240,7 @@ class Robot:
         return jacobian_flange
 
     def ik_fit_func(self, joint_angles, pose, reference_frame):
-        geometry.wrap_2_pi(joint_angles)
+        joint_angles = geometry.wrap_2_pi(joint_angles)
         actual_pose = self.fk(joint_angles, reference_frame=reference_frame)
 
         error = actual_pose - pose
