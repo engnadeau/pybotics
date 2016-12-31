@@ -31,13 +31,21 @@ class TestRobot(TestCase):
             [0, 0, 0, 1]
         ])
 
-        # test single transform
-        actual_transform = self.robot.fk(joints)
+        # test fk
+        reference_frames = [None, np.eye(4)]
+        torques = [None, [0] * self.robot.num_dof()]
+        for reference_frame in reference_frames:
+            for torque in torques:
+                actual_transform = self.robot.fk(joints, reference_frame=reference_frame, torques=torque)
 
-        assert actual_transform.shape[0] == expected_transform.shape[0]
-        assert actual_transform.shape[1] == expected_transform.shape[1]
-        assert actual_transform.size == expected_transform.size
-        np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
+                assert actual_transform.shape[0] == expected_transform.shape[0]
+                assert actual_transform.shape[1] == expected_transform.shape[1]
+                assert actual_transform.size == expected_transform.size
+                np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
+
+        # test exception raising
+        with self.assertRaises(AssertionError):
+            self.robot.fk(joints, torques=[0] * (self.robot.num_dof() + 1))
 
     def test_ik(self):
         test_joints_list = np.deg2rad([
