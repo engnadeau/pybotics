@@ -10,7 +10,6 @@ class Robot:
         self.robot_model = robot_model
         self.tool = np.eye(4)
         self.world_frame = np.eye(4)
-        self.current_joints = [0] * self.num_dof()
         self.joint_stiffness = [0] * self.num_dof()
         self.name = name
         self.joint_angle_limits = [(-np.pi, np.pi)] * self.num_dof()
@@ -29,69 +28,36 @@ class Robot:
     def num_dof(self):
         return len(self.robot_model)
 
-    def fk(self, joint_angles=None, link_limit=None, torques=None, reference_frame=None):
+    def fk(self, joint_angles, torques=None, reference_frame=None):
 
         # validate input
+        assert len(joint_angles) == self.num_dof()
         if torques is not None:
             assert len(torques) == self.num_dof()
 
-        # define output
-        transforms = []
-
-        # load current robot joints if none given
-        if joint_angles is None:
-
-            # if current joints are empty, assign zero
-            if not self.current_joints:
-                self.current_joints = [0] * self.num_dof()
-
-            joint_angles = [self.current_joints]
-
-        # make sure joints are contained in a list
-        elif not isinstance(joint_angles[0], list):
-            joint_angles = [joint_angles]
-
-        # define joint limit, transform up to n-th joint
-        tool_transform = np.eye(4)
-        if link_limit is None:
-            link_limit = self.num_dof()
-            tool_transform = self.tool
-
-        # define reference frame
+        # define transform to carry matrix multiplications through joints
         if reference_frame is None:
-            reference_frame = np.eye(4)
-
-        # iterate through input
-        for joints in joint_angles:
-
-            # define transform identity matrix to carry multiplications
             transform = np.eye(4)
+        else:
+            transform = reference_frame
 
-            # multiply wrt reference frame
-            transform = np.dot(reference_frame, transform)
+        # multiply through the forward transforms of the joints
+        for i, joint in enumerate(joint_angles):
+            # add the current joint pose to the forward transform
+            current_link = self.robot_model[i].copy()
+            current_link[2] += joint
 
-            # multiply through the forward transforms of the joints
-            for i in range(link_limit):
-                # add the current joint pose to the forward transform
-                current_link = self.robot_model[i].copy()
-                current_link[2] += joints[i]
+            if torques is not None:
+                current_link[2] += torques[i] * self.joint_stiffness[i]
 
-                if torques is not None:
-                    current_link[2] += torques[i] * self.joint_stiffness[i]
+            # get the transform step
+            current_link_transform = kinematics.forward_transform(current_link)
+            transform = np.dot(transform, current_link_transform)
 
-                # get the transform step
-                current_link_transform = kinematics.forward_transform(current_link)
-                transform = np.dot(transform, current_link_transform)
+        # add tool transform
+        transform = np.dot(transform, self.tool)
 
-            # add tool transform
-            transform = np.dot(transform, tool_transform)
-            transforms.append(transform)
-
-        # return only transform if only one joint config is given
-        if len(transforms) == 1:
-            transforms = transforms[0]
-
-        return transforms
+        return transform
 
     def impair_robot_model(self, relative_error=0.05):
         # random error multiplier between [-1,1]
@@ -251,7 +217,7 @@ class Robot:
         if joint_angles is not None:
             assert len(joint_angles) == self.num_dof()
         else:
-            joint_angles = self.current_joints
+            joint_angles = [0] * self.num_dof()
 
         if not isinstance(joint_angles, np.ndarray):
             joint_angles = np.array(joint_angles)
