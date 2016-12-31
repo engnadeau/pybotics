@@ -2,6 +2,7 @@ from copy import copy
 
 import numpy as np
 import scipy.optimize
+import robot_utilities
 from pybotics import kinematics, geometry
 
 
@@ -231,9 +232,9 @@ class Robot:
         result = None
         while not is_success and current_iteration < max_iterations:
             current_iteration += 1
-            optimize_result = scipy.optimize.least_squares(fun=ik_fit_func,
+            optimize_result = scipy.optimize.least_squares(fun=self.ik_fit_func,
                                                            x0=joint_angles,
-                                                           args=(pose, self, reference_frame),
+                                                           args=(pose, reference_frame),
                                                            bounds=bounds,
                                                            )
 
@@ -241,7 +242,7 @@ class Robot:
             if optimize_result.fun.max() < 1e-1 and self.validate_joint_angles(result):
                 is_success = True
             else:
-                joint_angles = random_joints(self.joint_angle_limits)
+                joint_angles = robot_utilities.random_joints(self.joint_angle_limits)
 
         if not is_success:
             result = None
