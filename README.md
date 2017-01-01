@@ -26,6 +26,7 @@ Inspired from [Peter Corke's Robotics Toolbox](http://www.petercorke.com/Robotic
 See [examples](examples) for usage examples.
 
 - [Kinematics](examples/example_kinematics.ipynb)
+- [Calibration](examples/example_calibration.ipynb)
 
 ## Contributing
 1. Fork it!
