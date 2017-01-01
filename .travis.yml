@@ -27,4 +27,4 @@ after_success:
 
 # notification settings
 notifications:
-    on_failure: never
+  email: false
