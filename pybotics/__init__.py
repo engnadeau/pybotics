@@ -2,4 +2,5 @@
 from . import geometry
 from . import kinematics
 from . import robot_utilities
+from . import calibration
 from .robot import Robot
