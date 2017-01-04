@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pybotics',
-    version='0.1.0',
+    version='0.1.3',
     packages=['examples', 'pybotics', 'tests'],
     url='https://github.com/nnadeau/pybotics',
     license='MIT',
