@@ -17,16 +17,10 @@ Inspired from [Peter Corke's Robotics Toolbox](http://www.petercorke.com/Robotic
 - Python 2.7, 3.4, 3.5
 - See [requirements.txt](requirements.txt) for package dependencies
 
-## Applications
-- Robot kinematics (forward and inverse)
-- Robot calibration
-- Trajectory/path planning
-
-## Usage
-See [examples](examples) for usage examples.
-
+## Applications and Usage
 - [Kinematics](examples/example_kinematics.ipynb)
 - [Calibration](examples/example_calibration.ipynb)
+- Trajectory and path planning
 
 ## Contributing
 1. Fork it!
@@ -40,9 +34,5 @@ See [examples](examples) for usage examples.
 - Currently only supports [Modified Denavit–Hartenberg Parameters](https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters#Modified_DH_parameters)
 
 ## References
-```
-Craig, John J. Introduction to robotics: mechanics and control. Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
-```
-```
-Corke, Peter. Robotics, vision and control: fundamental algorithms in MATLAB. Vol. 73. Springer, 2011.
-```
+- Craig, John J. Introduction to robotics: mechanics and control. Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+- Corke, Peter. Robotics, vision and control: fundamental algorithms in MATLAB. Vol. 73. Springer, 2011.
