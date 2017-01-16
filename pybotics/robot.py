@@ -43,20 +43,21 @@ class Robot:
             transform = reference_frame
 
         # multiply through the forward transforms of the joints
-        for i, joint in enumerate(joint_angles):
+        for i, (joint, torque) in enumerate(zip(joint_angles, torques)):
             # add the current joint pose to the forward transform
-            current_link = self.robot_model[i].copy()
-            current_link[2] += joint
-            current_link[2] += torques[i] * self.joint_stiffness[i]
-
-            # get the transform step
-            current_link_transform = kinematics.forward_transform(current_link)
-            transform = np.dot(transform, current_link_transform)
+            transform = np.dot(transform, self.calculate_link_transform(i, joint, torque))
 
         # add tool transform
         transform = np.dot(transform, self.tool)
 
         return transform
+
+    def calculate_link_transform(self, link_index, joint_angle, torque=0):
+        link = self.robot_model[link_index].copy()
+        link[2] += joint_angle
+        link[2] += torque * self.joint_stiffness[link_index]
+        link_transform = kinematics.forward_transform(link)
+        return link_transform
 
     def set_tool_xyz(self, xyz):
         for i, parameter in enumerate(xyz):
@@ -187,50 +188,6 @@ class Robot:
 
         return result
 
-    def jacobian_world(self, joint_angles=None):
-        # TODO: fully implement and validate
-        # set initial joints
-        if joint_angles is not None:
-            assert len(joint_angles) == self.num_dof()
-        else:
-            joint_angles = [0] * self.num_dof()
-
-        jacobian_flange = self.jacobian_flange(joint_angles)
-        pose = self.fk(joint_angles)
-        rotation = pose[0:3, 0:3]
-        jacobian_transform = np.zeros((6, 6))
-        jacobian_transform[:3, :3] = rotation
-        jacobian_transform[3:, 3:] = rotation
-        jacobian_world = np.dot(jacobian_transform, jacobian_flange)
-
-        return jacobian_world
-
-    def jacobian_flange(self, joint_angles=None):
-        # TODO: fully implement and validate
-        # set initial joints
-        if joint_angles is not None:
-            assert len(joint_angles) == self.num_dof()
-        else:
-            joint_angles = self.current_joints
-
-        # init Cartesian jacobian (6-dof in space)
-        jacobian_flange = np.zeros((6, self.num_dof()))
-        current_transform = copy(self.tool)
-
-        for i in reversed(range(self.num_dof())):
-            d = np.array([
-                -current_transform[0, 0] * current_transform[1, 3] + current_transform[1, 0] * current_transform[0, 3],
-                - current_transform[0, 1] * current_transform[1, 3] + current_transform[1, 1] * current_transform[0, 3],
-                - current_transform[0, 2] * current_transform[1, 3] + current_transform[1, 2] * current_transform[0, 3],
-            ])
-            delta = current_transform[2, 0:3]
-            jacobian_flange[:, i] = np.hstack((d, delta))
-            current_link = self.robot_model[i]
-            current_link_transform = kinematics.forward_transform(current_link, joint_angle=joint_angles[i])
-            current_transform = np.dot(current_link_transform, current_transform)
-
-        return jacobian_flange
-
     def ik_fit_func(self, joint_angles, pose, reference_frame):
         joint_angles = geometry.wrap_2_pi(joint_angles)
         actual_pose = self.fk(joint_angles, reference_frame=reference_frame)
@@ -238,3 +195,46 @@ class Robot:
         error = actual_pose - pose
         error = error.flatten()
         return error
+
+    def calculate_joint_torques(self, joint_angles, wrench):
+        """
+        Calculate the joint torques due to external force applied to the flange frame.
+
+        Method from:
+        5.9 STATIC FORCES IN MANIPULATORS
+        Craig, John J. Introduction to robotics: mechanics and control.
+        Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+
+        :param joint_angles:
+        :param force:
+        :return:
+        """
+
+        # split wrench into components
+        force = wrench[:3].copy()
+        moment = wrench[-3:].copy()
+
+        # init output
+        joint_torques = [moment[-1]]
+
+        # loop through links from flange to base, each iteration calculates for link i-1
+        for i, joint_angle in reversed(list(enumerate(joint_angles))):
+            if i == 0:
+                break
+
+            # get current link transform
+            transform = self.calculate_link_transform(i, joint_angle)
+
+            # calculate force applied to current link
+            rotation = transform[:3, :3]
+            force = np.dot(rotation, force)
+
+            # calculate moment applied to current link
+            position = transform[:3, -1]
+            moment = np.dot(rotation, moment) + np.cross(position, force)
+
+            # append z-component as joint torque
+            joint_torques.append(moment[-1])
+
+        # reverse torques into correct order
+        return list(reversed(joint_torques))
