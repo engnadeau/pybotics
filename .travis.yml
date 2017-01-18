@@ -8,6 +8,11 @@ python:
   - "3.6-dev"
   - "3.7-dev"
   - "nightly"
+  
+matrix:
+  allow_failures:
+  - "3.7-dev"
+  - "nightly"
 
 # command to install dependencies
 before_install:
