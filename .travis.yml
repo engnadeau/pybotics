@@ -2,18 +2,17 @@ language: python
 
 matrix:
   include:
-    python:
-      - "3.4"
-      - "3.5"
-      - "3.5-dev"
-      - "3.6"
-      - "3.6-dev" 
-      - "3.7-dev"
-      - "nightly"
+    - python: "3.4"
+    - python: "3.5"
+    - python: "3.5-dev"
+    - python: "3.6"
+    - python: "3.6-dev" 
+    - python: "3.7-dev"
+    - python: "nightly"
   fast_finish: true
   allow_failures:
-    - "3.7-dev"
-    - "nightly"
+    - python: "3.7-dev"
+    - python: "nightly"
 
 # command to install dependencies
 before_install:
