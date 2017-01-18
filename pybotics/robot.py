@@ -2,18 +2,26 @@ from copy import copy
 import itertools
 import numpy as np
 import scipy.optimize
-
+from typing import Iterable, Tuple
 from pybotics import kinematics, geometry, robot_utilities
+from pybotics.tool import Tool
 
 
 class Robot:
-    def __init__(self, robot_model, name='Pybot'):
-        self.robot_model = robot_model
-        self.tool = np.eye(4)
-        self.world_frame = np.eye(4)
-        self.joint_stiffness = [0] * self.num_dof()
+    def __init__(self,
+                 robot_model: np.ndarray,
+                 tool: Tool = Tool(),
+                 world_frame: np.ndarray = np.eye(4),
+                 joint_stiffness: Iterable[float] = None,
+                 joint_angle_limits: Iterable[Tuple[float]] = None,
+                 name: str = 'Pybot'):
+        self.robot_model = robot_model.reshape((-1, 4))
+        self.tool = tool
+        self.world_frame = world_frame
+        self.joint_stiffness = [0] * self.num_dof() if joint_stiffness is None else joint_stiffness
+        self.joint_angle_limits = [(-np.pi, np.pi)] \
+                                  * self.num_dof() if joint_angle_limits is None else joint_angle_limits
         self.name = name
-        self.joint_angle_limits = [(-np.pi, np.pi)] * self.num_dof()
 
     def validate_joint_angles(self, joint_angles):
         is_success = True
@@ -54,19 +62,19 @@ class Robot:
             transform = np.dot(transform, current_link_transform)
 
         # add tool transform
-        transform = np.dot(transform, self.tool)
+        transform = np.dot(transform, self.tool.tcp)
 
         return transform
 
     def set_tool_xyz(self, xyz):
         for i, parameter in enumerate(xyz):
-            self.tool[i, -1] = parameter
+            self.tool.tcp[i, -1] = parameter
 
     def generate_optimization_vector(self, optimization_mask):
         parameters = itertools.chain(
             geometry.pose_2_xyzrpw(self.world_frame),
             self.robot_model.ravel(),
-            geometry.pose_2_xyzrpw(self.tool),
+            geometry.pose_2_xyzrpw(self.tool.tcp),
             self.joint_stiffness
         )
         parameters = list(itertools.compress(parameters, optimization_mask))
@@ -80,7 +88,7 @@ class Robot:
         parameters = list(itertools.chain(
             geometry.pose_2_xyzrpw(self.world_frame),
             self.robot_model.ravel(),
-            geometry.pose_2_xyzrpw(self.tool),
+            geometry.pose_2_xyzrpw(self.tool.tcp),
             self.joint_stiffness
         ))
 
@@ -96,7 +104,7 @@ class Robot:
         self.robot_model = np.array(parameters[:self.robot_model.size]).reshape((-1, 4))
         del parameters[:self.robot_model.size]
 
-        self.tool = geometry.xyzrpw_2_pose(parameters[:6])
+        self.tool.tcp = geometry.xyzrpw_2_pose(parameters[:6])
         del parameters[:6]
 
         self.joint_stiffness = parameters[:self.num_dof()]
@@ -215,7 +223,7 @@ class Robot:
 
         # init Cartesian jacobian (6-dof in space)
         jacobian_flange = np.zeros((6, self.num_dof()))
-        current_transform = copy(self.tool)
+        current_transform = copy(self.tool.tcp)
 
         for i in reversed(range(self.num_dof())):
             d = np.array([
