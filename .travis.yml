@@ -1,18 +1,19 @@
 language: python
 
-python:
-  - "3.4"
-  - "3.5"
-  - "3.5-dev"
-  - "3.6"
-  - "3.6-dev"
-  - "3.7-dev"
-  - "nightly"
-  
 matrix:
+  include:
+    python:
+      - "3.4"
+      - "3.5"
+      - "3.5-dev"
+      - "3.6"
+      - "3.6-dev" 
+      - "3.7-dev"
+      - "nightly"
+  fast_finish: true
   allow_failures:
-  - "3.7-dev"
-  - "nightly"
+    - "3.7-dev"
+    - "nightly"
 
 # command to install dependencies
 before_install:
@@ -38,3 +39,4 @@ after_success:
 # notification settings
 notifications:
   email: false
+  
