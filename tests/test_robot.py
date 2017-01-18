@@ -70,6 +70,42 @@ class TestRobot(TestCase):
             assert len(ik_joints) == len(test_joints)
             np.testing.assert_allclose(actual=result_transform, desired=expected_transform, rtol=1e-1, atol=1e-1)
 
+    def test_calculate_joint_torques(self):
+        """
+        From EXAMPLE 5.7 of
+        Craig, John J. Introduction to robotics: mechanics and control.
+        Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+
+        :return:
+        """
+
+        # set robot
+        link_length = [10, 20]
+        robot_model = np.array([
+            [0, 0, 0, 0],
+            [0, link_length[0], 0, 0],
+            [0, link_length[1], 0, 0]
+        ], dtype=np.float)
+        robot = Robot(robot_model)
+
+        # set test force and angles
+        force = [-100, -200, 0]
+        moment = [0] * 3
+        wrench = force + moment
+        joint_angles = np.deg2rad([30, 60, 0])
+
+        # calculate expected torques
+        expected_torques = [
+            link_length[0] * np.sin(joint_angles[1]) * force[0] +
+            (link_length[1] + link_length[0] * np.cos(joint_angles[1])) * force[1],
+            link_length[1] * force[1],
+            0
+        ]
+
+        # test
+        actual_torques = robot.calculate_joint_torques(joint_angles, wrench)
+        np.testing.assert_allclose(actual_torques, expected_torques)
+
     def test_validate_joint_angles(self):
         test_joints_list = np.deg2rad([
             [10, 90, 80, 20, 90, 123],
@@ -150,14 +186,6 @@ class TestRobot(TestCase):
         for bound in bounds:
             for b in bound:
                 self.assertIsNone(b)
-
-    def test_jacobian_world(self):
-        # TODO: test
-        pass
-
-    def test_jacobian_flange(self):
-        # TODO: test
-        pass
 
     def test_ik_fit_func(self):
         reference_frame = np.eye(4)
