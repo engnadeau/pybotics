@@ -16,7 +16,7 @@ Python Toolbox for Robotics
 Inspired from [Peter Corke's Robotics Toolbox](http://www.petercorke.com/Robotics_Toolbox.html) for MATLAB. However, MATLAB is not necessarily widespread outside of academia (and I prefer Python), thus Pybotics was born.
 
 ## Requirements/Compatibility
-- Python 2.7, 3.4, 3.5
+- [Python >= 3.4](https://travis-ci.org/nnadeau/pybotics)
 - See [requirements.txt](requirements.txt) for package dependencies
 
 ## Applications and Usage
