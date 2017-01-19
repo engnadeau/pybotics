@@ -3,13 +3,17 @@ from pybotics import robot_utilities
 from pybotics import calibration
 import numpy as np
 import pytest
+import os
 
 np.set_printoptions(suppress=True)
 
 
 @pytest.fixture
 def robot():
-    return Robot(np.loadtxt('ur10-mdh.csv', delimiter=','))
+    model_path = os.path.abspath(__file__)
+    model_path = os.path.dirname(model_path)
+    model_path = os.path.join(model_path, 'ur10-mdh.csv')
+    return Robot(np.loadtxt(model_path, delimiter=','))
 
 
 def test_compute_absolute_errors(robot):
