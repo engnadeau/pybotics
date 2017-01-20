@@ -4,7 +4,7 @@ import numpy as np
 import scipy.optimize
 from typing import Iterable, Tuple
 from pybotics.tool import Tool
-from pybotics.exceptions import *
+from pybotics.exceptions import PybotException
 from pybotics import kinematics
 from pybotics import geometry
 
