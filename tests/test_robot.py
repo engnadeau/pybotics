@@ -91,8 +91,8 @@ def test_calculate_joint_torques(robot):
 
     # test
     robot.joint_angles = joint_angles
-    robot.calculate_external_wrench_joint_torques(wrench)
-    np.testing.assert_allclose(robot.joint_torques, expected_torques)
+    torques = robot.calculate_external_wrench_joint_torques(wrench)
+    np.testing.assert_allclose(torques, expected_torques)
 
 
 def test_validate_joint_angles(robot):
