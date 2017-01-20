@@ -1,14 +1,21 @@
 import math
 import numpy as np
+from typing import Sequence, Union
+from pybotics.exceptions import PybotException
 
 
-def xyzrpw_2_pose(xyzrpw):
-    """
-    Calculates the pose from the position and euler angles ([x,y,z,r,p,w] vector)
-    The result is the same as calling: H = transl(x,y,z)*rotz(w*pi/180)*roty(p*pi/180)*rotx(r*pi/180)
+def xyzrpw_2_pose(xyzrpw: Sequence[float]) -> np.ndarray:
+    """Calculate the pose from the position and euler angles ([x,y,z,r,p,w] vector).
+
+    Equivalent to transl(x,y,z)*rotz(w*pi/180)*roty(p*pi/180)*rotx(r*pi/180)
+
     :param xyzrpw:
     :return:
     """
+
+    # validate input
+    if len(xyzrpw) != 6:
+        raise PybotException
 
     # get individual variables
     [x, y, z, r, p, w] = xyzrpw
@@ -26,16 +33,19 @@ def xyzrpw_2_pose(xyzrpw):
         [cp * cw, -cp * sw, sp, x],
         [cr * sw + cw * sr * sp, cr * cw - sr * sp * sw, -cp * sr, y],
         [sr * sw - cr * cw * sp, cw * sr + cr * sp * sw, cr * cp, z],
-        [0, 0, 0, 1]]
+        [0, 0, 0, 1]
+    ]
 
     return np.array(transform)
 
 
-def pose_2_xyzrpw(pose):
-    """
-    Calculates the equivalent position and euler angles ([x,y,z,r,p,w] vector) of the given pose
-    Note: transl(x,y,z)*rotz(w*pi/180)*roty(p*pi/180)*rotx(r*pi/180)
-    Extract rotation from Rx * Ry * Rz order. From: Craig, John J. Introduction to robotics: mechanics and control, 2005
+def pose_2_xyzrpw(pose: np.ndarray) -> Sequence[float]:
+    """Calculates the equivalent position and euler angles ([x,y,z,r,p,w] vector) of the given pose.
+
+    Extract rotation from Rx * Ry * Rz order.
+    Decomposes transl(x,y,z)*rotz(w*pi/180)*roty(p*pi/180)*rotx(r*pi/180).
+
+    From: Craig, John J. Introduction to robotics: mechanics and control, 2005
     """
 
     x = pose[0, 3]
@@ -46,7 +56,7 @@ def pose_2_xyzrpw(pose):
     cos_p = math.sqrt(pose[1, 2] ** 2 + pose[2, 2] ** 2)
     sin_p = pose[0, 2]
 
-    if np.isclose(cos_p, 0):
+    if np.isclose([cos_p], [0]):
         r = 0
         if sin_p > 0:
             p = math.pi / 2
@@ -65,18 +75,19 @@ def pose_2_xyzrpw(pose):
         cos_w = pose[0, 0] / cos_p
         w = math.atan2(sin_w, cos_w)
 
-    return np.array([x, y, z, r, p, w])
+    return [x, y, z, r, p, w]
 
 
-def wrap_2_pi(angles):
-    '''
-    Wrap given angles to +/- PI.
-    :param angles: angles [rad]
-    :return: wrapped angles [rad]
-    '''
-    if isinstance(angles, (int, float)):
-        angles = (angles + np.pi) % (2 * np.pi) - np.pi
-    else:
+def wrap_2_pi(angles: Union[Sequence[float], float]) -> Union[Sequence[float], float]:
+    """Recursively wrap given angles to +/- PI.
+
+    :param angles:
+    :return:
+    """
+
+    if isinstance(angles, Sequence):
         angles = list(map(wrap_2_pi, angles))
+    else:
+        angles = (angles + np.pi) % (2 * np.pi) - np.pi
 
     return angles

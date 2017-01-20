@@ -126,7 +126,7 @@ def test_apply_optimization_vector(robot):
     mask = robot.generate_optimization_mask(world_mask=True,
                                             robot_model_mask=True,
                                             tool_mask=True,
-                                            joint_stiffness_mask=True)
+                                            joint_compliance_mask=True)
     vector = robot.generate_optimization_vector(mask)
     vector = [x + 1 for x in vector]
     robot.apply_optimization_vector(vector, mask)
@@ -135,7 +135,7 @@ def test_apply_optimization_vector(robot):
         geometry.pose_2_xyzrpw(robot.world_frame),
         robot.robot_model.ravel(),
         geometry.pose_2_xyzrpw(robot.tool.tcp),
-        robot.joint_stiffness
+        robot.joint_compliance
     ))
 
     np.testing.assert_allclose(parameters, vector)
@@ -151,7 +151,7 @@ def test_generate_optimization_mask(robot):
     assert len(robot.generate_optimization_mask()) == len(robot.generate_optimization_mask(world_mask=True,
                                                                                            robot_model_mask=True,
                                                                                            tool_mask=True,
-                                                                                           joint_stiffness_mask=True))
+                                                                                           joint_compliance_mask=True))
 
     with pytest.raises(PybotException):
         robot.generate_optimization_mask(world_mask=[True])
@@ -160,7 +160,7 @@ def test_generate_optimization_mask(robot):
     with pytest.raises(PybotException):
         robot.generate_optimization_mask(tool_mask=[True])
     with pytest.raises(PybotException):
-        robot.generate_optimization_mask(joint_stiffness_mask=[True])
+        robot.generate_optimization_mask(joint_compliance_mask=[True])
 
 
 def test_generate_parameter_bounds(robot):
@@ -171,7 +171,7 @@ def test_generate_parameter_bounds(robot):
     mask = robot.generate_optimization_mask(world_mask=True,
                                             robot_model_mask=True,
                                             tool_mask=True,
-                                            joint_stiffness_mask=True)
+                                            joint_compliance_mask=True)
     bounds = robot.generate_parameter_bounds(mask)
     assert len(bounds) > 0
     for bound in bounds:

@@ -15,7 +15,7 @@ def compute_absolute_errors(robot: Robot,
 
     :param robot: Robot object
     :param joints: iterable of joint angles [rads]
-    :param torques: iterable of joint torques [Nm]
+    :param torques: iterable of joint torques [N-mm]
     :param positions: iterable of the expected xyz positions [mm]
     :return: absolute distance errors [mm]
     """
