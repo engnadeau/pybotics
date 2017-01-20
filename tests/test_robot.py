@@ -1,11 +1,11 @@
 from pybotics.robot import Robot
+from pybotics.robot import Tool
+from pybotics.constants import Constant
 from pybotics import geometry, exceptions
 import numpy as np
 import itertools
 import pytest
 import os
-
-np.set_printoptions(suppress=True)
 
 
 @pytest.fixture
@@ -91,7 +91,7 @@ def test_calculate_joint_torques(robot):
 
     # test
     robot.joint_angles = joint_angles
-    robot.joint_torques_from_external_wrench(wrench)
+    robot.calculate_external_wrench_joint_torques(wrench)
     np.testing.assert_allclose(robot.joint_torques, expected_torques)
 
 
@@ -183,3 +183,25 @@ def test_random_joints(robot):
     for limit, joint in zip(robot.joint_angle_limits, robot.joint_angles):
         assert min(limit) < joint
         assert max(limit) > joint
+
+
+def test_calculate_tool_wrench(robot):
+    # test mass directly on flange
+    robot.tool = Tool(mass=10)
+    wrench = robot.calculate_tool_wrench()
+    wrench[1] -= robot.tool.mass * Constant.GRAVITY.value  # only y-force should see load
+    np.testing.assert_allclose(wrench, [0] * 6, atol=1e-7)
+
+    # test mass further from flange
+    robot.tool.cg = [0, 0, 100]
+    wrench = robot.calculate_tool_wrench()
+    wrench[1] -= robot.tool.mass * Constant.GRAVITY.value  # only y-force should see load
+    wrench[3] += robot.tool.mass * Constant.GRAVITY.value * robot.tool.cg[2]  # only x-moment should see load
+    np.testing.assert_allclose(wrench, [0] * 6, atol=1e-7)
+
+    # test new directions
+    robot.joint_angles = np.deg2rad([0, 0, 0, 0, 0, 90])
+    wrench = robot.calculate_tool_wrench()
+    wrench[0] -= robot.tool.mass * Constant.GRAVITY.value  # only x-force should see load
+    wrench[4] -= robot.tool.mass * Constant.GRAVITY.value * robot.tool.cg[2]  # only y-moment should see load
+    np.testing.assert_allclose(wrench, [0] * 6, atol=1e-7)
