@@ -3,9 +3,10 @@ import itertools
 import numpy as np
 import scipy.optimize
 from typing import Iterable, Tuple
-from pybotics import kinematics, geometry, robot_utilities
 from pybotics.tool import Tool
 from pybotics.exceptions import *
+from pybotics import kinematics
+from pybotics import geometry
 
 
 class Robot:
