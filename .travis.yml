@@ -25,6 +25,7 @@ install:
   - pip install codecov
   - pip install pytest-cov
   - pip install pydocstyle
+  - pip install vulture
   - pip install bandit
 
 # command to run tests
@@ -35,6 +36,7 @@ after_success:
   - coveralls
   - codecov
   - pydocstyle pybotics
+  - vulture .
   - bandit -r pybotics
 
 # notification settings
