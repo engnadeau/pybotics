@@ -1,6 +1,6 @@
 import numpy as np
 from pybotics.exceptions import PybotException
-from pybotics import Robot
+from pybotics.robot import Robot
 from typing import Iterable, Sequence
 
 

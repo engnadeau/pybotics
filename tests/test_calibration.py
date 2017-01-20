@@ -1,11 +1,8 @@
-from pybotics.robot import Robot
+from pybotics import Robot
 from pybotics import calibration
-from pybotics.exceptions import PybotException
 import numpy as np
 import pytest
 import os
-
-np.set_printoptions(suppress=True)
 
 
 @pytest.fixture
@@ -29,77 +26,7 @@ def test_compute_absolute_errors(robot):
     errors = calibration.compute_absolute_errors(robot=robot,
                                                  joints=joints,
                                                  torques=torques,
-                                                 positions=positions,
-                                                 reference_frame=robot.world_frame
-                                                 )
+                                                 positions=positions)
     assert len(errors) == len(joints)
     assert sum(errors) == 0
     assert min(errors) >= 0
-
-
-def test_calibration_fitness_func(robot):
-    joints = []
-    torques = []
-    positions = []
-    for i in range(100):
-        robot.random_joints()
-        joints.append(robot.joint_angles)
-        torques.append([0] * robot.num_dof())
-        positions.append(robot.fk()[:-1, -1])
-
-    optimization_mask = robot.generate_optimization_mask(tool_mask=True)
-    optimization_vector = np.array(robot.generate_optimization_vector(optimization_mask))
-
-    # test abs list
-    errors = calibration.calibration_fitness_func(optimization_vector,
-                                                  optimization_mask,
-                                                  robot,
-                                                  joints,
-                                                  torques,
-                                                  positions,
-                                                  robot.world_frame,
-                                                  'abs',
-                                                  'list'
-                                                  )
-
-    assert len(errors) == len(joints)
-    assert sum(errors) == 0
-    assert min(errors) >= 0
-
-    # test abs sumsq
-    errors = calibration.calibration_fitness_func(optimization_vector,
-                                                  optimization_mask,
-                                                  robot,
-                                                  joints,
-                                                  torques,
-                                                  positions,
-                                                  robot.world_frame,
-                                                  'abs',
-                                                  'sumsq'
-                                                  )
-
-    assert errors == 0
-
-    # test exceptions
-    with pytest.raises(PybotException):
-        calibration.calibration_fitness_func(optimization_vector,
-                                             optimization_mask,
-                                             robot,
-                                             joints,
-                                             torques,
-                                             positions,
-                                             robot.world_frame,
-                                             'absxxx',
-                                             'sumsq'
-                                             )
-    with pytest.raises(PybotException):
-        calibration.calibration_fitness_func(optimization_vector,
-                                             optimization_mask,
-                                             robot,
-                                             joints,
-                                             torques,
-                                             positions,
-                                             robot.world_frame,
-                                             'abs',
-                                             'sumsqxxx'
-                                             )
