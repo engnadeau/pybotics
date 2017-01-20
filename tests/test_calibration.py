@@ -1,6 +1,6 @@
 from pybotics.robot import Robot
 from pybotics import calibration
-from pybotics.exceptions import *
+from pybotics.exceptions import PybotException
 import numpy as np
 import pytest
 import os

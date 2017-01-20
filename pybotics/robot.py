@@ -2,7 +2,7 @@ from copy import copy, deepcopy
 import itertools
 import numpy as np
 import scipy.optimize
-from typing import Iterable, Tuple
+from typing import Iterable
 from pybotics.tool import Tool
 from pybotics.exceptions import PybotException
 from pybotics import kinematics

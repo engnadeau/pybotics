@@ -1,7 +1,8 @@
 from pybotics.robot import Robot
 from pybotics.robot import Tool
 from pybotics.constants import Constant
-from pybotics import geometry, exceptions
+from pybotics import geometry
+from pybotics.exceptions import PybotException
 import numpy as np
 import itertools
 import pytest
@@ -152,13 +153,13 @@ def test_generate_optimization_mask(robot):
                                                                                            tool_mask=True,
                                                                                            joint_stiffness_mask=True))
 
-    with pytest.raises(exceptions.PybotException):
+    with pytest.raises(PybotException):
         robot.generate_optimization_mask(world_mask=[True])
-    with pytest.raises(exceptions.PybotException):
+    with pytest.raises(PybotException):
         robot.generate_optimization_mask(robot_model_mask=[True])
-    with pytest.raises(exceptions.PybotException):
+    with pytest.raises(PybotException):
         robot.generate_optimization_mask(tool_mask=[True])
-    with pytest.raises(exceptions.PybotException):
+    with pytest.raises(PybotException):
         robot.generate_optimization_mask(joint_stiffness_mask=[True])
 
 
@@ -205,3 +206,12 @@ def test_calculate_tool_wrench(robot):
     wrench[0] -= robot.tool.mass * Constant.GRAVITY.value  # only x-force should see load
     wrench[4] -= robot.tool.mass * Constant.GRAVITY.value * robot.tool.cg[2]  # only y-moment should see load
     np.testing.assert_allclose(wrench, [0] * 6, atol=1e-7)
+
+
+def test_joint_torques(robot):
+    torques = [1, 2, 3, -4, -5, -6]
+    robot.joint_torques = torques
+    np.testing.assert_allclose(robot.joint_torques, torques)
+
+    with pytest.raises(PybotException):
+        robot.joint_torques = torques + torques
