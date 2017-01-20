@@ -1,7 +1,7 @@
 import numpy as np
 import math
 
-from pybotics.kinematics import forward_transform
+from pybotics import kinematics
 
 
 def test_forward_transform():
@@ -14,5 +14,5 @@ def test_forward_transform():
         [0, 0, 0, 1]
     ])
 
-    actual_transform = forward_transform(mdh)
+    actual_transform = kinematics.forward_transform(mdh)
     np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)

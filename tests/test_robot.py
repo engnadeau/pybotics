@@ -1,16 +1,17 @@
-from pybotics.robot import Robot
-from pybotics.robot import Tool
-from pybotics.constants import Constant
-from pybotics import geometry
-from pybotics.exceptions import PybotException
 import numpy as np
 import itertools
 import pytest
 import os
 
+from pybotics import Constant
+from pybotics import Robot
+from pybotics import Tool
+from pybotics import exceptions
+from pybotics import geometry
 
-@pytest.fixture
-def robot():
+
+@pytest.fixture(name='robot')
+def robot_fixture():
     model_path = os.path.abspath(__file__)
     model_path = os.path.dirname(model_path)
     model_path = os.path.join(model_path, 'ur10-mdh.csv')
@@ -50,7 +51,10 @@ def test_ik(robot):
         robot.joint_angles = test_joints
         expected_transform = robot.fk()
 
+        robot.joint_angles = test_joints_list[0]
         ik_joints = robot.ik(expected_transform)
+        assert ik_joints is not None
+
         robot.joint_angles = ik_joints
         result_transform = robot.fk()
 
@@ -58,7 +62,7 @@ def test_ik(robot):
         np.testing.assert_allclose(actual=result_transform, desired=expected_transform, rtol=1e-1, atol=1e-1)
 
 
-def test_calculate_joint_torques(robot):
+def test_calculate_joint_torques():
     """
     From EXAMPLE 5.7 of
     Craig, John J. Introduction to robotics: mechanics and control.
@@ -106,12 +110,6 @@ def test_validate_joint_angles(robot):
     assert not robot.validate_joint_angles(test_joints_list[1])
 
 
-def test_set_tool_xyz(robot):
-    test_tool = [1.1, 2.2, 3.3]
-    robot.set_tool_xyz(test_tool)
-    np.testing.assert_allclose(test_tool, robot.tool.tcp[:-1, -1])
-
-
 def test_generate_optimization_vector(robot):
     mask = robot.generate_optimization_mask()
     vector = robot.generate_optimization_vector(mask)
@@ -153,13 +151,13 @@ def test_generate_optimization_mask(robot):
                                                                                            tool_mask=True,
                                                                                            joint_compliance_mask=True))
 
-    with pytest.raises(PybotException):
+    with pytest.raises(exceptions.PybotException):
         robot.generate_optimization_mask(world_mask=[True])
-    with pytest.raises(PybotException):
+    with pytest.raises(exceptions.PybotException):
         robot.generate_optimization_mask(robot_model_mask=[True])
-    with pytest.raises(PybotException):
+    with pytest.raises(exceptions.PybotException):
         robot.generate_optimization_mask(tool_mask=[True])
-    with pytest.raises(PybotException):
+    with pytest.raises(exceptions.PybotException):
         robot.generate_optimization_mask(joint_compliance_mask=[True])
 
 
@@ -213,5 +211,42 @@ def test_joint_torques(robot):
     robot.joint_torques = torques
     np.testing.assert_allclose(robot.joint_torques, torques)
 
-    with pytest.raises(PybotException):
+    with pytest.raises(exceptions.PybotException):
         robot.joint_torques = torques + torques
+
+
+def test_joint_angles(robot):
+    # test regular setting
+    values = [1, 2, 3, -1, -2, -3]
+    robot.joint_angles = values
+    np.testing.assert_allclose(robot.joint_angles, values)
+
+    # test too many values
+    with pytest.raises(exceptions.PybotException):
+        robot.joint_angles = values + values
+
+    # test values over the limit
+    with pytest.raises(exceptions.PybotException):
+        robot.joint_angles = 2 * np.array(values)
+
+
+def test_joint_angle_limits(robot):
+    # test regular setting
+    values = [(-np.pi, np.pi)] * robot.num_dof()
+    robot.joint_angle_limits = values
+    np.testing.assert_allclose(robot.joint_angle_limits, values)
+
+    # test too many values
+    with pytest.raises(exceptions.PybotException):
+        robot.joint_angle_limits = values + values
+
+
+def test_joint_compliance(robot):
+    # test regular setting
+    values = [0] * robot.num_dof()
+    robot.joint_compliance = values
+    np.testing.assert_allclose(robot.joint_compliance, values)
+
+    # test too many values
+    with pytest.raises(exceptions.PybotException):
+        robot.joint_compliance = values + values

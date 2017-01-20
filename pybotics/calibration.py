@@ -1,13 +1,15 @@
 import numpy as np
-from pybotics.exceptions import PybotException
+from typing import List
+
 from pybotics.robot import Robot
-from typing import Iterable, Sequence
+from pybotics import exceptions
+from pybotics.types import Vector
 
 
 def compute_absolute_errors(robot: Robot,
-                            joints: Sequence[Iterable[float]],
-                            torques: Sequence[Iterable[float]],
-                            positions: Sequence[Iterable[float]]) -> np.ndarray:
+                            joints: List[Vector],
+                            torques: List[Vector],
+                            positions: List[Vector]) -> np.ndarray:
     """Compute absolute forward kinematic position errors.
 
     All positions must be in the same world frame as the robot.
@@ -20,7 +22,7 @@ def compute_absolute_errors(robot: Robot,
     :return: absolute distance errors [mm]
     """
     if len(joints) != len(torques) or len(joints) != len(positions):
-        raise PybotException
+        raise exceptions.PybotException
 
     errors = []
     for i, _ in enumerate(joints):

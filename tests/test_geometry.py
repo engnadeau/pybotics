@@ -1,7 +1,9 @@
 import math
 import numpy as np
+import pytest
 
-from pybotics.geometry import xyzrpw_2_pose, pose_2_xyzrpw, wrap_2_pi
+from pybotics import exceptions
+from pybotics import geometry
 
 
 def test_xyzrpw_2_pose():
@@ -14,10 +16,13 @@ def test_xyzrpw_2_pose():
         [0, 0, 0, 1]
     ])
 
-    actual_transform = xyzrpw_2_pose(xyzrpw)
+    actual_transform = geometry.xyzrpw_2_pose(xyzrpw)
     np.testing.assert_allclose(actual=actual_transform,
                                desired=expected_transform,
                                rtol=1e-6, atol=1e-6)
+
+    with pytest.raises(exceptions.PybotException):
+        geometry.xyzrpw_2_pose(xyzrpw + xyzrpw)
 
 
 def test_xyzrpw_2_pose_2_xyzrpw_2_pose():
@@ -32,10 +37,10 @@ def test_xyzrpw_2_pose_2_xyzrpw_2_pose():
         for p in angles:
             for w in angles:
                 xyzrpw_original = [x, y, z, r, p, w]
-                pose_original = xyzrpw_2_pose(xyzrpw_original)
+                pose_original = geometry.xyzrpw_2_pose(xyzrpw_original)
 
-                xyzrpw_result = pose_2_xyzrpw(pose_original)
-                pose_result = xyzrpw_2_pose(xyzrpw_result)
+                xyzrpw_result = geometry.pose_2_xyzrpw(pose_original)
+                pose_result = geometry.xyzrpw_2_pose(xyzrpw_result)
 
                 np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
 
@@ -52,13 +57,12 @@ def test_wrap_2_pi():
     test_angles = angles[:, 0]
     expected_angles = angles[:, 1]
 
-    # test whole array
-    actual_angles = wrap_2_pi(test_angles)
+    actual_angles = geometry.wrap_2_pi(test_angles)
     assert len(test_angles) == len(expected_angles)
     assert len(actual_angles) == len(expected_angles)
     np.testing.assert_allclose(actual_angles, expected_angles)
 
     # test single elements
     for i, _ in enumerate(expected_angles):
-        actual_angle = wrap_2_pi(test_angles[i])
+        actual_angle = geometry.wrap_2_pi(test_angles[i])
         np.testing.assert_allclose(actual_angle, expected_angles[i])

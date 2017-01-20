@@ -1,12 +1,14 @@
-from pybotics import Robot
-from pybotics import calibration
 import numpy as np
 import pytest
 import os
 
+from pybotics import Robot
+from pybotics import calibration
+from pybotics.exceptions import PybotException
 
-@pytest.fixture
-def robot():
+
+@pytest.fixture(name='robot')
+def robot_fixture():
     model_path = os.path.abspath(__file__)
     model_path = os.path.dirname(model_path)
     model_path = os.path.join(model_path, 'ur10-mdh.csv')
@@ -28,5 +30,20 @@ def test_compute_absolute_errors(robot):
                                                  torques=torques,
                                                  positions=positions)
     assert len(errors) == len(joints)
-    assert sum(errors) == 0
-    assert min(errors) >= 0
+    np.testing.assert_allclose(errors, [0] * len(errors))
+
+    with pytest.raises(PybotException):
+        calibration.compute_absolute_errors(robot=robot,
+                                            joints=joints + joints,
+                                            torques=torques,
+                                            positions=positions)
+    with pytest.raises(PybotException):
+        calibration.compute_absolute_errors(robot=robot,
+                                            joints=joints,
+                                            torques=torques + torques,
+                                            positions=positions)
+    with pytest.raises(PybotException):
+        calibration.compute_absolute_errors(robot=robot,
+                                            joints=joints,
+                                            torques=torques,
+                                            positions=positions + positions)

@@ -1,9 +1,10 @@
 import math
 import numpy as np
-from typing import Sequence
+
+from pybotics.types import Vector
 
 
-def forward_transform(mdh_parameters: Sequence[float]) -> np.ndarray:
+def forward_transform(mdh_parameters: Vector) -> np.ndarray:
     """Returns the Modified Denavit-Hartenberg (MDH) 4x4 matrix for a robot link (Craig 1986).
 
     Angular arguments are in radians.
