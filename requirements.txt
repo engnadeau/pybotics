@@ -1,4 +1,2 @@
-numpy>=1.12.0
-pytest-cov>=2.3.1
-pytest>=3.0.3
+numpy>=1.11.0
 scipy>=0.18.1
