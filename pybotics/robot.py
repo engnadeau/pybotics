@@ -14,8 +14,6 @@ class Robot:
                  robot_model: np.ndarray,
                  tool: Tool = Tool(),
                  world_frame: np.ndarray = None,
-                 joint_stiffness: Iterable[float] = None,
-                 joint_angle_limits: Iterable[Tuple[float]] = None,
                  name: str = 'Pybot'):
 
         # public members
@@ -23,13 +21,12 @@ class Robot:
         self.robot_model = robot_model.reshape((-1, 4))
         self.tool = tool
         self.world_frame = np.eye(4) if world_frame is None else world_frame
-        self.joint_stiffness = [0] * self.num_dof() if joint_stiffness is None else joint_stiffness
-        self.joint_angle_limits = [(-np.pi,
-                                    np.pi)] * self.num_dof() if joint_angle_limits is None else joint_angle_limits
 
         # private members
         self._joint_angles = [0] * self.num_dof()
         self._joint_torques = [0] * self.num_dof()
+        self._joint_stiffness = [0] * self.num_dof()
+        self._joint_angle_limits = [(-np.pi, np.pi)] * self.num_dof()
 
     @property
     def joint_angles(self):
@@ -42,6 +39,26 @@ class Robot:
         elif not self.validate_joint_angles(value):
             raise PybotException
         self._joint_angles = value
+
+    @property
+    def joint_angle_limits(self):
+        return self._joint_angle_limits
+
+    @joint_angle_limits.setter
+    def joint_angle_limits(self, value: Iterable[float]):
+        if len(value) != self.num_dof():
+            raise PybotException
+        self._joint_angle_limits = value
+
+    @property
+    def joint_stiffness(self):
+        return self._joint_stiffness
+
+    @joint_stiffness.setter
+    def joint_stiffness(self, value: Iterable[float]):
+        if len(value) != self.num_dof():
+            raise PybotException
+        self._joint_stiffness = value
 
     @property
     def joint_torques(self):
