@@ -1,13 +1,18 @@
 import numpy as np
+from pybotics.exceptions import *
 
 
 def compute_absolute_errors(robot, joints, torques, positions, reference_frame):
-    assert len(joints) == len(torques)
-    assert len(joints) == len(positions)
+    if len(joints) != len(torques) or len(joints) != len(positions):
+        raise PybotException
 
     errors = []
+    robot.world_frame = reference_frame
     for i, _ in enumerate(joints):
-        pose = robot.fk(joints[i], torques=torques[i], reference_frame=reference_frame)
+        robot.joint_angles = joints[i]
+        robot.joint_torques = torques[i]
+
+        pose = robot.fk()
         pose_xyz = pose[0:-1, -1]
 
         position_error = pose_xyz - positions[i]
@@ -45,11 +50,11 @@ def calibration_fitness_func(optimization_vector,
         # errors = compute_relative_errors(robot, joints, torques, positions)
         pass
     else:
-        raise ValueError
+        raise PybotException
 
     if return_type == 'list':
         return errors
     elif return_type == 'sumsq':
         return np.sum(np.square(errors))
     else:
-        raise ValueError
+        raise PybotException

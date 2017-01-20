@@ -1,6 +1,7 @@
 from pybotics.robot import Robot
 from pybotics import robot_utilities
 from pybotics import calibration
+from pybotics.exceptions import *
 import numpy as np
 import pytest
 import os
@@ -21,9 +22,10 @@ def test_compute_absolute_errors(robot):
     torques = []
     positions = []
     for i in range(100):
-        joints.append(robot_utilities.random_joints(robot.joint_angle_limits))
+        robot.random_joints()
+        joints.append(robot.joint_angles)
         torques.append([0] * robot.num_dof())
-        positions.append(robot.fk(joints[-1])[:-1, -1])
+        positions.append(robot.fk()[:-1, -1])
 
     errors = calibration.compute_absolute_errors(robot=robot,
                                                  joints=joints,
@@ -41,9 +43,10 @@ def test_calibration_fitness_func(robot):
     torques = []
     positions = []
     for i in range(100):
-        joints.append(robot_utilities.random_joints(robot.joint_angle_limits))
+        robot.random_joints()
+        joints.append(robot.joint_angles)
         torques.append([0] * robot.num_dof())
-        positions.append(robot.fk(joints[-1])[:-1, -1])
+        positions.append(robot.fk()[:-1, -1])
 
     optimization_mask = robot.generate_optimization_mask(tool_mask=True)
     optimization_vector = np.array(robot.generate_optimization_vector(optimization_mask))
@@ -79,7 +82,7 @@ def test_calibration_fitness_func(robot):
     assert errors == 0
 
     # test exceptions
-    with pytest.raises(ValueError):
+    with pytest.raises(PybotException):
         calibration.calibration_fitness_func(optimization_vector,
                                              optimization_mask,
                                              robot,
@@ -90,7 +93,7 @@ def test_calibration_fitness_func(robot):
                                              'absxxx',
                                              'sumsq'
                                              )
-    with pytest.raises(ValueError):
+    with pytest.raises(PybotException):
         calibration.calibration_fitness_func(optimization_vector,
                                              optimization_mask,
                                              robot,

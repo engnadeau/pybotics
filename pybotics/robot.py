@@ -1,19 +1,100 @@
-from copy import copy
+from copy import copy, deepcopy
 import itertools
 import numpy as np
 import scipy.optimize
-
+from typing import Iterable, Tuple
 from pybotics import kinematics, geometry, robot_utilities
+from pybotics.tool import Tool
+from pybotics.exceptions import *
 
 
 class Robot:
-    def __init__(self, robot_model, name='Pybot'):
-        self.robot_model = robot_model
-        self.tool = np.eye(4)
-        self.world_frame = np.eye(4)
-        self.joint_stiffness = [0] * self.num_dof()
+    def __init__(self,
+                 robot_model: np.ndarray,
+                 tool: Tool = Tool(),
+                 world_frame: np.ndarray = None,
+                 joint_stiffness: Iterable[float] = None,
+                 joint_angle_limits: Iterable[Tuple[float]] = None,
+                 name: str = 'Pybot'):
+
+        # public members
         self.name = name
-        self.joint_angle_limits = [(-np.pi, np.pi)] * self.num_dof()
+        self.robot_model = robot_model.reshape((-1, 4))
+        self.tool = tool
+        self.world_frame = np.eye(4) if world_frame is None else world_frame
+        self.joint_stiffness = [0] * self.num_dof() if joint_stiffness is None else joint_stiffness
+        self.joint_angle_limits = [(-np.pi,
+                                    np.pi)] * self.num_dof() if joint_angle_limits is None else joint_angle_limits
+
+        # private members
+        self._joint_angles = [0] * self.num_dof()
+        self._joint_torques = [0] * self.num_dof()
+
+    @property
+    def joint_angles(self):
+        return self._joint_angles
+
+    @joint_angles.setter
+    def joint_angles(self, value: Iterable[float]):
+        if len(value) != self.num_dof():
+            raise PybotException
+        elif not self.validate_joint_angles(value):
+            raise PybotException
+        self._joint_angles = value
+
+    @property
+    def joint_torques(self):
+        return self._joint_torques
+
+    @joint_torques.setter
+    def joint_torques(self, value: Iterable[float]):
+
+        if len(value) != self.num_dof():
+            raise PybotException
+        self._joint_torques = value
+
+    def joint_torques_from_external_wrench(self, wrench: Iterable[float]):
+        """
+         Calculate the joint torques due to external force applied to the flange frame.
+
+         Method from:
+         5.9 STATIC FORCES IN MANIPULATORS
+         Craig, John J. Introduction to robotics: mechanics and control.
+         Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+
+         :param torques:
+         :param external_wrench:
+         :return:
+         """
+
+        # split wrench into components
+        force = wrench[:3].copy()
+        moment = wrench[-3:].copy()
+
+        # init output
+        joint_torques = [moment[-1]]
+
+        # loop through links from flange to base, each iteration calculates for link i-1
+        for i, joint_angle in reversed(list(enumerate(self._joint_angles))):
+            if i == 0:
+                break
+
+            # get current link transform
+            transform = self.calculate_link_transform(i, joint_angle)
+
+            # calculate force applied to current link
+            rotation = transform[:3, :3]
+            force = np.dot(rotation, force)
+
+            # calculate moment applied to current link
+            position = transform[:3, -1]
+            moment = np.dot(rotation, moment) + np.cross(position, force)
+
+            # append z-component as joint torque
+            joint_torques.append(moment[-1])
+
+        # reverse torques into correct order
+        self._joint_torques = list(reversed(joint_torques))
 
     def validate_joint_angles(self, joint_angles):
         is_success = True
@@ -27,28 +108,17 @@ class Robot:
     def num_dof(self):
         return len(self.robot_model)
 
-    def fk(self, joint_angles, torques=None, reference_frame=None):
-
-        # validate input
-        assert len(joint_angles) == self.num_dof()
-        if torques is not None:
-            assert len(torques) == self.num_dof()
-        else:
-            torques = [0] * self.num_dof()
-
+    def fk(self):
         # define transform to carry matrix multiplications through joints
-        if reference_frame is None:
-            transform = np.eye(4)
-        else:
-            transform = reference_frame
+        transform = self.world_frame.copy()
 
         # multiply through the forward transforms of the joints
-        for i, (joint, torque) in enumerate(zip(joint_angles, torques)):
+        for i, (joint, torque) in enumerate(zip(self._joint_angles, self._joint_torques)):
             # add the current joint pose to the forward transform
             transform = np.dot(transform, self.calculate_link_transform(i, joint, torque))
 
         # add tool transform
-        transform = np.dot(transform, self.tool)
+        transform = np.dot(transform, self.tool.tcp)
 
         return transform
 
@@ -56,18 +126,18 @@ class Robot:
         link = self.robot_model[link_index].copy()
         link[2] += joint_angle
         link[2] += torque * self.joint_stiffness[link_index]
-        link_transform = kinematics.forward_transform(link)
-        return link_transform
+        transform = kinematics.forward_transform(link)
+        return transform
 
-    def set_tool_xyz(self, xyz):
+    def set_tool_xyz(self, xyz: Iterable[float]):
         for i, parameter in enumerate(xyz):
-            self.tool[i, -1] = parameter
+            self.tool.tcp[i, -1] = parameter
 
     def generate_optimization_vector(self, optimization_mask):
         parameters = itertools.chain(
             geometry.pose_2_xyzrpw(self.world_frame),
             self.robot_model.ravel(),
-            geometry.pose_2_xyzrpw(self.tool),
+            geometry.pose_2_xyzrpw(self.tool.tcp),
             self.joint_stiffness
         )
         parameters = list(itertools.compress(parameters, optimization_mask))
@@ -81,7 +151,7 @@ class Robot:
         parameters = list(itertools.chain(
             geometry.pose_2_xyzrpw(self.world_frame),
             self.robot_model.ravel(),
-            geometry.pose_2_xyzrpw(self.tool),
+            geometry.pose_2_xyzrpw(self.tool.tcp),
             self.joint_stiffness
         ))
 
@@ -97,34 +167,39 @@ class Robot:
         self.robot_model = np.array(parameters[:self.robot_model.size]).reshape((-1, 4))
         del parameters[:self.robot_model.size]
 
-        self.tool = geometry.xyzrpw_2_pose(parameters[:6])
+        self.tool.tcp = geometry.xyzrpw_2_pose(parameters[:6])
         del parameters[:6]
 
         self.joint_stiffness = parameters[:self.num_dof()]
         del parameters[:self.num_dof()]
 
-    def generate_optimization_mask(self, world_mask=False, robot_model_mask=False, tool_mask=False,
+    def generate_optimization_mask(self,
+                                   world_mask=False,
+                                   robot_model_mask=False,
+                                   tool_mask=False,
                                    joint_stiffness_mask=False):
 
-        if not isinstance(world_mask, list):
+        # TODO: use namedtuple for masks?
+
+        if isinstance(world_mask, bool):
             world_mask = [world_mask] * 6
-        else:
-            assert len(world_mask) == 6
+        elif len(world_mask) != 6:
+            raise PybotException
 
-        if not isinstance(robot_model_mask, list):
+        if isinstance(robot_model_mask, bool):
             robot_model_mask = [robot_model_mask] * self.robot_model.size
-        else:
-            assert len(robot_model_mask) == self.robot_model.size
+        elif len(robot_model_mask) != self.robot_model.size:
+            raise PybotException
 
-        if not isinstance(tool_mask, list):
+        if isinstance(tool_mask, bool):
             tool_mask = [tool_mask] * 6
-        else:
-            assert len(tool_mask) == 6
+        elif len(tool_mask) != 6:
+            raise PybotException
 
-        if not isinstance(joint_stiffness_mask, list):
+        if isinstance(joint_stiffness_mask, bool):
             joint_stiffness_mask = [joint_stiffness_mask] * self.num_dof()
-        else:
-            assert len(joint_stiffness_mask) == self.num_dof()
+        elif len(joint_stiffness_mask) != self.num_dof():
+            raise PybotException
 
         mask = list(itertools.chain(
             world_mask,
@@ -160,81 +235,47 @@ class Robot:
 
         return bounds
 
-    def ik(self, pose, joint_angles=None, reference_frame=None):
-        # set initial joints
-        if joint_angles is not None:
-            assert len(joint_angles) == self.num_dof()
-        else:
-            joint_angles = [0] * self.num_dof()
+    def ik(self, pose):
+        # copy self for iterative solver
+        robot = deepcopy(self)
 
         # transpose joint angle limits to least_squares format
-        bounds = np.array(self.joint_angle_limits)
+        bounds = np.array(robot.joint_angle_limits)
         bounds = tuple(map(tuple, bounds.transpose()))
 
+        # solver variables
         result = None
         for _ in range(5):
-            optimize_result = scipy.optimize.least_squares(fun=self.ik_fit_func,
-                                                           x0=joint_angles,
-                                                           args=(pose, reference_frame),
-                                                           bounds=bounds,
-                                                           )
+            optimize_result = scipy.optimize.least_squares(fun=_ik_fit_func,
+                                                           x0=robot.joint_angles,
+                                                           args=(robot, pose),
+                                                           bounds=bounds)
 
             joint_angles = optimize_result.x
-            if optimize_result.fun.max() < 1e-1 and self.validate_joint_angles(joint_angles):
+            if optimize_result.fun.max() < 1e-1 and robot.validate_joint_angles(joint_angles):
                 result = joint_angles
                 break
             else:
-                joint_angles = robot_utilities.random_joints(self.joint_angle_limits)
+                robot.random_joints()
 
         return result
 
-    def ik_fit_func(self, joint_angles, pose, reference_frame):
-        joint_angles = geometry.wrap_2_pi(joint_angles)
-        actual_pose = self.fk(joint_angles, reference_frame=reference_frame)
+    def tool_wrench(self):
+        """Calculate the wrench (force and moment/torque) generated by the tool."""
+        pose = self.fk()
 
-        error = actual_pose - pose
-        error = error.flatten()
-        return error
+    def random_joints(self):
+        joint_angles = []
+        for limits in self.joint_angle_limits:
+            joint_angles.append(np.random.uniform(min(limits), max(limits)))
+        self.joint_angles = joint_angles
 
-    def calculate_joint_torques(self, joint_angles, wrench):
-        """
-        Calculate the joint torques due to external force applied to the flange frame.
 
-        Method from:
-        5.9 STATIC FORCES IN MANIPULATORS
-        Craig, John J. Introduction to robotics: mechanics and control.
-        Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+def _ik_fit_func(joint_angles, robot, pose):
+    joint_angles = geometry.wrap_2_pi(joint_angles)
+    robot.joint_angles = joint_angles
+    actual_pose = robot.fk()
 
-        :param joint_angles:
-        :param force:
-        :return:
-        """
-
-        # split wrench into components
-        force = wrench[:3].copy()
-        moment = wrench[-3:].copy()
-
-        # init output
-        joint_torques = [moment[-1]]
-
-        # loop through links from flange to base, each iteration calculates for link i-1
-        for i, joint_angle in reversed(list(enumerate(joint_angles))):
-            if i == 0:
-                break
-
-            # get current link transform
-            transform = self.calculate_link_transform(i, joint_angle)
-
-            # calculate force applied to current link
-            rotation = transform[:3, :3]
-            force = np.dot(rotation, force)
-
-            # calculate moment applied to current link
-            position = transform[:3, -1]
-            moment = np.dot(rotation, moment) + np.cross(position, force)
-
-            # append z-component as joint torque
-            joint_torques.append(moment[-1])
-
-        # reverse torques into correct order
-        return list(reversed(joint_torques))
+    error = actual_pose - pose
+    error = error.flatten()
+    return error

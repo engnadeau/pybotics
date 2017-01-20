@@ -1,0 +1,3 @@
+class PybotException(Exception):
+    pass
+
