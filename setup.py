@@ -18,7 +18,7 @@ with open(os.path.join(file_path, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='pybotics',
-    version=version(),
+    version=version,
     packages=['pybotics'],
     url='https://github.com/nnadeau/pybotics',
     license='MIT',
