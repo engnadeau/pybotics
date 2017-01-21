@@ -19,7 +19,7 @@ matrix:
 
 # command to install dependencies
 before_install:
-  - sudo apt-get install -qq python-numpy python-scipy
+  - sudo apt-get install -qq python-numpy python-scipy  # install here in order to link with libs
   - find .
   
 install:
