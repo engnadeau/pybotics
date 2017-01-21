@@ -1,13 +1,35 @@
 import numpy as np
+from typing import List
+
+from pybotics.robot import Robot
+from pybotics import exceptions
+from pybotics.types import Vector
 
 
-def compute_absolute_errors(robot, joints, torques, positions, reference_frame):
-    assert len(joints) == len(torques)
-    assert len(joints) == len(positions)
+def compute_absolute_errors(robot: Robot,
+                            joints: List[Vector],
+                            torques: List[Vector],
+                            positions: List[Vector]) -> np.ndarray:
+    """Compute absolute forward kinematic position errors.
+
+    All positions must be in the same world frame as the robot.
+    Must have the same number of joints, torques, and positions.
+
+    :param robot: Robot object
+    :param joints: iterable of joint angles [rads]
+    :param torques: iterable of joint torques [N-mm]
+    :param positions: iterable of the expected xyz positions [mm]
+    :return: absolute distance errors [mm]
+    """
+    if len(joints) != len(torques) or len(joints) != len(positions):
+        raise exceptions.PybotException
 
     errors = []
     for i, _ in enumerate(joints):
-        pose = robot.fk(joints[i], torques=torques[i], reference_frame=reference_frame)
+        robot.joint_angles = joints[i]
+        robot.joint_torques = torques[i]
+
+        pose = robot.fk()
         pose_xyz = pose[0:-1, -1]
 
         position_error = pose_xyz - positions[i]
@@ -16,40 +38,3 @@ def compute_absolute_errors(robot, joints, torques, positions, reference_frame):
 
     errors = np.abs(errors)
     return errors
-
-
-def calibration_fitness_func(optimization_vector,
-                             optimization_mask,
-                             robot,
-                             joints,
-                             torques,
-                             positions,
-                             reference_frame,
-                             calibration_type,
-                             return_type
-                             ):
-    # validate input
-    assert len(joints) == len(torques)
-    assert len(joints) == len(positions)
-
-    # make sure optimization_vector is a list
-    if isinstance(optimization_vector, np.ndarray):
-        optimization_vector = optimization_vector.tolist()
-
-    robot.apply_optimization_vector(optimization_vector, optimization_mask)
-
-    if calibration_type == 'abs':
-        errors = compute_absolute_errors(robot, joints, torques, positions, reference_frame)
-    elif calibration_type == 'rel':
-        # TODO: implement relative errors
-        # errors = compute_relative_errors(robot, joints, torques, positions)
-        pass
-    else:
-        raise ValueError
-
-    if return_type == 'list':
-        return errors
-    elif return_type == 'sumsq':
-        return np.sum(np.square(errors))
-    else:
-        raise ValueError
