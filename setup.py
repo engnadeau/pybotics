@@ -1,3 +1,4 @@
+import pypandoc
 from setuptools import setup
 import os
 import git
@@ -13,7 +14,8 @@ with open('requirements.txt') as f:
 
 # long description
 file_path = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(file_path, 'README.md'), encoding='utf-8') as f:
+pypandoc.convert_file('README.md', 'rst', outputfile=os.path.join(file_path, 'README.rst'))
+with open(os.path.join(file_path, 'README.rst'), encoding='utf-8') as f:
     description = f.read()
 
 setup(
