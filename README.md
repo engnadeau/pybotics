@@ -30,6 +30,11 @@ Inspired from [Peter Corke's Robotics Toolbox](http://www.petercorke.com/Robotic
 - See [requirements.txt](requirements.txt) for package dependencies
 
 ## Usage
+### Installation
+```
+pip install pybotics
+```
+
 ### Quick Start
 ```python
 import numpy as np

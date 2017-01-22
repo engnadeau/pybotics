@@ -25,6 +25,13 @@ Requirements/Compatibility
 Usage
 -----
 
+Installation
+~~~~~~~~~~~~
+
+::
+
+    pip install pybotics
+
 Quick Start
 ~~~~~~~~~~~
 
