@@ -1,1 +1,4 @@
 include LICENSE
+include VERSION
+include README
+include requirements.txt

@@ -55,6 +55,10 @@ after_success:
 notifications:
   email: false
 
+before_deploy:
+- python convert_readme.py
+- python update_version.py
+
 deploy:
   provider: pypi
   user: nnadeau
