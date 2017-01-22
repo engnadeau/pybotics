@@ -4,7 +4,7 @@ import os
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-with open('README', encoding='utf-8') as f:
+with open('README.rst', encoding='utf-8') as f:
     description = f.read()
 
 with open('VERSION', encoding='utf-8') as f:
