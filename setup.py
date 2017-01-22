@@ -1,23 +1,14 @@
-import pypandoc
 from setuptools import setup
 import os
-import git
 
-# tag version
-repo = git.Repo(os.getcwd())
-tag = repo.tags[-1]
-version = tag.name
-
-# requirements
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-# long description
-# TODO: pypandoc.convert() function returns wrong RST format, but saving/loading a file works
-file_path = os.path.abspath(os.path.dirname(__file__))
-pypandoc.convert_file('README.md', 'rst', outputfile=os.path.join(file_path, 'README.rst'))
-with open(os.path.join(file_path, 'README.rst'), encoding='utf-8') as f:
+with open('README', encoding='utf-8') as f:
     description = f.read()
+
+with open('VERSION', encoding='utf-8') as f:
+    version = f.read()
 
 setup(
     name='pybotics',
