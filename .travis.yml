@@ -20,7 +20,10 @@ matrix:
   - python: nightly
 
 before_install:
-- sudo apt-get install -qq python-numpy python-scipy
+- sudo apt-get -qq update
+- sudo apt-get install -qq -y python-numpy
+- sudo apt-get install -qq -y python-scipy
+- sudo apt-get install -qq -y pandoc
 - find .
 
 install:
