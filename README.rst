@@ -13,13 +13,8 @@ pybotics
 
 Python Toolbox for Robotics
 
-Context
--------
-
 Inspired from `Peter Corke's Robotics
 Toolbox <http://www.petercorke.com/Robotics_Toolbox.html>`__ for MATLAB.
-However, MATLAB is not necessarily widespread outside of academia (and I
-prefer Python), thus Pybotics was born.
 
 Requirements/Compatibility
 --------------------------
@@ -27,22 +22,38 @@ Requirements/Compatibility
 -  `Python >= 3.4 <https://travis-ci.org/nnadeau/pybotics>`__
 -  See `requirements.txt <requirements.txt>`__ for package dependencies
 
-Applications and Usage
-----------------------
+Usage
+-----
 
--  `Kinematics <examples/example_kinematics.ipynb>`__
--  `Calibration <examples/example_calibration.ipynb>`__
+Quick Start
+~~~~~~~~~~~
+
+.. code:: python
+
+    import numpy as np
+    import pybotics as pybot
+
+    # classic planar robot from textbooks
+    robot_model = np.array([
+        [0, 0, 0, 0],
+        [0, 10, 0, 0],
+        [0, 20, 0, 0]
+    ], dtype=np.float)
+    planar_robot = pybot.Robot(robot_model)
+    pose = planar_robot.fk()
+
+    # modern, collaborative, 6-axis robot (UR10 from Universal Robots)
+    robot_model = np.loadtxt('ur10-mdh.csv', delimiter=',')
+    ur10_robot = pybot.Robot(robot_model)
+    ur10_robot.random_joints()
+    ur10_robot.fk()
+
+Applications
+~~~~~~~~~~~~
+
+-  `Kinematics <https://github.com/nnadeau/pybotics/blob/master/examples/example_kinematics.ipynb>`__
+-  `Calibration <https://github.com/nnadeau/pybotics/blob/master/examples/example_calibration.ipynb>`__
 -  Trajectory and path planning
-
-Contributing
-------------
-
-1. Fork it!
-2. Create your feature branch
-3. Follow PEP 8 style guide
-4. Don't break the current codebase (without good reason)
-5. Have tests for all your code
-6. Submit a pull request :D
 
 Limitations
 -----------
