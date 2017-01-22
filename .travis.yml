@@ -2,50 +2,66 @@ language: python
 
 matrix:
   include:
-    - python: "2.7"
-    - python: "3.4"
-    - python: "3.5"
-    - python: "3.5-dev"
-    - python: "3.6"
-    - python: "3.6-dev" 
-    - python: "3.7-dev"
-    - python: "nightly"
+  - python: 2.7
+  - python: 3.2
+  - python: 3.3
+  - python: 3.4
+  - python: 3.5
+  - python: 3.5-dev
+  - python: 3.6
+  - python: 3.6-dev
+  - python: 3.7-dev
+  - python: nightly
+
   fast_finish: true
+
   allow_failures:
-    - python: "2.7"
-    - python: "3.4"
-    - python: "3.7-dev"
-    - python: "nightly"
+  - python: 2.7
+  - python: 3.2
+  - python: 3.3
+  - python: 3.7-dev
+  - python: nightly
 
-# command to install dependencies
 before_install:
-  - sudo apt-get install -qq python-numpy python-scipy
-  - find .
-  
-install:
-  - pip install .
-  - pip install -r requirements.txt
-  - pip install coveralls
-  - pip install codecov
-  - pip install pytest-cov
-  - pip install pydocstyle
-  - pip install flake8
-  - pip install vulture
-  - pip install bandit
+- sudo apt-get -qq update
+- sudo apt-get install -qq -y python-numpy
+- sudo apt-get install -qq -y python-scipy
+- sudo apt-get install -qq -y pandoc
+- find .
 
-# command to run tests
+install:
+- pip install coveralls
+- pip install codecov
+- pip install pytest-cov
+- pip install pydocstyle
+- pip install flake8
+- pip install vulture
+- pip install bandit
+- pip install pypandoc
+- pip install .
+- pip install -r requirements.txt
+
 script:
-  - python setup.py test
+- python setup.py test
 
 after_success:
-  - coveralls
-  - codecov
-  - pydocstyle pybotics
-  - flake8 --show-source pybotics
-  - vulture .
-  - bandit -r pybotics
+- coveralls
+- codecov
+- pydocstyle pybotics
+- flake8 --show-source pybotics
+- vulture .
+- bandit -r pybotics
 
-# notification settings
 notifications:
   email: false
-  
+
+deploy:
+  provider: pypi
+  user: nnadeau
+  password:
+    secure: xJKEKNbGAlBcC/d6Z+3pRTSLA1KMhtb8ayVbsuyDa0tbmoZij7n6e3xbFx7matI0eB38YXrdP0gVO60T7EruLPlkyJSWlJMF4citdv/v5wnxZjzXTfYHY+4ym9uA+jHpZEyBiQY6Nfoj3FhqMUxXxwG0OI44wrMHFa8wLTHkCNJxRTRh63JyiGddqfwtgrsqiNRS60gVvYf+xjg09YjY4039TuaFf/HMJkJuivpgQBl2IbPxKYiGphNvDwxz2V6h0TrJCR/yK+3mV+2yaBVqSTaNQfmHf+VvUij7YX7POmrmMVif4Oxd1cFQoevnpZOOC7r0Bpg5Ts/bWPQKYn4+bPPm4e0e6Z1dmknLVInVLBGV4NzcbWsTuDqBvxZNOz+R7q9BKI7SVetYb0ZP1ceD5xORk3uNU5ROmPrXYC3+XCnHW8tmuewjFyzy7R62a7bfXBaWUptG0SFNn65KEVJvNE9d17hPpMO49Wmp5dHfp/Yqklr2KI+PZOmET0uvODUqB6F1bIYAShkUDS8Pq3fTu7uX5/wqoQ8kUHTi8xtnzjSnhrYTpbiSroz2rVeuHYlBdXYOoTUwJGN+6w/srijHKyAdUpiQMR7h46L4VIFqoUoq4W0ZiPwfsM3fWsTCtIwMZSH7rQDHWSIOnrAlv93c3kxwmkhsl1pRxHVQ7AwogUg=
+  on:
+    tags: true
+    branch: release
+    distributions: sdist bdist_wheel
+    repo: nnadeau/pybotics
