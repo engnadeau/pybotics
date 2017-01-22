@@ -38,6 +38,8 @@ install:
 - pip install vulture
 - pip install bandit
 - pip install pypandoc
+- python convert_readme.py
+- python update_version.py
 - pip install .
 - pip install -r requirements.txt
 
@@ -55,11 +57,8 @@ after_success:
 notifications:
   email: false
 
-before_deploy:
-- python convert_readme.py
-- python update_version.py
-
 deploy:
+  skip_cleanup: true
   provider: pypi
   user: nnadeau
   password:
