@@ -11,6 +11,8 @@ from pybotics.exceptions import PybotException
 def robot_fixture():
     model_path = os.path.abspath(__file__)
     model_path = os.path.dirname(model_path)
+    model_path = os.path.dirname(model_path)
+    model_path = os.path.join(model_path, 'robot-models')
     model_path = os.path.join(model_path, 'ur10-mdh.csv')
     return Robot(np.loadtxt(model_path, delimiter=','))
 
