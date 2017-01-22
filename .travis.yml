@@ -24,8 +24,6 @@ before_install:
 - find .
 
 install:
-- pip install .
-- pip install -r requirements.txt
 - pip install coveralls
 - pip install codecov
 - pip install pytest-cov
@@ -34,6 +32,8 @@ install:
 - pip install vulture
 - pip install bandit
 - pip install pypandoc
+- pip install .
+- pip install -r requirements.txt
 
 script:
 - python setup.py test
