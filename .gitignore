@@ -364,3 +364,4 @@ ENV/
 
 .idea
 *.rej
+README.rst
