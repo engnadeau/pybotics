@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import logging
 import timeit
 
 from pybotics import Robot
@@ -20,10 +19,14 @@ def profile(robot: Robot):
     robot.fk()
 
 
+R = load_robot()
+
 if __name__ == '__main__':
     num_calls = int(1e6)
-    time = timeit.timeit(stmt='profile(load_robot())',
-                         setup="from __main__ import profile, load_robot",
+    time = timeit.timeit(stmt='profile(R)',
+                         setup="from __main__ import profile, load_robot, R",
                          number=num_calls)
     print('Total time: {} s'.format(time))
-    print('Mean time: {} s'.format(time / num_calls))
+    mean_time = time / num_calls
+    print('Mean time: {} s'.format(mean_time))
+    print('Mean time: {} ms'.format(mean_time * 1e3))
