@@ -37,7 +37,6 @@ install:
 - pip install vulture
 - pip install bandit
 - pip install pypandoc
-- python convert_readme.py
 - python update_version.py
 - pip install .
 - pip install -r requirements.txt

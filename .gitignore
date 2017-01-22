@@ -364,6 +364,4 @@ ENV/
 
 .idea
 *.rej
-README.rst
-README
 VERSION
