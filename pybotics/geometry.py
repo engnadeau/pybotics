@@ -38,7 +38,7 @@ def xyzrpw_2_pose(xyzrpw: Vector) -> np.ndarray:
         [0, 0, 0, 1]
     ]
 
-    return np.array(transform)
+    return np.array(transform, dtype=np.float)
 
 
 def pose_2_xyzrpw(pose: np.ndarray) -> List[float]:
