@@ -27,7 +27,6 @@ before_install:
 - sudo apt-get install -qq -y python-numpy
 - sudo apt-get install -qq -y python-scipy
 - sudo apt-get install -qq -y pandoc
-- find .
 
 install:
 - pip install coveralls
@@ -53,6 +52,7 @@ after_success:
 - flake8 --show-source pybotics
 - vulture .
 - bandit -r pybotics
+- cat README.rst
 
 notifications:
   email: false
