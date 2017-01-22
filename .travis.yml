@@ -68,3 +68,4 @@ deploy:
     branch: release
     distributions: sdist bdist_wheel
     repo: nnadeau/pybotics
+    python: 3.6
