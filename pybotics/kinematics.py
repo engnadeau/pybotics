@@ -28,4 +28,4 @@ def forward_transform(mdh_parameters: Vector) -> np.ndarray:
         [0, 0, 0, 1]
     ]
 
-    return np.array(transform)
+    return np.array(transform, dtype=np.float)
