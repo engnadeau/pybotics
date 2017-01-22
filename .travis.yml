@@ -37,9 +37,9 @@ install:
 - pip install vulture
 - pip install bandit
 - pip install pypandoc
+- pip install mypy
 - python update_version.py
 - pip install .
-- pip install -r requirements.txt
 
 script:
 - python setup.py test
@@ -51,6 +51,7 @@ after_success:
 - flake8 --show-source pybotics
 - vulture .
 - bandit -r pybotics
+- mypy pybotics
 - cat README.rst
 
 notifications:
