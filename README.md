@@ -51,6 +51,7 @@ robot_model = np.array([
     [0, 20, 0, 0]
 ], dtype=np.float)
 planar_robot = pybot.Robot(robot_model)
+planar_robot.joint_angles = np.deg2rad([30, 60, 0])
 pose = planar_robot.fk()
 
 # modern, collaborative, 6-axis robot (UR10 from Universal Robots)
