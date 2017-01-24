@@ -7,6 +7,7 @@
 [![PyPI Wheel](https://img.shields.io/pypi/wheel/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
 [![PyPI Format](https://img.shields.io/pypi/format/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
 [![PyPI Pythons](https://img.shields.io/pypi/pyversions/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
+[![Python 3](https://pyup.io/repos/github/nnadeau/pybotics/python-3-shield.svg)](https://pyup.io/repos/github/nnadeau/pybotics/)
 [![PyPI Implementation](https://img.shields.io/pypi/implementation/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
 [![PyPI Status](https://img.shields.io/pypi/status/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
 
@@ -14,6 +15,9 @@
 [![CircleCI](https://circleci.com/gh/nnadeau/pybotics/tree/master.svg?style=svg)](https://circleci.com/gh/nnadeau/pybotics/tree/master)
 
 [![Dependency Status](https://www.versioneye.com/user/projects/57d87a4a7129660045cf3a58/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57d87a4a7129660045cf3a58)
+[![Updates](https://pyup.io/repos/github/nnadeau/pybotics/shield.svg)](https://pyup.io/repos/github/nnadeau/pybotics/)
+
+
 [![Coverage Status](https://coveralls.io/repos/github/nnadeau/pybotics/badge.svg?branch=master)](https://coveralls.io/github/nnadeau/pybotics?branch=master)
 [![codecov](https://codecov.io/gh/nnadeau/pybotics/branch/master/graph/badge.svg)](https://codecov.io/gh/nnadeau/pybotics)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9d4f77b167874a049e97731181e2b53a)](https://www.codacy.com/app/nicholas-nadeau/pybotics?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nnadeau/pybotics&amp;utm_campaign=Badge_Grade)
