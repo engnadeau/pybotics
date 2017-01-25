@@ -256,3 +256,28 @@ def test_joint_compliance(robot):
     # test too many values
     with pytest.raises(exceptions.PybotException):
         robot.joint_compliance = values + values
+
+
+def test_symbolic_jacobian():
+    # set robot
+    link_length = [10, 20]
+    robot_model = np.array([
+        [0, 0, 0, 0],
+        [0, link_length[0], 0, 0],
+        [0, link_length[1], 0, 0]
+    ], dtype=np.float)
+    robot = Robot(robot_model)
+    robot.joint_angles = np.deg2rad([30, 60, 0])
+
+    # test
+    expected = np.array([
+        [link_length[0] * np.sin(robot.joint_angles[1]), 0, 0],
+        [link_length[0] * np.cos(robot.joint_angles[1]) + link_length[1], link_length[1], 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [1, 1, 1]
+    ])
+    jacobian = robot.symbolic_jacobian()
+
+    np.testing.assert_allclose(jacobian, expected)
