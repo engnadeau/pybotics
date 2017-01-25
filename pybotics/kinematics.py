@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-from pybotics.types import Vector
+from pybotics.pybot_types import Vector
 
 
 def forward_transform(mdh_parameters: Vector) -> np.ndarray:

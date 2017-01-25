@@ -3,7 +3,7 @@ from typing import List
 
 from pybotics.robot import Robot
 from pybotics import exceptions
-from pybotics.types import Vector
+from pybotics.pybot_types import Vector
 
 
 def compute_absolute_errors(robot: Robot,

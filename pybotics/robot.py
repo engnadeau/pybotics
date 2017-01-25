@@ -9,7 +9,7 @@ from pybotics.tool import Tool
 from pybotics import exceptions
 from pybotics import geometry
 from pybotics import kinematics
-from pybotics.types import Vector
+from pybotics.pybot_types import Vector
 
 
 class Robot:
