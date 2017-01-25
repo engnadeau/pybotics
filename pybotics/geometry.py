@@ -3,7 +3,7 @@ import numpy as np
 from typing import Union, List
 
 from pybotics import exceptions
-from pybotics.types import Vector
+from pybotics.pybot_types import Vector
 
 
 def xyzrpw_2_pose(xyzrpw: Vector) -> np.ndarray:

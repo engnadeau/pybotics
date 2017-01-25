@@ -1,7 +1,7 @@
 import numpy as np
 
 from pybotics.exceptions import PybotException
-from pybotics.types import Vector
+from pybotics.pybot_types import Vector
 
 
 class Tool:
