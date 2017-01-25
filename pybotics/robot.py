@@ -403,7 +403,7 @@ class Robot:
             joint_angles.append(np.random.uniform(min(limits), max(limits)))
         self.joint_angles = joint_angles
 
-    def symbolic_jacobian(self):
+    def symbolic_jacobian(self, is_flange_frame=True):
         """Calculate the tool jacobian uses symbolic math.
 
         Method from:
@@ -432,6 +432,11 @@ class Robot:
             angular_component = np.dot(rotation, angular_velocity)
             joint_component = [0, 0, theta_prime[i]]
             angular_velocity = angular_component + joint_component
+
+        if not is_flange_frame:
+            rotation = self.fk()[:3, :3]
+            linear_velocity = np.dot(rotation, linear_velocity)
+            angular_velocity = np.dot(rotation, angular_velocity)
 
         velocity_matrix = np.concatenate((linear_velocity.flatten(), angular_velocity.flatten()))
         velocity_matrix = sympy.Matrix(velocity_matrix)

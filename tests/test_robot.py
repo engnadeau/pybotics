@@ -269,7 +269,7 @@ def test_symbolic_jacobian():
     robot = Robot(robot_model)
     robot.joint_angles = np.deg2rad([30, 60, 0])
 
-    # test
+    # test flange frame
     expected = np.array([
         [link_length[0] * np.sin(robot.joint_angles[1]), 0, 0],
         [link_length[0] * np.cos(robot.joint_angles[1]) + link_length[1], link_length[1], 0],
@@ -278,6 +278,21 @@ def test_symbolic_jacobian():
         [0, 0, 0],
         [1, 1, 1]
     ])
-    jacobian = robot.symbolic_jacobian()
+    np.testing.assert_allclose(robot.symbolic_jacobian(), expected)
 
-    np.testing.assert_allclose(jacobian, expected)
+    # test reference frame
+    expected = np.array([
+        [-link_length[0] * np.sin(robot.joint_angles[0])
+         - link_length[1] * np.sin(robot.joint_angles[0] + robot.joint_angles[1]),
+         -link_length[1] * np.sin(robot.joint_angles[0] + robot.joint_angles[1]),
+         0],
+        [link_length[0] * np.cos(robot.joint_angles[0])
+         + link_length[1] * np.cos(robot.joint_angles[0] + robot.joint_angles[1]),
+         link_length[1] * np.cos(robot.joint_angles[0] + robot.joint_angles[1]),
+         0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [1, 1, 1]
+    ])
+    np.testing.assert_allclose(robot.symbolic_jacobian(is_flange_frame=False), expected, atol=1e-6)
