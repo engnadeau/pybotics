@@ -20,6 +20,18 @@ def robot_fixture():
     return Robot(np.loadtxt(model_path, delimiter=','))
 
 
+@pytest.fixture(name='robot_2d')
+def robot_2d_fixture():
+    # set robot
+    link_length = [10, 20]
+    robot_model = np.array([
+        [0, 0, 0, 0],
+        [0, link_length[0], 0, 0],
+        [0, link_length[1], 0, 0]
+    ], dtype=np.float)
+    return Robot(robot_model)
+
+
 def test_num_dof(robot):
     assert robot.num_dof() == robot.robot_model.shape[0]
 
@@ -68,7 +80,7 @@ def test_ik(robot):
         np.testing.assert_allclose(actual=result_transform, desired=expected_transform, rtol=1e-1, atol=1e-1)
 
 
-def test_calculate_joint_torques():
+def test_calculate_joint_torques(robot_2d):
     """
     From EXAMPLE 5.7 of
     Craig, John J. Introduction to robotics: mechanics and control.
@@ -76,15 +88,6 @@ def test_calculate_joint_torques():
 
     :return:
     """
-
-    # set robot
-    link_length = [10, 20]
-    robot_model = np.array([
-        [0, 0, 0, 0],
-        [0, link_length[0], 0, 0],
-        [0, link_length[1], 0, 0]
-    ], dtype=np.float)
-    robot = Robot(robot_model)
 
     # set test force and angles
     force = [-100, -200, 0]
@@ -94,15 +97,15 @@ def test_calculate_joint_torques():
 
     # calculate expected torques
     expected_torques = [
-        link_length[0] * np.sin(joint_angles[1]) * force[0] +
-        (link_length[1] + link_length[0] * np.cos(joint_angles[1])) * force[1],
-        link_length[1] * force[1],
+        robot_2d.robot_model[1, 1] * np.sin(joint_angles[1]) * force[0] +
+        (robot_2d.robot_model[2, 1] + robot_2d.robot_model[1, 1] * np.cos(joint_angles[1])) * force[1],
+        robot_2d.robot_model[2, 1] * force[1],
         0
     ]
 
     # test
-    robot.joint_angles = joint_angles
-    torques = robot.calculate_external_wrench_joint_torques(wrench)
+    robot_2d.joint_angles = joint_angles
+    torques = robot_2d.calculate_external_wrench_joint_torques(wrench)
     np.testing.assert_allclose(torques, expected_torques)
 
 
@@ -258,7 +261,7 @@ def test_joint_compliance(robot):
         robot.joint_compliance = values + values
 
 
-def test_symbolic_jacobian():
+def test_symbolic_jacobian(robot_2d):
     """
      From EXAMPLES 5.3, 5.7 and EQUATIONS 5.66, 5.67 of
      Craig, John J. Introduction to robotics: mechanics and control.
@@ -267,42 +270,37 @@ def test_symbolic_jacobian():
      :return:
      """
 
-    # set robot
-    link_length = [10, 20]
-    robot_model = np.array([
-        [0, 0, 0, 0],
-        [0, link_length[0], 0, 0],
-        [0, link_length[1], 0, 0]
-    ], dtype=np.float)
-    robot = Robot(robot_model)
-    robot.joint_angles = np.deg2rad([30, 60, 0])
+    robot_2d.joint_angles = np.deg2rad([30, 60, 0])
 
     # test flange frame
     expected = np.array([
-        [link_length[0] * np.sin(robot.joint_angles[1]), 0, 0],
-        [link_length[0] * np.cos(robot.joint_angles[1]) + link_length[1], link_length[1], 0],
+        [robot_2d.robot_model[1, 1] * np.sin(robot_2d.joint_angles[1]), 0, 0],
+        [robot_2d.robot_model[1, 1] * np.cos(robot_2d.joint_angles[1]) + robot_2d.robot_model[2, 1],
+         robot_2d.robot_model[2, 1], 0],
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0],
         [1, 1, 1]
     ])
-    actual = robot.symbolic_jacobian()
+    actual = robot_2d.symbolic_jacobian()
     np.testing.assert_allclose(actual, expected)
 
     # test reference frame
     expected = np.array([
-        [-link_length[0] * np.sin(robot.joint_angles[0])
-         - link_length[1] * np.sin(robot.joint_angles[0] + robot.joint_angles[1]),
-         -link_length[1] * np.sin(robot.joint_angles[0] + robot.joint_angles[1]),
+        [-robot_2d.robot_model[1, 1] * np.sin(robot_2d.joint_angles[0])
+         - robot_2d.robot_model[2, 1] * np.sin(robot_2d.joint_angles[0] + robot_2d.joint_angles[1]),
+         -robot_2d.robot_model[2, 1] * np.sin(robot_2d.joint_angles[0] + robot_2d.joint_angles[1]),
          0],
-        [link_length[0] * np.cos(robot.joint_angles[0])
-         + link_length[1] * np.cos(robot.joint_angles[0] + robot.joint_angles[1]),
-         link_length[1] * np.cos(robot.joint_angles[0] + robot.joint_angles[1]),
+        [robot_2d.robot_model[1, 1] * np.cos(robot_2d.joint_angles[0])
+         + robot_2d.robot_model[2, 1] * np.cos(robot_2d.joint_angles[0] + robot_2d.joint_angles[1]),
+         robot_2d.robot_model[2, 1] * np.cos(robot_2d.joint_angles[0] + robot_2d.joint_angles[1]),
          0],
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0],
         [1, 1, 1]
     ])
-    actual = robot.symbolic_jacobian(is_flange_frame=False)
+    actual = robot_2d.symbolic_jacobian(is_flange_frame=False)
     np.testing.assert_allclose(actual, expected, atol=1e-9)
+
+
