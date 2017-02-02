@@ -259,6 +259,14 @@ def test_joint_compliance(robot):
 
 
 def test_symbolic_jacobian():
+    """
+     From EXAMPLES 5.3, 5.7 and EQUATIONS 5.66, 5.67 of
+     Craig, John J. Introduction to robotics: mechanics and control.
+     Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+
+     :return:
+     """
+
     # set robot
     link_length = [10, 20]
     robot_model = np.array([
@@ -278,7 +286,8 @@ def test_symbolic_jacobian():
         [0, 0, 0],
         [1, 1, 1]
     ])
-    np.testing.assert_allclose(robot.symbolic_jacobian(), expected)
+    actual = robot.symbolic_jacobian()
+    np.testing.assert_allclose(actual, expected)
 
     # test reference frame
     expected = np.array([
@@ -295,4 +304,5 @@ def test_symbolic_jacobian():
         [0, 0, 0],
         [1, 1, 1]
     ])
-    np.testing.assert_allclose(robot.symbolic_jacobian(is_flange_frame=False), expected, atol=1e-6)
+    actual = robot.symbolic_jacobian(is_flange_frame=False)
+    np.testing.assert_allclose(actual, expected, atol=1e-9)
