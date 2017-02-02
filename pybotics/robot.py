@@ -451,6 +451,11 @@ class Robot:
         jacobian = np.array(jacobian, dtype=np.float)
         return jacobian
 
+    def wrench_from_torques(self, torques):
+        inv_tr_jacobian = np.linalg.pinv(self.symbolic_jacobian().transpose())
+        force = np.dot(inv_tr_jacobian, torques)
+        return force
+
 
 def _ik_fit_func(joint_angles: Vector,
                  robot: Robot,

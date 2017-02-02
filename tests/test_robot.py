@@ -304,3 +304,22 @@ def test_symbolic_jacobian(robot_2d):
     np.testing.assert_allclose(actual, expected, atol=1e-9)
 
 
+def test_wrench_from_torques(robot_2d):
+    # set test force and angles
+    expected_force = [-100, -200, 0]
+    expected_moment = [0] * 3
+    expected_wrench = expected_force + expected_moment
+    joint_angles = np.deg2rad([30, 60, 0])
+
+    # calculate expected torques
+    torques = [
+        robot_2d.robot_model[1, 1] * np.sin(joint_angles[1]) * expected_force[0] +
+        (robot_2d.robot_model[2, 1] + robot_2d.robot_model[1, 1] * np.cos(joint_angles[1])) * expected_force[1],
+        robot_2d.robot_model[2, 1] * expected_force[1],
+        0
+    ]
+
+    # test
+    robot_2d.joint_angles = joint_angles
+    actual_wrench = robot_2d.wrench_from_torques(torques)
+    np.testing.assert_allclose(actual_wrench, expected_wrench, atol=1e-9)
