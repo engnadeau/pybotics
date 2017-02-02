@@ -18,7 +18,7 @@ class Robot:
 
     def __init__(self,
                  robot_model: np.ndarray,
-                 tool: Tool = Tool(),
+                 tool: Tool = None,
                  world_frame: np.ndarray = None,
                  name: str = 'Pybot'):
         """Construct a Robot object.
@@ -32,7 +32,7 @@ class Robot:
         # public members
         self.name = name
         self.robot_model = robot_model.reshape((-1, 4))
-        self.tool = tool
+        self.tool = Tool() if tool is None else tool
         self.world_frame = np.eye(4) if world_frame is None else world_frame
 
         # private members
