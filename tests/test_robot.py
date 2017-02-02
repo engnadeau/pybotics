@@ -261,7 +261,7 @@ def test_joint_compliance(robot):
         robot.joint_compliance = values + values
 
 
-def test_symbolic_jacobian(robot_2d):
+def test_jacobian(robot_2d):
     """
      From EXAMPLES 5.3, 5.7 and EQUATIONS 5.66, 5.67 of
      Craig, John J. Introduction to robotics: mechanics and control.
@@ -282,7 +282,7 @@ def test_symbolic_jacobian(robot_2d):
         [0, 0, 0],
         [1, 1, 1]
     ])
-    actual = robot_2d.symbolic_jacobian()
+    actual = robot_2d.jacobian()
     np.testing.assert_allclose(actual, expected)
 
     # test reference frame
@@ -300,7 +300,7 @@ def test_symbolic_jacobian(robot_2d):
         [0, 0, 0],
         [1, 1, 1]
     ])
-    actual = robot_2d.symbolic_jacobian(is_flange_frame=False)
+    actual = robot_2d.jacobian(is_flange_frame=False)
     np.testing.assert_allclose(actual, expected, atol=1e-9)
 
 

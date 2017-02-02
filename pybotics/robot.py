@@ -403,7 +403,7 @@ class Robot:
             joint_angles.append(np.random.uniform(min(limits), max(limits)))
         self.joint_angles = joint_angles
 
-    def symbolic_jacobian(self, is_flange_frame=True):
+    def jacobian(self, is_flange_frame=True):
         """Calculate the tool jacobian uses symbolic math.
 
         Method from:
@@ -452,7 +452,7 @@ class Robot:
         return jacobian
 
     def wrench_from_torques(self, torques):
-        inv_tr_jacobian = np.linalg.pinv(self.symbolic_jacobian().transpose())
+        inv_tr_jacobian = np.linalg.pinv(self.jacobian().transpose())
         force = np.dot(inv_tr_jacobian, torques)
         return force
 
