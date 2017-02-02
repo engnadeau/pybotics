@@ -21,7 +21,7 @@ def test_compute_absolute_errors(robot):
     joints = []
     torques = []
     positions = []
-    for i in range(100):
+    for _ in range(100):
         robot.random_joints()
         joints.append(robot.joint_angles)
         torques.append([0] * robot.num_dof())
