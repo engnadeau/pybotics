@@ -58,14 +58,22 @@ notifications:
   email: false
 
 deploy:
-  skip_cleanup: true
-  provider: pypi
-  user: nnadeau
-  password:
-    secure: xJKEKNbGAlBcC/d6Z+3pRTSLA1KMhtb8ayVbsuyDa0tbmoZij7n6e3xbFx7matI0eB38YXrdP0gVO60T7EruLPlkyJSWlJMF4citdv/v5wnxZjzXTfYHY+4ym9uA+jHpZEyBiQY6Nfoj3FhqMUxXxwG0OI44wrMHFa8wLTHkCNJxRTRh63JyiGddqfwtgrsqiNRS60gVvYf+xjg09YjY4039TuaFf/HMJkJuivpgQBl2IbPxKYiGphNvDwxz2V6h0TrJCR/yK+3mV+2yaBVqSTaNQfmHf+VvUij7YX7POmrmMVif4Oxd1cFQoevnpZOOC7r0Bpg5Ts/bWPQKYn4+bPPm4e0e6Z1dmknLVInVLBGV4NzcbWsTuDqBvxZNOz+R7q9BKI7SVetYb0ZP1ceD5xORk3uNU5ROmPrXYC3+XCnHW8tmuewjFyzy7R62a7bfXBaWUptG0SFNn65KEVJvNE9d17hPpMO49Wmp5dHfp/Yqklr2KI+PZOmET0uvODUqB6F1bIYAShkUDS8Pq3fTu7uX5/wqoQ8kUHTi8xtnzjSnhrYTpbiSroz2rVeuHYlBdXYOoTUwJGN+6w/srijHKyAdUpiQMR7h46L4VIFqoUoq4W0ZiPwfsM3fWsTCtIwMZSH7rQDHWSIOnrAlv93c3kxwmkhsl1pRxHVQ7AwogUg=
-  on:
-    tags: true
-    branch: master
-    distributions: sdist bdist_wheel
-    repo: nnadeau/pybotics
-    python: 3.6
+  - provider: pypi
+    skip_cleanup: true
+    user: nnadeau
+    password:
+      secure: "xJKEKNbGAlBcC/d6Z+3pRTSLA1KMhtb8ayVbsuyDa0tbmoZij7n6e3xbFx7matI0eB38YXrdP0gVO60T7EruLPlkyJSWlJMF4citdv/v5wnxZjzXTfYHY+4ym9uA+jHpZEyBiQY6Nfoj3FhqMUxXxwG0OI44wrMHFa8wLTHkCNJxRTRh63JyiGddqfwtgrsqiNRS60gVvYf+xjg09YjY4039TuaFf/HMJkJuivpgQBl2IbPxKYiGphNvDwxz2V6h0TrJCR/yK+3mV+2yaBVqSTaNQfmHf+VvUij7YX7POmrmMVif4Oxd1cFQoevnpZOOC7r0Bpg5Ts/bWPQKYn4+bPPm4e0e6Z1dmknLVInVLBGV4NzcbWsTuDqBvxZNOz+R7q9BKI7SVetYb0ZP1ceD5xORk3uNU5ROmPrXYC3+XCnHW8tmuewjFyzy7R62a7bfXBaWUptG0SFNn65KEVJvNE9d17hPpMO49Wmp5dHfp/Yqklr2KI+PZOmET0uvODUqB6F1bIYAShkUDS8Pq3fTu7uX5/wqoQ8kUHTi8xtnzjSnhrYTpbiSroz2rVeuHYlBdXYOoTUwJGN+6w/srijHKyAdUpiQMR7h46L4VIFqoUoq4W0ZiPwfsM3fWsTCtIwMZSH7rQDHWSIOnrAlv93c3kxwmkhsl1pRxHVQ7AwogUg="
+    on:
+      tags: true
+      branch: master
+      distributions: sdist bdist_wheel
+      repo: nnadeau/pybotics
+      python: 3.6
+  - provider: releases
+    api_key:
+      secure: "ejcmokhvS709ISa//M4I5okWLl9HvYLuGa21Wxdt/GfESAEJ1zl9uh/ux7izjBFalgd2hmtE2Mw2EiMtI1uTNP3cz0YIp1MBDqt5DOxQPqHJrMu1CNCt4sTtaALqz4LGrmoSfSrtUx3PTYO19Zxd/xAjwZciM2sdPt9L4nAxH50Zj7uDVZFgOAn6qKx0gLbQQslU1XCpahvRU/pio7s9BEPrDC2pLFPGIF5i6iRPGq+PoVXUttmgSF4a/RWxuVe58EMCesMzQ7iVIB1x/SRk/XzIMZSBUHuGDP3oKEYmXB30XPolSx/Hst38+8xyNdU3iOC/NVWeEJS702iYQiTE37Dejiq4UZGvUkdN1uyKsBFewB2JfsTKPJ0W6ulr/TPMzNxfm8fDQQUJavuolI6ugshvwq9eB+/d1dZIUijGbxOo8fofPC2F3Pe5Sf5MrQKk3dPvMeRk46zQmX8Mv2BP7cFa79xVgVQk4xKjgLjomJmORYdAUIvSbWABq2BMLj8+Kcz3w43sa+tS8rcVMZ6rUrjlcHYI8Ob3ILn1nf4+bUVxx1umQKdxCqu2zluYoG/Lreghib7vzb+/elQx8/oB2S8Gq7Di11//vEmiocq87iGyKr08j7RkDhoHmZFPtWpmxT/OrVS0kWv/2sGudQgF+zinbFYpC1xJH8fL2D+d2sM="
+    on:
+      tags: true
+      branch: master
+      repo: nnadeau/pybotics
+      python: 3.6
