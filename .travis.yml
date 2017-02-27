@@ -1,5 +1,4 @@
 language: python
-
 matrix:
   include:
   - python: 2.7
@@ -12,22 +11,18 @@ matrix:
   - python: 3.6-dev
   - python: 3.7-dev
   - python: nightly
-
   fast_finish: true
-
   allow_failures:
   - python: 2.7
   - python: 3.2
   - python: 3.3
   - python: 3.7-dev
   - python: nightly
-
 before_install:
 - sudo apt-get -qq update
 - sudo apt-get install -qq -y python-numpy
 - sudo apt-get install -qq -y python-scipy
 - sudo apt-get install -qq -y pandoc
-
 install:
 - pip install coveralls
 - pip install codecov
@@ -40,10 +35,8 @@ install:
 - pip install mypy
 - python update_version.py
 - pip install .
-
 script:
 - python setup.py test
-
 after_success:
 - coveralls
 - codecov
@@ -53,10 +46,8 @@ after_success:
 - bandit -r pybotics
 - mypy pybotics
 - cat README.rst
-
 notifications:
   email: false
-
 deploy:
   - provider: pypi
     skip_cleanup: true
@@ -71,9 +62,7 @@ deploy:
       python: 3.6
   - provider: releases
     api_key:
-      secure: "ejcmokhvS709ISa//M4I5okWLl9HvYLuGa21Wxdt/GfESAEJ1zl9uh/ux7izjBFalgd2hmtE2Mw2EiMtI1uTNP3cz0YIp1MBDqt5DOxQPqHJrMu1CNCt4sTtaALqz4LGrmoSfSrtUx3PTYO19Zxd/xAjwZciM2sdPt9L4nAxH50Zj7uDVZFgOAn6qKx0gLbQQslU1XCpahvRU/pio7s9BEPrDC2pLFPGIF5i6iRPGq+PoVXUttmgSF4a/RWxuVe58EMCesMzQ7iVIB1x/SRk/XzIMZSBUHuGDP3oKEYmXB30XPolSx/Hst38+8xyNdU3iOC/NVWeEJS702iYQiTE37Dejiq4UZGvUkdN1uyKsBFewB2JfsTKPJ0W6ulr/TPMzNxfm8fDQQUJavuolI6ugshvwq9eB+/d1dZIUijGbxOo8fofPC2F3Pe5Sf5MrQKk3dPvMeRk46zQmX8Mv2BP7cFa79xVgVQk4xKjgLjomJmORYdAUIvSbWABq2BMLj8+Kcz3w43sa+tS8rcVMZ6rUrjlcHYI8Ob3ILn1nf4+bUVxx1umQKdxCqu2zluYoG/Lreghib7vzb+/elQx8/oB2S8Gq7Di11//vEmiocq87iGyKr08j7RkDhoHmZFPtWpmxT/OrVS0kWv/2sGudQgF+zinbFYpC1xJH8fL2D+d2sM="
+      secure: T22m7+XHswKDx1NmONF0S+DeUW9OmSt08yzQlVZNg2d9Y3M/RNGnAhri2zh2GuqLKXCCegBMVMqXwOhrgXgOAUiqu58Lc/mEL8FJvb6Dd32Y8qZE17OhY/rta4DFJc6otJSFZB+EZva8Y3o61UBq67OD93W+7JOxhB/sSYJeajVRqRC85j6g4j3cX3KQWQH2teLGNLQ1fTaDf3pfxoF8yt5J78yv6FrVsHtU/Ya7wkqEyciSvoIoccH3T+2OFaqSblaSrZ8lVb38F6IZssQ83zAFg8HwMr6bSSYXa++I41kwiaCaFPBUQrPnoQeU6I4HO+SXNYnmpprXfJZhl17S7RhcB70DHfgR4RqrT4g2XgiMqwShSzfpgujC8SRDG8+HUbETcsEuHpDAWdo/uvLSppl4ba5BnbHFbTd/ggzrz2yWuihGD1J81d5um+Pgiu3N216tZKGozszqyp0ZxwZw9BxFq81SBRw7lToPhZltex29jdDR+9x/JEVcZ0hs32N2K12N2a3FeCPzlikUysJfTo9vbHH4E9aIijx0Xr6nqp6kSsCgNBFFf2QLjaavES5TYSctupD/5Uaz3VGkTjXrTL8y8XGwN7YAwnrpuiApGX61OY0UdSwnm/XI3yNjnQkObvYyx7/xuV2koLsA1vO+bUg66fQ6hul3ll9uTg1vWJE=
+    file: ''
     on:
-      tags: true
-      branch: master
       repo: nnadeau/pybotics
-      python: 3.6
