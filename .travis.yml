@@ -33,6 +33,7 @@ install:
 - pip install bandit
 - pip install pypandoc
 - pip install mypy
+- pip install pipdeptree
 - python update_version.py
 - pip install .
 script:
@@ -45,6 +46,7 @@ after_success:
 - vulture .
 - bandit -r pybotics
 - mypy pybotics
+- pipdeptree
 - cat README.rst
 notifications:
   email: false
