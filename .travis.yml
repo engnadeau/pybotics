@@ -1,5 +1,10 @@
+dist: trusty
+sudo: required
+
 language: python
+
 matrix:
+  fast_finish: true
   include:
   - python: 2.7
   - python: 3.2
@@ -11,18 +16,19 @@ matrix:
   - python: 3.6-dev
   - python: 3.7-dev
   - python: nightly
-  fast_finish: true
   allow_failures:
   - python: 2.7
   - python: 3.2
   - python: 3.3
   - python: 3.7-dev
   - python: nightly
+
 before_install:
 - sudo apt-get -qq update
 - sudo apt-get install -qq -y python-numpy
 - sudo apt-get install -qq -y python-scipy
 - sudo apt-get install -qq -y pandoc
+
 install:
 - pip install coveralls
 - pip install codecov
@@ -35,8 +41,10 @@ install:
 - pip install mypy
 - python update_version.py
 - pip install .
+
 script:
 - python setup.py test
+
 after_success:
 - coveralls
 - codecov
@@ -46,8 +54,10 @@ after_success:
 - bandit -r pybotics
 - mypy pybotics
 - cat README.rst
+
 notifications:
   email: false
+
 deploy:
   - provider: pypi
     skip_cleanup: true
