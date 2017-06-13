@@ -52,7 +52,7 @@ after_success:
 - flake8 --show-source pybotics
 - vulture .
 - bandit -r pybotics
-- mypy pybotics
+- mypy --strict pybotics
 - cat README.rst
 
 notifications:
