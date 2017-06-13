@@ -11,4 +11,4 @@ codecov
 pytest-cov
 
 # misc
-pypandoc
+pypandoc==1.4
