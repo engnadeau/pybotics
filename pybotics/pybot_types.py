@@ -1,3 +1,4 @@
+"""Types used in pybotics."""
 from typing import List, Union
 import numpy as np
 
