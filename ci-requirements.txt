@@ -3,7 +3,7 @@ pydocstyle
 flake8
 vulture
 bandit
-mypy
+mypy==0.511
 
 # coverage
 coveralls
