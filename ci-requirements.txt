@@ -7,7 +7,7 @@ mypy
 
 # coverage
 coveralls
-codecov
+codecov==2.0.9
 pytest-cov
 
 # misc
