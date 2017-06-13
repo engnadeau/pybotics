@@ -1,5 +1,5 @@
 dist: trusty
-sudo: required
+sudo: false
 
 language: python
 
@@ -24,8 +24,8 @@ matrix:
   - python: nightly
 
 before_install:
-- sudo apt -qq -y update
-- sudo apt install -qq -y python-numpy python-scipy
+- apt -qq -y update
+- apt install -qq -y python-numpy python-scipy
 
 install:
 - pip install -r ci-requirements.txt
