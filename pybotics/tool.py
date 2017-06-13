@@ -1,8 +1,6 @@
 """Tool module."""
-import numpy as np
-
+import numpy as np  # type: ignore
 from pybotics.exceptions import PybotException
-from pybotics.pybot_types import Vector
 
 
 class Tool:
@@ -11,7 +9,7 @@ class Tool:
     def __init__(self,
                  tcp: np.ndarray = np.eye(4),
                  mass: float = 0,
-                 cg: np.ndarray = np.zeros(3)):
+                 cg: np.ndarray = np.zeros(3)) -> None:
         """
         Construct Tool object.
 
@@ -23,7 +21,7 @@ class Tool:
         self.mass = mass
         self.cg = cg
 
-    def tcp_xyz(self, xyz: Vector):
+    def tcp_xyz(self, xyz: np.ndarray) -> None:
         """
         Set the tool center point (TCP) xyz position.
 

@@ -1,16 +1,16 @@
 """Robot module."""
 from copy import copy, deepcopy
 import itertools
-import numpy as np
-import scipy.optimize
+import numpy as np  # type: ignore
+import scipy.optimize  # type: ignore
 from typing import Tuple, Union, List, Optional
 
 from pybotics.constants import Constant
+from pybotics.pybot_types import RobotBound
 from pybotics.tool import Tool
 from pybotics import exceptions
 from pybotics import geometry
 from pybotics import kinematics
-from pybotics.pybot_types import Vector
 
 
 class Robot:
@@ -20,7 +20,7 @@ class Robot:
                  robot_model: np.ndarray,
                  tool: Tool = Tool(),
                  world_frame: np.ndarray = None,
-                 name: str = 'Pybot'):
+                 name: str = 'Pybot') -> None:
         """Construct a Robot object.
 
         :param robot_model: Modified Denavit-Hartenberg (MDH) parameters, size=[number of joints, 4]
@@ -41,7 +41,7 @@ class Robot:
         self._joint_angle_limits = [(-np.pi, np.pi)] * self.num_dof()
 
     @property
-    def joint_angles(self) -> Vector:
+    def joint_angles(self) -> np.ndarray:
         """Get current joint angles.
 
         :return: joint angles [rad]
@@ -49,7 +49,7 @@ class Robot:
         return self._joint_angles
 
     @joint_angles.setter
-    def joint_angles(self, value: Vector):
+    def joint_angles(self, value: np.ndarray) -> None:
         """Set current joint angles.
 
         :param value: vector of joint angles [rad]
@@ -70,7 +70,7 @@ class Robot:
         return self._joint_angle_limits
 
     @joint_angle_limits.setter
-    def joint_angle_limits(self, value: List[Tuple[float, float]]):
+    def joint_angle_limits(self, value: List[Tuple[float, float]]) -> None:
         """Set joint angle limits.
 
         :param value: sequence of joint angle limits [rad]
@@ -81,7 +81,7 @@ class Robot:
         self._joint_angle_limits = value
 
     @property
-    def joint_compliance(self) -> Vector:
+    def joint_compliance(self) -> np.ndarray:
         """Get joint stiffnesses.
 
         :return: sequence of joint stiffnesses [rad/N-mm]
@@ -89,7 +89,7 @@ class Robot:
         return self._joint_stiffness
 
     @joint_compliance.setter
-    def joint_compliance(self, value: Vector):
+    def joint_compliance(self, value: np.ndarray) -> None:
         """Set joint stiffnesses.
 
         :param value: sequence of joint stiffnesses [rad/N-mm]
@@ -100,7 +100,7 @@ class Robot:
         self._joint_stiffness = value
 
     @property
-    def joint_torques(self) -> Vector:
+    def joint_torques(self) -> np.ndarray:
         """Get current joint torques.
 
         :return: sequence of joint torques [N-mm]
@@ -108,7 +108,7 @@ class Robot:
         return self._joint_torques
 
     @joint_torques.setter
-    def joint_torques(self, value: Vector):
+    def joint_torques(self, value: np.ndarray) -> None:
         """Set current joint torques.
 
         :param value: sequence of joint torques [N-mm]
@@ -118,7 +118,7 @@ class Robot:
             raise exceptions.PybotException
         self._joint_torques = value
 
-    def validate_joint_angles(self, joint_angles: Vector) -> bool:
+    def validate_joint_angles(self, joint_angles: np.ndarray) -> bool:
         """Validate a sequence of joint angles with respect to current limits.
 
         :param joint_angles: sequence of joint angles [rad]
@@ -181,19 +181,19 @@ class Robot:
         :param optimization_mask: sequence of booleans describing desired parameters
         :return: sequence of parameters
         """
-        parameters = itertools.chain(
+        parameters = list(itertools.chain(
             geometry.pose_2_xyzrpw(self.world_frame),
             self.robot_model.ravel(),
             geometry.pose_2_xyzrpw(self.tool.tcp),
             self.joint_compliance
-        )
+        ))
         parameters = list(itertools.compress(parameters, optimization_mask))
 
         return parameters
 
     def apply_optimization_vector(self,
                                   optimization_vector: List[float],
-                                  optimization_mask: List[bool]):
+                                  optimization_mask: List[bool]) -> None:
         """Apply an optimization vector to the Robot.
 
         :param optimization_vector: sequence of parameters
@@ -274,11 +274,11 @@ class Robot:
 
     def generate_parameter_bounds(self,
                                   optimization_mask: List[bool],
-                                  world_bounds: List[Tuple[float, float]] = None,
-                                  robot_model_bounds: List[Tuple[float, float]] = None,
-                                  tool_bounds: List[Tuple[float, float]] = None,
-                                  joint_compliance_bounds: List[Tuple[float, float]] = None
-                                  ) -> List[Tuple[float, float]]:
+                                  world_bounds: RobotBound = None,
+                                  robot_model_bounds: RobotBound = None,
+                                  tool_bounds: RobotBound = None,
+                                  joint_compliance_bounds: RobotBound = None
+                                  ) -> RobotBound:
         """
         Generate optimization bounds.
 
@@ -296,18 +296,18 @@ class Robot:
         joint_compliance_bounds = [(
             None, None)] * self.num_dof() if joint_compliance_bounds is None else joint_compliance_bounds
 
-        bounds = itertools.chain(
+        bounds = list(itertools.chain(
             world_bounds,
             robot_model_bounds,
             tool_bounds,
             joint_compliance_bounds
-        )
+        ))
 
         bounds = list(itertools.compress(bounds, optimization_mask))
 
         return bounds
 
-    def ik(self, pose: np.ndarray) -> Optional[Vector]:
+    def ik(self, pose: np.ndarray) -> Optional[np.ndarray]:
         """
         Calculate iteratively the inverse kinematics for a given pose.
 
@@ -361,7 +361,7 @@ class Robot:
         wrench = np.hstack((force, moment))
         return wrench
 
-    def calculate_external_wrench_joint_torques(self, wrench: Vector) -> List[float]:
+    def calculate_external_wrench_joint_torques(self, wrench: np.ndarray) -> List[float]:
         """
         Calculate the joint torques due to external force applied to the flange frame.
 
@@ -402,7 +402,7 @@ class Robot:
         # reverse torques into correct order
         return list(reversed(joint_torques))
 
-    def random_joints(self):
+    def random_joints(self) -> None:
         """
         Set random joint angle values within the limits.
 
@@ -414,7 +414,7 @@ class Robot:
         self.joint_angles = joint_angles
 
 
-def _ik_fit_func(joint_angles: Vector,
+def _ik_fit_func(joint_angles: np.ndarray,
                  robot: Robot,
                  pose: np.ndarray) -> np.ndarray:
     """Fitness function used internally for the inverse kinematics.

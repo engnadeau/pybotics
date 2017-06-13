@@ -1,16 +1,15 @@
 """Calibration functions and utilities."""
-import numpy as np
+import numpy as np  # type: ignore
 from typing import List
 
 from pybotics.robot import Robot
 from pybotics import exceptions
-from pybotics.pybot_types import Vector
 
 
 def compute_absolute_errors(robot: Robot,
-                            joints: List[Vector],
-                            torques: List[Vector],
-                            positions: List[Vector]) -> np.ndarray:
+                            joints: List[np.ndarray],
+                            torques: List[np.ndarray],
+                            positions: List[np.ndarray]) -> np.ndarray:
     """Compute absolute forward kinematic position errors.
 
     All positions must be in the same world frame as the robot.
