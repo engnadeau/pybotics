@@ -28,8 +28,8 @@ before_install:
 - sudo apt install -qq -y python-numpy python-scipy
 
 install:
-- python update_version.py
 - pip install -r ci-requirements.txt
+- python update_version.py
 - pip install .
 
 script:
