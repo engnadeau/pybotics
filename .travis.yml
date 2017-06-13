@@ -51,7 +51,7 @@ after_success:
 - pydocstyle pybotics
 - flake8 --show-source pybotics
 - vulture .
-- bandit -r pybotics
+- bandit -r -v pybotics
 - mypy pybotics
 - cat README.rst
 
