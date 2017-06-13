@@ -1,9 +1,20 @@
 import pypandoc
 import os
+import logging
 
-print('Pandoc version: {}'.format(pypandoc.get_pandoc_version()))
-print('Pandoc path: {}'.format(pypandoc.get_pandoc_path()))
-print('Pandoc formats: {}'.format(pypandoc.get_pandoc_formats()))
+logging.basicConfig(level=logging.INFO)
 
-file_path = os.path.abspath(os.path.dirname(__file__))
-pypandoc.convert_file('README.md', 'rst', outputfile=os.path.join(file_path, 'README.rst'))
+logging.info('Converting markdown README to RST for PyPI')
+logging.info('Pandoc version:\t{}'.format(pypandoc.get_pandoc_version()))
+
+root_path = os.path.dirname(__file__)
+logging.info('Root path:\t{}'.format(root_path))
+
+input_file = os.path.join(root_path, 'README.md')
+output_file = os.path.join(root_path, 'README.rst')
+
+logging.info('Input file:\t{}'.format(input_file))
+logging.info('Output file:\t{}'.format(output_file))
+
+pypandoc.convert_file(input_file, 'rst', outputfile=os.path.join(root_path, output_file))
+logging.info('Conversion complete')
