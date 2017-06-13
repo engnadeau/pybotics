@@ -29,6 +29,7 @@ before_install:
 
 install:
 - pip install -r ci-requirements.txt
+- python update_version.py
 - pip install .
 
 script:
@@ -43,7 +44,6 @@ after_success:
 - bandit -r pybotics
 - mypy pybotics
 - cat README.rst
-- python update_version.py
 
 notifications:
   email: false
