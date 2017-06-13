@@ -44,6 +44,7 @@ install:
 
 script:
 - python setup.py test
+- bandit -r -v pybotics
 
 after_success:
 - coveralls
@@ -51,7 +52,6 @@ after_success:
 - pydocstyle pybotics
 - flake8 --show-source pybotics
 - vulture .
-- bandit -r -v pybotics
 - mypy pybotics
 - cat README.rst
 
