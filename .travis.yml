@@ -44,12 +44,12 @@ install:
 
 script:
 - python setup.py test
+- flake8 --show-source -v --count --statistics pybotics
 
 after_success:
 - coveralls
 - codecov
 - pydocstyle pybotics
-- flake8 --show-source -v --count --statistics pybotics
 - vulture .
 - bandit -r pybotics
 - mypy pybotics
