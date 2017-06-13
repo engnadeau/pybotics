@@ -48,7 +48,7 @@ script:
 after_success:
 - coveralls
 - codecov
-- pydocstyle pybotics
+- pydocstyle -e -s -v pybotics
 - flake8 --show-source pybotics
 - vulture .
 - bandit -r pybotics
