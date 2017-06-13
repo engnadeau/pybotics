@@ -8,7 +8,7 @@ mypy
 # coverage
 coveralls
 codecov
-pytest-cov
+pytest-cov==2.5.1
 
 # misc
 pypandoc
