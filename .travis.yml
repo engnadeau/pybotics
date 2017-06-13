@@ -49,7 +49,7 @@ after_success:
 - coveralls
 - codecov
 - pydocstyle pybotics
-- flake8 --show-source pybotics
+- flake8 --show-source -v --count --statistics pybotics
 - vulture .
 - bandit -r pybotics
 - mypy pybotics
