@@ -45,11 +45,11 @@ install:
 script:
 - python setup.py test
 - bandit -r -v pybotics
+- pydocstyle -e -s -v pybotics
 
 after_success:
 - coveralls
 - codecov
-- pydocstyle pybotics
 - flake8 --show-source pybotics
 - vulture .
 - mypy pybotics
