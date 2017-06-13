@@ -1,5 +1,5 @@
 # tests
-pydocstyle
+pydocstyle==2.0.0
 flake8
 vulture
 bandit
