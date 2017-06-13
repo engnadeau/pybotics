@@ -53,6 +53,7 @@ after_success:
 - vulture .
 - bandit -r pybotics
 - mypy pybotics
+- python convert_readme.py
 - cat README.rst
 
 notifications:
