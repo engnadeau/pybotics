@@ -1,3 +1,4 @@
+"""Kinematic functions and utilities."""
 import math
 import numpy as np
 
@@ -5,7 +6,7 @@ from pybotics.pybot_types import Vector
 
 
 def forward_transform(mdh_parameters: Vector) -> np.ndarray:
-    """Returns the Modified Denavit-Hartenberg (MDH) 4x4 matrix for a robot link (Craig 1986).
+    """Return the Modified Denavit-Hartenberg (MDH) 4x4 matrix for a robot link (Craig 1986).
 
     Angular arguments are in radians.
     Calling forward_transform(rx,tx,tz,rz) is the same as using rotx(rx)*transl(tx,0,tx)*rotz(rz)
@@ -13,7 +14,6 @@ def forward_transform(mdh_parameters: Vector) -> np.ndarray:
     :param mdh_parameters: list of MDH paramters: alpha [rad], a [mm], theta [rad], d [mm]
     :return: 4x4 transform
     """
-
     rx, tx, rz, tz = mdh_parameters
 
     crx = math.cos(rx)

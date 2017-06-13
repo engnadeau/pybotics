@@ -1,3 +1,7 @@
-class PybotException(Exception):
-    pass
+"""Exceptions used in pybotics."""
 
+
+class PybotException(Exception):
+    """Pybotics exception base class."""
+    
+    pass
