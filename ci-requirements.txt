@@ -2,7 +2,7 @@
 pydocstyle
 flake8
 vulture
-bandit
+bandit==1.4.0
 mypy
 
 # coverage
