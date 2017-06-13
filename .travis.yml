@@ -44,11 +44,11 @@ install:
 
 script:
 - python setup.py test
+- pydocstyle -e -s -v pybotics
 
 after_success:
 - coveralls
 - codecov
-- pydocstyle -e -s -v pybotics
 - flake8 --show-source pybotics
 - vulture .
 - bandit -r pybotics
