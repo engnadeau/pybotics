@@ -1,0 +1,14 @@
+# tests
+pydocstyle
+flake8
+vulture
+bandit
+mypy
+
+# coverage
+coveralls
+codecov
+pytest-cov
+
+# misc
+pypandoc
