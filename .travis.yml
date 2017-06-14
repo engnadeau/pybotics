@@ -1,5 +1,5 @@
 dist: trusty
-sudo: required
+sudo: false
 
 language: python
 
@@ -23,9 +23,14 @@ matrix:
   - python: 3.7-dev
   - python: nightly
 
-before_install:
-- sudo apt -qq -y update
-- sudo apt install -qq -y python-numpy python-scipy pandoc
+addons:
+  apt:
+    packages:
+    - python-scipy
+    - python3-scipy
+    - python-numpy
+    - python3-numpy
+    - pandoc
 
 install:
 - pip install -r ci-requirements.txt
@@ -36,6 +41,7 @@ install:
 script:
 - python setup.py test
 - mypy --strict pybotics
+- vulture .
 - bandit -r -v pybotics
 - pydocstyle -e -s -v pybotics
 - pipdeptree -w fail -p pybotics
@@ -44,7 +50,6 @@ after_success:
 - coveralls
 - codecov
 - flake8 --show-source pybotics
-- vulture .
 
 notifications:
   email: false
