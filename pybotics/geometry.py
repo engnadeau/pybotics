@@ -1,7 +1,8 @@
 """Geometry functions and utilities."""
 import math
+from typing import Union
+
 import numpy as np  # type: ignore
-from typing import Union, List, Any
 
 from pybotics import exceptions
 
@@ -80,7 +81,7 @@ def pose_2_xyzrpw(pose: np.ndarray) -> np.ndarray:
     return np.array([x, y, z, r, p, w])
 
 
-def wrap_2_pi(angles: Union[np.ndarray, float]) -> Any:  # TODO: should return Union[np.ndarray, float], but mypy error
+def wrap_2_pi(angles: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """
     Recursively wrap given angles to +/- PI.
 
@@ -92,4 +93,4 @@ def wrap_2_pi(angles: Union[np.ndarray, float]) -> Any:  # TODO: should return U
     else:
         angles = np.array(list(map(wrap_2_pi, angles)))
 
-    return angles
+    return angles  # type: ignore
