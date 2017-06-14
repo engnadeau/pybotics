@@ -4,6 +4,7 @@ flake8
 vulture
 bandit
 mypy
+pipdeptree
 
 # coverage
 coveralls
