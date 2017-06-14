@@ -1,6 +1,6 @@
 # tests
+flake8==3.3.0
 pydocstyle==2.0.0
-flake8
 mypy==0.511
 vulture==0.14
 bandit==1.4.0
