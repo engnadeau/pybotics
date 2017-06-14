@@ -2,7 +2,7 @@
 pydocstyle==2.0.0
 flake8
 vulture
-bandit
+bandit==1.4.0
 mypy
 pipdeptree
 
