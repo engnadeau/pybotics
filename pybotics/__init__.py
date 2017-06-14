@@ -7,7 +7,7 @@ from .constants import Constant
 from .tool import Tool
 from .robot import Robot
 
-__all__ = [
+__all__ = (
     'geometry',
     'kinematics',
     'calibration',
@@ -15,4 +15,4 @@ __all__ = [
     'Constant',
     'Tool',
     'Robot'
-]
+)
