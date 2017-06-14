@@ -1,11 +1,11 @@
 # Contributing
 1. Fork it!
 2. Create your feature branch
-3. Follow and include:
-    - PEP 8 coding style guide
-    - Unit tests
-    - Docstrings
-    - PEP 484 type hints
-1. Don't break the current codebase (without good reason)
-1. Have tests for all your code
-5. Submit a pull request :D
+3. Pass all CI tests, including strict:
+    - `mypy` (typing)
+    - `flake8` (PEP8 coding style)
+    - `vulture` (dead code)
+    - `bandit` (security issues)
+    - `pydocstyle` (docstrings)
+    - `pipdeptree` (dependencies)
+4. Submit a pull request
