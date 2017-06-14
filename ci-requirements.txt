@@ -1,9 +1,10 @@
 # tests
-pydocstyle
+pydocstyle==2.0.0
 flake8
 vulture==0.14
-bandit
+bandit==1.4.0
 mypy
+pipdeptree
 
 # coverage
 coveralls
