@@ -24,7 +24,6 @@ matrix:
   - python: nightly
 
 before_install:
-- apt -qq -y update
 - apt install -qq -y python-numpy python-scipy
 
 install:
