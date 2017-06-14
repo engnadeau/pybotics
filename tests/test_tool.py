@@ -23,3 +23,7 @@ def test_xyz(tool):
 
     with pytest.raises(PybotException):
         tool.tcp_xyz(values + values)
+
+
+def test_fixtures():
+    tool_fixture()

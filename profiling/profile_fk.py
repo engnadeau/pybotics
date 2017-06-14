@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import timeit
+import logging
 
 from pybotics import Robot
 
@@ -14,19 +15,28 @@ def load_robot():
     return Robot(np.loadtxt(model_path, delimiter=','))
 
 
-def profile(robot: Robot):
+robot = load_robot()
+
+
+def profile():
     robot.random_joints()
     robot.fk()
 
 
-R = load_robot()
-
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+
+    logging.info('Profiling pybotics forward kinematics')
+    profile()   # use method to avoid vulture linting error
+
     num_calls = int(1e6)
-    time = timeit.timeit(stmt='profile(R)',
-                         setup="from __main__ import profile, load_robot, R",
+    logging.info('Number of calls:\t{}'.format(num_calls))
+
+    time = timeit.timeit(stmt='profile()',
+                         setup="from __main__ import profile",
                          number=num_calls)
-    print('Total time: {} s'.format(time))
     mean_time = time / num_calls
-    print('Mean time: {} s'.format(mean_time))
-    print('Mean time: {} ms'.format(mean_time * 1e3))
+
+    logging.info('Total time:\t{} s'.format(time))
+    logging.info('Mean time:\t{} s'.format(mean_time))
+    logging.info('Mean time:\t{} ms'.format(mean_time * 1e3))

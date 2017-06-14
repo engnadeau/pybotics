@@ -256,3 +256,7 @@ def test_joint_compliance(robot):
     # test too many values
     with pytest.raises(exceptions.PybotException):
         robot.joint_compliance = values + values
+
+
+def test_fixtures():
+    robot_fixture()
