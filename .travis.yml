@@ -35,6 +35,7 @@ install:
 
 script:
 - python setup.py test
+- bandit -r -v pybotics
 - pydocstyle -e -s -v pybotics
 - pipdeptree -w fail -p pybotics
 
@@ -43,7 +44,6 @@ after_success:
 - codecov
 - flake8 --show-source pybotics
 - vulture .
-- bandit -r pybotics
 - mypy pybotics
 
 notifications:
