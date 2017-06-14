@@ -4,7 +4,7 @@ flake8
 vulture
 bandit==1.4.0
 mypy
-pipdeptree
+pipdeptree==0.10.1
 
 # coverage
 coveralls==1.1
