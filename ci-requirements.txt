@@ -1,15 +1,15 @@
 # tests
 flake8==3.3.0
 pydocstyle==2.0.0
-vulture
-bandit
+vulture==0.14
+bandit==1.4.0
 mypy
-pipdeptree
+pipdeptree==0.10.1
 
 # coverage
-coveralls
-codecov
-pytest-cov
+codecov==2.0.9
+coveralls==1.1
+pytest-cov==2.5.1
 
 # misc
-pypandoc
+pypandoc==1.4
