@@ -24,36 +24,26 @@ matrix:
   - python: nightly
 
 before_install:
-- sudo apt-get -qq update
-- sudo apt-get install -qq -y python-numpy
-- sudo apt-get install -qq -y python-scipy
-- sudo apt-get install -qq -y pandoc
+- sudo apt -qq -y update
+- sudo apt install -qq -y python-numpy python-scipy
 
 install:
-- pip install coveralls
-- pip install codecov
-- pip install pytest-cov
-- pip install pydocstyle
-- pip install flake8
-- pip install vulture
-- pip install bandit
-- pip install pypandoc
-- pip install mypy
+- pip install -r ci-requirements.txt
 - python update_version.py
+- python convert_readme.py
 - pip install .
 
 script:
 - python setup.py test
 - vulture .
+- pydocstyle -e -s -v pybotics
 
 after_success:
 - coveralls
 - codecov
-- pydocstyle pybotics
 - flake8 --show-source pybotics
 - bandit -r pybotics
 - mypy pybotics
-- cat README.rst
 
 notifications:
   email: false
