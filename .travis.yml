@@ -30,6 +30,7 @@ before_install:
 install:
 - pip install -r ci-requirements.txt
 - python update_version.py
+- python convert_readme.py
 - pip install .
 
 script:
@@ -44,7 +45,6 @@ after_success:
 - vulture .
 - bandit -r pybotics
 - mypy pybotics
-- cat README.rst
 
 notifications:
   email: false
