@@ -12,5 +12,5 @@ coveralls==1.1
 pytest-cov==2.5.1
 
 # misc
-GitPython
+GitPython==2.1.5
 pypandoc==1.4
