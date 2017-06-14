@@ -4,6 +4,7 @@ import itertools
 import numpy as np
 import scipy.optimize
 from typing import Tuple, Union, List, Optional
+import sympy
 
 from pybotics.constants import Constant
 from pybotics.tool import Tool
@@ -18,7 +19,7 @@ class Robot:
 
     def __init__(self,
                  robot_model: np.ndarray,
-                 tool: Tool = Tool(),
+                 tool: Tool = None,
                  world_frame: np.ndarray = None,
                  name: str = 'Pybot'):
         """Construct a Robot object.
@@ -31,7 +32,7 @@ class Robot:
         # public members
         self.name = name
         self.robot_model = robot_model.reshape((-1, 4))
-        self.tool = tool
+        self.tool = Tool() if tool is None else tool
         self.world_frame = np.eye(4) if world_frame is None else world_frame
 
         # private members
@@ -412,6 +413,59 @@ class Robot:
         for limits in self.joint_angle_limits:
             joint_angles.append(np.random.uniform(min(limits), max(limits)))
         self.joint_angles = joint_angles
+
+    def jacobian(self, is_flange_frame=True):
+        """Calculate the tool jacobian uses symbolic math.
+
+        Method from:
+        5.6 STATIC FORCES IN MANIPULATORS
+        Craig, John J. Introduction to robotics: mechanics and control.
+        Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+
+        :return:
+        """
+
+        theta_prime = sympy.symbols('theta_prime0:{}'.format(self.num_dof()))  # joint velocity
+
+        angular_velocity = [0, 0, theta_prime[0]]
+        linear_velocity = [0, 0, 0]
+        for i in range(1, self.num_dof()):
+            transform = self.calculate_link_transform(i, self.joint_angles[i])
+            rotation = transform.transpose()[:3, :3]
+
+            # linear velocity
+            position = transform[:3, -1]
+            angular_component = np.cross(angular_velocity, position)
+            linear_velocity += angular_component
+            linear_velocity = np.dot(rotation, linear_velocity)
+
+            # angular velocity
+            angular_component = np.dot(rotation, angular_velocity)
+            joint_component = [0, 0, theta_prime[i]]
+            angular_velocity = angular_component + joint_component
+
+        if not is_flange_frame:
+            rotation = self.fk()[:3, :3]
+            linear_velocity = np.dot(rotation, linear_velocity)
+            angular_velocity = np.dot(rotation, angular_velocity)
+
+        velocity_matrix = np.concatenate((linear_velocity.flatten(), angular_velocity.flatten()))
+        velocity_matrix = sympy.Matrix(velocity_matrix)
+
+        jacobian = []
+        for row in velocity_matrix:
+            row = sympy.expand(row)
+            row = sympy.collect(row, theta_prime)
+            coeffs = [row.coeff(v) for v in theta_prime]
+            jacobian.append(coeffs)
+
+        jacobian = np.array(jacobian, dtype=np.float)
+        return jacobian
+
+    def wrench_from_torques(self, torques):
+        inv_tr_jacobian = np.linalg.pinv(self.jacobian().transpose())
+        force = np.dot(inv_tr_jacobian, torques)
+        return force
 
 
 def _ik_fit_func(joint_angles: Vector,
