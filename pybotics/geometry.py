@@ -1,13 +1,13 @@
 """Geometry functions and utilities."""
 import math
-import numpy as np
-from typing import Union, List
+from typing import Union
+
+import numpy as np  # type: ignore
 
 from pybotics import exceptions
-from pybotics.pybot_types import Vector
 
 
-def xyzrpw_2_pose(xyzrpw: Vector) -> np.ndarray:
+def xyzrpw_2_pose(xyzrpw: np.ndarray) -> np.ndarray:
     """
     Calculate the pose from the position and euler angles ([x,y,z,r,p,w] vector).
 
@@ -42,7 +42,7 @@ def xyzrpw_2_pose(xyzrpw: Vector) -> np.ndarray:
     return np.array(transform, dtype=np.float)
 
 
-def pose_2_xyzrpw(pose: np.ndarray) -> List[float]:
+def pose_2_xyzrpw(pose: np.ndarray) -> np.ndarray:
     """
     Calculate the equivalent position and euler angles ([x,y,z,r,p,w] vector) of the given pose.
 
@@ -60,7 +60,7 @@ def pose_2_xyzrpw(pose: np.ndarray) -> List[float]:
     sin_p = pose[0, 2]
 
     if np.isclose([cos_p], [0]):
-        r = 0
+        r = 0.0
         if sin_p > 0:
             p = math.pi / 2
             w = math.atan2(pose[1, 0], -pose[2, 0])
@@ -78,10 +78,10 @@ def pose_2_xyzrpw(pose: np.ndarray) -> List[float]:
         cos_w = pose[0, 0] / cos_p
         w = math.atan2(sin_w, cos_w)
 
-    return [x, y, z, r, p, w]
+    return np.array([x, y, z, r, p, w])
 
 
-def wrap_2_pi(angles: Union[Vector, float]) -> Union[List[float], float]:
+def wrap_2_pi(angles: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """
     Recursively wrap given angles to +/- PI.
 
@@ -91,6 +91,6 @@ def wrap_2_pi(angles: Union[Vector, float]) -> Union[List[float], float]:
     if isinstance(angles, float):
         angles = (angles + np.pi) % (2 * np.pi) - np.pi
     else:
-        angles = list(map(wrap_2_pi, angles))
+        angles = np.array(list(map(wrap_2_pi, angles)))
 
-    return angles
+    return angles  # type: ignore

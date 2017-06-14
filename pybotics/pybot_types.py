@@ -1,5 +1,4 @@
 """Types used in pybotics."""
-from typing import List, Union
-import numpy as np
+from typing import List, Union, Tuple
 
-Vector = Union[List[float], np.ndarray]
+RobotBound = Union[List[Tuple[float, float]], List[Tuple[None, None]]]

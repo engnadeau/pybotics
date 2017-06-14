@@ -365,3 +365,4 @@ ENV/
 .idea
 *.rej
 VERSION
+.mypy_cache/

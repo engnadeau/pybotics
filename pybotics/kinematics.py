@@ -1,11 +1,9 @@
 """Kinematic functions and utilities."""
 import math
-import numpy as np
-
-from pybotics.pybot_types import Vector
+import numpy as np  # type: ignore
 
 
-def forward_transform(mdh_parameters: Vector) -> np.ndarray:
+def forward_transform(mdh_parameters: np.ndarray) -> np.ndarray:
     """Return the Modified Denavit-Hartenberg (MDH) 4x4 matrix for a robot link (Craig 1986).
 
     Angular arguments are in radians.
