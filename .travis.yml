@@ -24,7 +24,7 @@ matrix:
   - python: nightly
 
 before_install:
-- apt install -qq -y python-numpy python-scipy
+- apt install -qq -y python-numpy python-scipy pandoc
 
 install:
 - pip install -r ci-requirements.txt
