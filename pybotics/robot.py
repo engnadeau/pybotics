@@ -380,7 +380,8 @@ class Robot:
         # init output
         joint_torques = [moment[-1]]
 
-        # loop through links from flange to base, each iteration calculates for link i-1
+        # loop through links from flange to base
+        # each iteration calculates for link i-1
         for i, joint_angle in reversed(list(enumerate(self._joint_angles))):
             if i == 0:
                 break

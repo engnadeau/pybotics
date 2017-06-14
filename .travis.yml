@@ -41,6 +41,7 @@ install:
 script:
 - python setup.py test
 - mypy --strict pybotics
+- flake8 --show-source -v --count --statistics pybotics
 - vulture .
 - bandit -r -v pybotics
 - pydocstyle -e -s -v pybotics
@@ -49,7 +50,6 @@ script:
 after_success:
 - coveralls
 - codecov
-- flake8 --show-source pybotics
 
 notifications:
   email: false
