@@ -7,8 +7,8 @@ mypy
 pipdeptree==0.10.1
 
 # coverage
+codecov==2.0.9
 coveralls==1.1
-codecov
 pytest-cov==2.5.1
 
 # misc
