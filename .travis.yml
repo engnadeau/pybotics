@@ -30,20 +30,20 @@ before_install:
 install:
 - pip install -r ci-requirements.txt
 - python update_version.py
+- python convert_readme.py
 - pip install .
 
 script:
 - python setup.py test
+- pydocstyle -e -s -v pybotics
 
 after_success:
 - coveralls
 - codecov
-- pydocstyle pybotics
 - flake8 --show-source pybotics
 - vulture .
 - bandit -r pybotics
 - mypy pybotics
-- cat README.rst
 
 notifications:
   email: false

@@ -1,3 +1,4 @@
+"""Geometry functions and utilities."""
 import math
 import numpy as np
 from typing import Union, List
@@ -7,14 +8,14 @@ from pybotics.pybot_types import Vector
 
 
 def xyzrpw_2_pose(xyzrpw: Vector) -> np.ndarray:
-    """Calculate the pose from the position and euler angles ([x,y,z,r,p,w] vector).
+    """
+    Calculate the pose from the position and euler angles ([x,y,z,r,p,w] vector).
 
     Equivalent to transl(x,y,z)*rotz(w*pi/180)*roty(p*pi/180)*rotx(r*pi/180)
 
     :param xyzrpw:
     :return:
     """
-
     # validate input
     if len(xyzrpw) != 6:
         raise exceptions.PybotException
@@ -42,14 +43,14 @@ def xyzrpw_2_pose(xyzrpw: Vector) -> np.ndarray:
 
 
 def pose_2_xyzrpw(pose: np.ndarray) -> List[float]:
-    """Calculates the equivalent position and euler angles ([x,y,z,r,p,w] vector) of the given pose.
+    """
+    Calculate the equivalent position and euler angles ([x,y,z,r,p,w] vector) of the given pose.
 
     Extract rotation from Rx * Ry * Rz order.
     Decomposes transl(x,y,z)*rotz(w*pi/180)*roty(p*pi/180)*rotx(r*pi/180).
 
     From: Craig, John J. Introduction to robotics: mechanics and control, 2005
     """
-
     x = pose[0, 3]
     y = pose[1, 3]
     z = pose[2, 3]
@@ -81,7 +82,8 @@ def pose_2_xyzrpw(pose: np.ndarray) -> List[float]:
 
 
 def wrap_2_pi(angles: Union[Vector, float]) -> Union[List[float], float]:
-    """Recursively wrap given angles to +/- PI.
+    """
+    Recursively wrap given angles to +/- PI.
 
     :param angles:
     :return:
