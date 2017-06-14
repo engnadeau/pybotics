@@ -4,12 +4,12 @@ flake8
 vulture
 mypy==0.511
 bandit==1.4.0
-pipdeptree
+pipdeptree==0.10.1
 
 # coverage
-coveralls
-codecov
-pytest-cov
+codecov==2.0.9
+coveralls==1.1
+pytest-cov==2.5.1
 
 # misc
-pypandoc
+pypandoc==1.4
