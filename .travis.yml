@@ -25,7 +25,7 @@ matrix:
 
 before_install:
 - sudo apt -qq -y update
-- sudo apt install -qq -y python-numpy python-scipy
+- sudo apt install -qq -y python-numpy python-scipy pandoc
 
 install:
 - pip install -r ci-requirements.txt
