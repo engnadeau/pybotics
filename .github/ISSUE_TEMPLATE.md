@@ -12,6 +12,8 @@
 3.
 
 ## Specifications
+- Pybotics Version:
 - Python Version:
-- Other Versions:
+- Other Package Versions:
 - Platform:
+- Misc:
