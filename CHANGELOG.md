@@ -14,6 +14,8 @@
 
 ## Misc
 - Removed `PyPI` downloads from `README` (deprecated)
+- Simplified `README`
+- Added logo
 - Added `pyup` service
 - Added `QuantifiedCode` service
 - Added `Scrutinizer CI` service
