@@ -26,7 +26,7 @@
 [![Code Climate](https://codeclimate.com/github/nnadeau/pybotics/badges/gpa.svg)](https://codeclimate.com/github/nnadeau/pybotics)
 [![Issue Count](https://codeclimate.com/github/nnadeau/pybotics/badges/issue_count.svg)](https://codeclimate.com/github/nnadeau/pybotics)
 
-# pybotics <img src=robotic-arm.svg height="100">
+# pybotics ![](logo/robotic-arm.png)
 Python Toolbox for Robotics
 
 ## Usage
