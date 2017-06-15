@@ -29,12 +29,6 @@
 # pybotics <img src=robotic-arm.svg height="100">
 Python Toolbox for Robotics
 
-Inspired from [Peter Corke's Robotics Toolbox](http://www.petercorke.com/Robotics_Toolbox.html) for MATLAB.
-
-## Requirements/Compatibility
-- [Python >= 3.4](https://travis-ci.org/nnadeau/pybotics)
-- See [requirements.txt](requirements.txt) for package dependencies
-
 ## Usage
 ### Installation
 ```
@@ -67,9 +61,6 @@ ur10_robot.fk()
 - [Kinematics](https://github.com/nnadeau/pybotics/blob/master/examples/example_kinematics.ipynb)
 - [Calibration](https://github.com/nnadeau/pybotics/blob/master/examples/example_calibration.ipynb)
 - Trajectory and path planning
-
-## Limitations
-- Currently only supports [Modified Denavit–Hartenberg Parameters](https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters#Modified_DH_parameters)
 
 ## References
 - Craig, John J. Introduction to robotics: mechanics and control. Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
