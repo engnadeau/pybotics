@@ -13,4 +13,3 @@ pytest-cov==2.5.1
 
 # misc
 GitPython==2.1.5
-pypandoc==1.4
