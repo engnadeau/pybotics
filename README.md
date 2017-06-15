@@ -48,13 +48,13 @@ robot_model = np.array([
 ], dtype=np.float)
 planar_robot = pybot.Robot(robot_model)
 planar_robot.joint_angles = np.deg2rad([30, 60, 0])
-pose = planar_robot.fk()
+pose = planar_robot.fk() # forward kinematics, returns 4x4 pose transform    
 
 # modern, collaborative, 6-axis robot (UR10 from Universal Robots)
 robot_model = np.loadtxt('ur10-mdh.csv', delimiter=',')
 ur10_robot = pybot.Robot(robot_model)
 ur10_robot.random_joints()
-ur10_robot.fk()
+pose = ur10_robot.fk() # forward kinematics, returns 4x4 pose transform
 ```
 
 ### Applications
