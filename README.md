@@ -26,14 +26,8 @@
 [![Code Climate](https://codeclimate.com/github/nnadeau/pybotics/badges/gpa.svg)](https://codeclimate.com/github/nnadeau/pybotics)
 [![Issue Count](https://codeclimate.com/github/nnadeau/pybotics/badges/issue_count.svg)](https://codeclimate.com/github/nnadeau/pybotics)
 
-# pybotics
+# pybotics ![](logo/robotic-arm.png)
 Python Toolbox for Robotics
-
-Inspired from [Peter Corke's Robotics Toolbox](http://www.petercorke.com/Robotics_Toolbox.html) for MATLAB.
-
-## Requirements/Compatibility
-- [Python >= 3.4](https://travis-ci.org/nnadeau/pybotics)
-- See [requirements.txt](requirements.txt) for package dependencies
 
 ## Usage
 ### Installation
@@ -54,13 +48,13 @@ robot_model = np.array([
 ], dtype=np.float)
 planar_robot = pybot.Robot(robot_model)
 planar_robot.joint_angles = np.deg2rad([30, 60, 0])
-pose = planar_robot.fk()
+pose = planar_robot.fk() # forward kinematics, returns 4x4 pose transform    
 
 # modern, collaborative, 6-axis robot (UR10 from Universal Robots)
 robot_model = np.loadtxt('ur10-mdh.csv', delimiter=',')
 ur10_robot = pybot.Robot(robot_model)
 ur10_robot.random_joints()
-ur10_robot.fk()
+pose = ur10_robot.fk() # forward kinematics, returns 4x4 pose transform
 ```
 
 ### Applications
@@ -68,9 +62,9 @@ ur10_robot.fk()
 - [Calibration](https://github.com/nnadeau/pybotics/blob/master/examples/example_calibration.ipynb)
 - Trajectory and path planning
 
-## Limitations
-- Currently only supports [Modified Denavit–Hartenberg Parameters](https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters#Modified_DH_parameters)
-
 ## References
 - Craig, John J. Introduction to robotics: mechanics and control. Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
 - Corke, Peter. Robotics, vision and control: fundamental algorithms in MATLAB. Vol. 73. Springer, 2011.
+
+---
+<div>Logo made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
