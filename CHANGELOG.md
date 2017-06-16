@@ -1,5 +1,10 @@
-# 0.3.0
-## Travis CI
+## 0.3.1
+### Misc
+- Migrated to pure pandoc README conversion
+- Added GitHub issue and PR templates
+
+## 0.3.0
+### Travis CI
 - Switched to sudo-less containers
 - Upgraded to `ubuntu:trusty`
 - Simplified `pip install` stage with `ci-requirements.txt`
@@ -12,7 +17,7 @@
     - `pydocstyle` (docstrings)
     - `pipdeptree` (dependencies)
 
-## Misc
+### Misc
 - Removed `PyPI` downloads from `README` (deprecated)
 - Simplified `README`
 - Added logo
