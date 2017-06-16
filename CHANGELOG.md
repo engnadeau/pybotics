@@ -1,3 +1,8 @@
+## 0.3.1
+### Misc
+- Migrated to pure pandoc README conversion
+- Added GitHub issue and PR templates
+
 ## 0.3.0
 ### Travis CI
 - Switched to sudo-less containers
