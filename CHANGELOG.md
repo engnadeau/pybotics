@@ -1,3 +1,7 @@
+## 0.3.2
+### Misc
+- Changed relative URL of logo in `README` to absolute link
+
 ## 0.3.1
 ### Misc
 - Migrated to pure pandoc README conversion
