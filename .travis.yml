@@ -61,6 +61,17 @@ deploy:
     skip_cleanup: true
     user: nnadeau
     password:
+      secure: "gN+oTjGRS3snYKcVtgy11GgdKHOVTygRxFLz0GCf0FLgN20FJpaTAq92b4+i1n2akvu+0spIE91UO7Ii39InLR79nJXgJZ8Z1XsRuf8lZ44dkvy/jaUdsMgYeLKGGTXpc/8CdK2DaU4BMSVGNlzIDPg8HySSv1sAAR4kQ070p1Gl/XwT0GvX/r0WrfA023rWlG9HnOnq8c/MtZVRX9SPxxDGv4YhWSZsIAyO6zawbzaOFtmamX2Pc13m1tWftpYtGWWGKW7Kmf9/zW7sbXbcikyKDB66lNyB2ARrN1l9OdRXkjHN457YpMOxAg71azazcim6JdarYtjeVpuS1b98UVReE897uSdylzp1sq99ZMJ5GFpu345K7sShvPH6DCJOQnaoiXQSW60oQ8BqS6NpmxfKsOj3KOXSbbV8S2ygr5FcbTpsxD3d9qOGTo/DcwN2/2nVxXUO6ZjsPCaKNjTFk6Mwv9v17lGQGebq4hG4Za/k5T78B91ELSqDfZ2+x+kJzJ50Vd1yfPayxh4mEyAAqnnVYELuxIbXx+AZjMf9hZyEeKkCIebQU++LVoJraYSdG6YbhX2qBjj4r0/YmcskOrZO3SmEvCsMV/kgZMwEcgH0u/cRxUPkvGKTEgiBtSJ5K9ytG6JmS15nFy6SaYPtXeNnBaAdLtmF6PmEgF2CL4g="
+    server: https://testpypi.python.org/pypi
+    on:
+#      branch: master
+      distributions: sdist bdist_wheel
+      repo: nnadeau/pybotics
+      python: 3.6
+  - provider: pypi
+    skip_cleanup: true
+    user: nnadeau
+    password:
       secure: "xJKEKNbGAlBcC/d6Z+3pRTSLA1KMhtb8ayVbsuyDa0tbmoZij7n6e3xbFx7matI0eB38YXrdP0gVO60T7EruLPlkyJSWlJMF4citdv/v5wnxZjzXTfYHY+4ym9uA+jHpZEyBiQY6Nfoj3FhqMUxXxwG0OI44wrMHFa8wLTHkCNJxRTRh63JyiGddqfwtgrsqiNRS60gVvYf+xjg09YjY4039TuaFf/HMJkJuivpgQBl2IbPxKYiGphNvDwxz2V6h0TrJCR/yK+3mV+2yaBVqSTaNQfmHf+VvUij7YX7POmrmMVif4Oxd1cFQoevnpZOOC7r0Bpg5Ts/bWPQKYn4+bPPm4e0e6Z1dmknLVInVLBGV4NzcbWsTuDqBvxZNOz+R7q9BKI7SVetYb0ZP1ceD5xORk3uNU5ROmPrXYC3+XCnHW8tmuewjFyzy7R62a7bfXBaWUptG0SFNn65KEVJvNE9d17hPpMO49Wmp5dHfp/Yqklr2KI+PZOmET0uvODUqB6F1bIYAShkUDS8Pq3fTu7uX5/wqoQ8kUHTi8xtnzjSnhrYTpbiSroz2rVeuHYlBdXYOoTUwJGN+6w/srijHKyAdUpiQMR7h46L4VIFqoUoq4W0ZiPwfsM3fWsTCtIwMZSH7rQDHWSIOnrAlv93c3kxwmkhsl1pRxHVQ7AwogUg="
     on:
       tags: true
@@ -76,3 +87,4 @@ deploy:
       branch: master
       repo: nnadeau/pybotics
       python: 3.6
+
