@@ -64,7 +64,6 @@ deploy:
       secure: "gN+oTjGRS3snYKcVtgy11GgdKHOVTygRxFLz0GCf0FLgN20FJpaTAq92b4+i1n2akvu+0spIE91UO7Ii39InLR79nJXgJZ8Z1XsRuf8lZ44dkvy/jaUdsMgYeLKGGTXpc/8CdK2DaU4BMSVGNlzIDPg8HySSv1sAAR4kQ070p1Gl/XwT0GvX/r0WrfA023rWlG9HnOnq8c/MtZVRX9SPxxDGv4YhWSZsIAyO6zawbzaOFtmamX2Pc13m1tWftpYtGWWGKW7Kmf9/zW7sbXbcikyKDB66lNyB2ARrN1l9OdRXkjHN457YpMOxAg71azazcim6JdarYtjeVpuS1b98UVReE897uSdylzp1sq99ZMJ5GFpu345K7sShvPH6DCJOQnaoiXQSW60oQ8BqS6NpmxfKsOj3KOXSbbV8S2ygr5FcbTpsxD3d9qOGTo/DcwN2/2nVxXUO6ZjsPCaKNjTFk6Mwv9v17lGQGebq4hG4Za/k5T78B91ELSqDfZ2+x+kJzJ50Vd1yfPayxh4mEyAAqnnVYELuxIbXx+AZjMf9hZyEeKkCIebQU++LVoJraYSdG6YbhX2qBjj4r0/YmcskOrZO3SmEvCsMV/kgZMwEcgH0u/cRxUPkvGKTEgiBtSJ5K9ytG6JmS15nFy6SaYPtXeNnBaAdLtmF6PmEgF2CL4g="
     server: https://testpypi.python.org/pypi
     on:
-#      branch: master
       all_branches: true
       distributions: sdist bdist_wheel
       repo: nnadeau/pybotics
