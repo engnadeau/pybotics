@@ -65,6 +65,7 @@ deploy:
     server: https://testpypi.python.org/pypi
     on:
 #      branch: master
+      all_branches: true
       distributions: sdist bdist_wheel
       repo: nnadeau/pybotics
       python: 3.6
