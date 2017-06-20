@@ -62,6 +62,10 @@ pose = ur10_robot.fk() # forward kinematics, returns 4x4 pose transform
 - [Calibration](https://github.com/nnadeau/pybotics/blob/master/examples/example_calibration.ipynb)
 - Trajectory and path planning
 
+## Development
+- All branches are deployed to [PyPI's Test Site](https://testpypi.python.org/pypi/pybotics/)
+- Only tags on the `master` branch are deployed to [PyPI](https://pypi.python.org/pypi/pybotics) 
+
 ## References
 - Craig, John J. Introduction to robotics: mechanics and control. Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
 - Corke, Peter. Robotics, vision and control: fundamental algorithms in MATLAB. Vol. 73. Springer, 2011.
