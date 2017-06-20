@@ -9,7 +9,7 @@ def strip_links(key, value, format, meta):
 
     # turn links to text
     if key == 'Link':
-        return value[1]
+        return value[0]
 
     # strip raw html, logo, and ruled lines
     if key in ['RawBlock', 'HorizontalRule', 'Image']:
