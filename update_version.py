@@ -31,12 +31,13 @@ travis_pr_branch = os.environ.get('TRAVIS_PULL_REQUEST_BRANCH')
 logging.info('Travis PR branch:\t{}'.format(travis_pr_branch))
 
 travis_tag = os.environ.get('TRAVIS_TAG')
+travis_tag = travis_tag if travis_tag is not None else ''
 logging.info('Travis tag:\t{}'.format(travis_tag))
 
 if len(travis_tag) > 0:
     version = '{}'.format(latest_tag)
 else:
-    version = '{}+{}'.format(latest_tag, short_sha)
+    version = '{}.dev{}'.format(latest_tag, int(short_sha, 16))
 
 logging.info('Package version:\t{}'.format(version))
 
