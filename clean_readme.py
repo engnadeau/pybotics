@@ -4,7 +4,7 @@ from pandocfilters import toJSONFilter
 def strip_links(key, value, format, meta):
     # strip readme badges
     if key == 'Para':
-        if value[0]['t'] == 'Link' and value[0]['c'][1][0]['t'] == 'Image':
+        if value[0]['t'] == 'Link' and value[0]['c'][0][0]['t'] == 'Image':
             return []
 
     # turn links to text
