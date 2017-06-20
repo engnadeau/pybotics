@@ -36,7 +36,9 @@ install:
 - pip install -r ci-requirements.txt
 - python update_version.py
 - pandoc -v
-- pandoc --from=markdown --to=rst --output=README.rst README.md
+- pandoc -s -f markdown_github -t json -o README.json README.md
+- cat README.json
+- pandoc -s -f markdown_github -t json README.md | python clean_readme.py | pandoc -s -f json -t rst -o README.rst
 - cat README.rst
 - pip install .
 
