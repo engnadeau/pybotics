@@ -15,11 +15,14 @@ logging.info('Repo:\t{}'.format(repo))
 latest_tag = repo.tags[-1]
 logging.info('Latest tag:\t{}'.format(latest_tag))
 
-# current_branch = repo.active_branch
-# logging.info('Current branch:\t{}'.format(current_branch))
-
 travis_commit = os.environ.get('TRAVIS_COMMIT')
 logging.info('Travis commit:\t{}'.format(travis_commit))
+
+sha = repo.head.object.hexsha
+logging.info('Last commit sha:\t{}'.format(sha))
+
+short_sha = repo.git.rev_parse(sha, short=4)
+logging.info('Last commit short sha:\t{}'.format(short_sha))
 
 travis_branch = os.environ.get('TRAVIS_BRANCH')
 logging.info('Travis branch:\t{}'.format(travis_branch))
@@ -30,14 +33,7 @@ logging.info('Travis PR branch:\t{}'.format(travis_pr_branch))
 travis_tag = os.environ.get('TRAVIS_TAG')
 logging.info('Travis tag:\t{}'.format(travis_tag))
 
-
-sha = repo.head.object.hexsha
-logging.info('Last commit sha:\t{}'.format(sha))
-
-short_sha = repo.git.rev_parse(sha, short=4)
-logging.info('Last commit short sha:\t{}'.format(short_sha))
-
-if str(current_branch) == 'master':
+if len(travis_tag) > 0:
     version = '{}'.format(latest_tag)
 else:
     version = '{}+{}'.format(latest_tag, short_sha)
