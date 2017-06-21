@@ -44,6 +44,7 @@ install:
 
 script:
 - python setup.py test
+- python examples/test_examples.py
 - mypy --strict pybotics
 - flake8 --show-source -v --count --statistics pybotics
 - vulture .
