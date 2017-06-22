@@ -14,4 +14,7 @@ pytest-cov==2.5.1
 # misc
 GitPython==2.1.5
 pandocfilters==1.4.1
+
+# examples
 jupyter
+pandas
