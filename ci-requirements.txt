@@ -16,5 +16,5 @@ GitPython==2.1.5
 pandocfilters==1.4.1
 
 # examples
+pandas==0.20.2
 jupyter==1.0.0
-pandas
