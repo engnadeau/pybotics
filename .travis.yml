@@ -44,7 +44,7 @@ install:
 
 script:
 - python setup.py test
-- jupyter nbconvert --to script --execute --stdout examples/example_calibration.ipynb | python
+- for F in examples/*.ipynb; do jupyter nbconvert --to script --execute --stdout $F | python; done
 - mypy --strict pybotics
 - flake8 --show-source -v --count --statistics pybotics
 - vulture .
@@ -90,4 +90,3 @@ deploy:
       branch: master
       repo: nnadeau/pybotics
       python: 3.6
-
