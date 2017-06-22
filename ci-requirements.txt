@@ -17,4 +17,4 @@ pandocfilters==1.4.1
 
 # examples
 jupyter
-pandas
+pandas==0.20.2
