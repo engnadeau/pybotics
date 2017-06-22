@@ -44,7 +44,7 @@ install:
 
 script:
 - python setup.py test
-- python examples/test_examples.py
+- jupyter nbconvert --to script --execute --stdout examples/example_calibration.ipynb | python
 - mypy --strict pybotics
 - flake8 --show-source -v --count --statistics pybotics
 - vulture .
