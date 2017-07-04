@@ -366,3 +366,4 @@ ENV/
 *.rej
 VERSION
 .mypy_cache/
+README.rst
