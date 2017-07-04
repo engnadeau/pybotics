@@ -211,7 +211,7 @@ class Robot:
         ))
 
         # update vector wrt optimizations and mask
-        for i, truth in enumerate(optimization_mask):
+        for i, truth in enumerate(optimization_mask):   # TODO: coverage 215->214
             if truth:
                 parameters[i] = optimization_vector.pop(0)
 
@@ -245,22 +245,22 @@ class Robot:
 
         if isinstance(world_mask, bool):
             world_mask = [world_mask] * 6
-        elif len(world_mask) != 6:
+        elif len(world_mask) != 6: # TODO: coverage 248->251
             raise exceptions.PybotException
 
         if isinstance(robot_model_mask, bool):
             robot_model_mask = [robot_model_mask] * self.robot_model.size
-        elif len(robot_model_mask) != self.robot_model.size:
+        elif len(robot_model_mask) != self.robot_model.size: # TODO: coverage 253->256
             raise exceptions.PybotException
 
         if isinstance(tool_mask, bool):
             tool_mask = [tool_mask] * 6
-        elif len(tool_mask) != 6:
+        elif len(tool_mask) != 6: # TODO: coverage 258->261
             raise exceptions.PybotException
 
         if isinstance(joint_compliance_mask, bool):
             joint_compliance_mask = [joint_compliance_mask] * self.num_dof()
-        elif len(joint_compliance_mask) != self.num_dof():
+        elif len(joint_compliance_mask) != self.num_dof(): # TODO: coverage 263->266
             raise exceptions.PybotException
 
         mask = list(itertools.chain(
@@ -325,7 +325,7 @@ class Robot:
 
         # solver variables
         result = None
-        for _ in range(5):
+        for _ in range(5): # TODO: coverage 328->341
             optimize_result = scipy.optimize.least_squares(fun=_ik_fit_func,
                                                            x0=robot.joint_angles,
                                                            args=(robot, pose),
@@ -382,7 +382,7 @@ class Robot:
 
         # loop through links from flange to base
         # each iteration calculates for link i-1
-        for i, joint_angle in reversed(list(enumerate(self._joint_angles))):
+        for i, joint_angle in reversed(list(enumerate(self._joint_angles))): # TODO: coverage 385->404
             if i == 0:
                 break
 
