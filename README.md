@@ -20,7 +20,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/nnadeau/pybotics/badge.svg?branch=master)](https://coveralls.io/github/nnadeau/pybotics?branch=master)
 [![codecov](https://codecov.io/gh/nnadeau/pybotics/branch/master/graph/badge.svg)](https://codecov.io/gh/nnadeau/pybotics)
 
-[![Code Issues](https://www.quantifiedcode.com/api/v1/project/9015d6abef024afea0981992c1041078/badge.svg)](https://www.quantifiedcode.com/app/project/9015d6abef024afea0981992c1041078)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nnadeau/pybotics/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nnadeau/pybotics/?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9d4f77b167874a049e97731181e2b53a)](https://www.codacy.com/app/nicholas-nadeau/pybotics?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nnadeau/pybotics&amp;utm_campaign=Badge_Grade)
 [![Code Climate](https://codeclimate.com/github/nnadeau/pybotics/badges/gpa.svg)](https://codeclimate.com/github/nnadeau/pybotics)
