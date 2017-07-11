@@ -29,6 +29,9 @@ addons:
     - python3-scipy
     - python-numpy
     - python3-numpy
+    - python-wheel
+    - python-wheel-common
+    - python3-wheel
     - pandoc
 
 install:
