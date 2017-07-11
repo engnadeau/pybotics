@@ -274,10 +274,10 @@ class Robot:
 
     def generate_parameter_bounds(self,
                                   optimization_mask: List[bool],
-                                  world_bounds: RobotBound = None,
-                                  robot_model_bounds: RobotBound = None,
-                                  tool_bounds: RobotBound = None,
-                                  joint_compliance_bounds: RobotBound = None
+                                  world_bounds: Union[RobotBound, None] = None,
+                                  robot_model_bounds: Union[RobotBound, None] = None,
+                                  tool_bounds: Union[RobotBound, None] = None,
+                                  joint_compliance_bounds: Union[RobotBound, None] = None
                                   ) -> RobotBound:
         """
         Generate optimization bounds.
