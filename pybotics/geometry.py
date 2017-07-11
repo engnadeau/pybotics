@@ -93,4 +93,4 @@ def wrap_2_pi(angles: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     else:
         angles = np.array(list(map(wrap_2_pi, angles)))
 
-    return angles  # type: ignore
+    return angles
