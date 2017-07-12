@@ -15,7 +15,7 @@
 
 [![Dependency Status](https://www.versioneye.com/user/projects/57d87a4a7129660045cf3a58/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57d87a4a7129660045cf3a58)
 [![Updates](https://pyup.io/repos/github/nnadeau/pybotics/shield.svg)](https://pyup.io/repos/github/nnadeau/pybotics/)
-
+[![Dependency Status](https://dependencyci.com/github/nnadeau/pybotics/badge)](https://dependencyci.com/github/nnadeau/pybotics)
 
 [![Coverage Status](https://coveralls.io/repos/github/nnadeau/pybotics/badge.svg?branch=master)](https://coveralls.io/github/nnadeau/pybotics?branch=master)
 [![codecov](https://codecov.io/gh/nnadeau/pybotics/branch/master/graph/badge.svg)](https://codecov.io/gh/nnadeau/pybotics)
@@ -63,7 +63,7 @@ pose = ur10_robot.fk() # forward kinematics, returns 4x4 pose transform
 
 ## Development
 - All branches are deployed to [PyPI's Test Site](https://testpypi.python.org/pypi/pybotics/)
-- Only tags on the `master` branch are deployed to [PyPI](https://pypi.python.org/pypi/pybotics) 
+- Only tags on the `master` branch are deployed to [PyPI](https://pypi.python.org/pypi/pybotics)
 
 ## References
 - Craig, John J. Introduction to robotics: mechanics and control. Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
