@@ -23,10 +23,6 @@ matrix:
 addons:
   apt:
     packages:
-    - python-numpy
-    - python3-numpy
-    - python-scipy
-    - python3-scipy
     - python-wheel
     - python-wheel-common
     - python3-wheel
