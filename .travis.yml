@@ -23,6 +23,9 @@ matrix:
 addons:
   apt:
     packages:
+    - libopenblas-dev
+    - liblapack-dev
+    - gfortran
     - python-wheel
     - python-wheel-common
     - python3-wheel
