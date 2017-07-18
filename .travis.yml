@@ -24,10 +24,9 @@ matrix:
 addons:
   apt:
     packages:
-    - python-numpy
-    - python3-numpy
-    - python-scipy
-    - python3-scipy
+    - libopenblas-dev
+    - liblapack-dev
+    - gfortran
     - python-wheel
     - python-wheel-common
     - python3-wheel
