@@ -13,8 +13,8 @@ python:
 - 3.6-dev
 - 3.7-dev
 - nightly
-- pypy
-- pypy3
+- pypy-5.8.0
+- pypy3-5.8.0
 
 matrix:
   fast_finish: true
