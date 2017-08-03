@@ -12,7 +12,7 @@
 3.
 
 ## Specifications
-Please run `utilities/system_specifications.py` and paste the output in the code block below...
+Please run `utilities/print_system_specs.py` and paste the output in the code block below...
 ```
 
 ```
