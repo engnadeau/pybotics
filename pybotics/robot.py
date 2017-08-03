@@ -19,8 +19,7 @@ class Robot:
     def __init__(self,
                  robot_model: np.ndarray,
                  tool: Tool = Tool(),
-                 world_frame: np.ndarray = None,
-                 name: str = 'Pybot') -> None:
+                 world_frame: np.ndarray = None) -> None:
         """Construct a Robot object.
 
         :param robot_model: Modified Denavit-Hartenberg (MDH) parameters, size=[number of joints, 4]
@@ -29,7 +28,6 @@ class Robot:
         :param name: robot name
         """
         # public members
-        self.name = name
         self.robot_model = robot_model.reshape((-1, 4))
         self.tool = tool
         self.world_frame = np.eye(4) if world_frame is None else world_frame
