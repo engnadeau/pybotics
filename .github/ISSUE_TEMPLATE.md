@@ -12,8 +12,7 @@
 3.
 
 ## Specifications
-- Pybotics Version:
-- Python Version:
-- Other Package Versions:
-- Platform:
-- Misc:
+Please run `utilities/system_specifications.py` and paste the output in the code block below...
+```
+
+```
