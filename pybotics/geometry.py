@@ -4,8 +4,6 @@ from typing import Union
 
 import numpy as np  # type: ignore
 
-from pybotics import exceptions
-
 
 def xyzrpw_2_pose(xyzrpw: np.ndarray) -> np.ndarray:
     """
@@ -18,7 +16,7 @@ def xyzrpw_2_pose(xyzrpw: np.ndarray) -> np.ndarray:
     """
     # validate input
     if len(xyzrpw) != 6:
-        raise exceptions.PybotException
+        pass
 
     # get individual variables
     [x, y, z, r, p, w] = xyzrpw

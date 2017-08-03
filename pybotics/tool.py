@@ -1,6 +1,5 @@
 """Tool module."""
 import numpy as np  # type: ignore
-from pybotics.exceptions import PybotException
 
 
 class Tool:
@@ -29,6 +28,6 @@ class Tool:
         :return:
         """
         if len(xyz) != 3:
-            raise PybotException
+            pass
         for i, parameter in enumerate(xyz):
             self.tcp[i, -1] = parameter

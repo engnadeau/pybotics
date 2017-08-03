@@ -6,7 +6,6 @@ import os
 from pybotics import Constant
 from pybotics import Robot
 from pybotics import Tool
-from pybotics import exceptions
 from pybotics import geometry
 
 

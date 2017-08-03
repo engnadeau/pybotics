@@ -8,7 +8,6 @@ from typing import Tuple, Union, List, Optional
 from pybotics.constants import Constant
 from pybotics.pybot_types import RobotBound
 from pybotics.tool import Tool
-from pybotics import exceptions
 from pybotics import geometry
 from pybotics import kinematics
 
