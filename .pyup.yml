@@ -1,0 +1,11 @@
+# configure updates globally
+update: all
+
+# configure dependency pinning globally
+pin: True
+
+# update schedule
+schedule: "every day"
+
+# search for requirement files
+search: True
