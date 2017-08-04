@@ -1,7 +1,7 @@
 # tests
 flake8==3.3.0
 pydocstyle==2.0.0
-mypy==0.511
+mypy==0.521
 vulture==0.15
 bandit==1.4.0
 pipdeptree==0.10.1
