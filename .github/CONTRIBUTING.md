@@ -8,4 +8,6 @@
     - `bandit` (security issues)
     - `pydocstyle` (docstrings)
     - `pipdeptree` (dependencies)
-4. Submit a pull request
+4. Update `CHANGELOG.md`
+    - Describe changes under `[Unreleased]` section
+5. Submit a pull request
