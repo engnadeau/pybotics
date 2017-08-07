@@ -22,30 +22,30 @@ def test_compute_absolute_errors(robot):
     torques = []
     positions = []
     for _ in range(100):
-        robot.random_joints()
+        robot.generate_random_joints()
         joints.append(robot.joint_angles)
         torques.append([0] * robot.num_dof())
         positions.append(robot.fk()[:-1, -1])
 
     errors = calibration.compute_absolute_errors(robot=robot,
-                                                 joints=joints,
-                                                 torques=torques,
-                                                 positions=positions)
+                                                 joint_angles=joints,
+                                                 joint_torques=torques,
+                                                 tcp_positions=positions)
     assert len(errors) == len(joints)
     np.testing.assert_allclose(errors, [0] * len(errors))
 
     with pytest.raises(PybotException):
         calibration.compute_absolute_errors(robot=robot,
-                                            joints=joints + joints,
-                                            torques=torques,
-                                            positions=positions)
+                                            joint_angles=joints + joints,
+                                            joint_torques=torques,
+                                            tcp_positions=positions)
     with pytest.raises(PybotException):
         calibration.compute_absolute_errors(robot=robot,
-                                            joints=joints,
-                                            torques=torques + torques,
-                                            positions=positions)
+                                            joint_angles=joints,
+                                            joint_torques=torques + torques,
+                                            tcp_positions=positions)
     with pytest.raises(PybotException):
         calibration.compute_absolute_errors(robot=robot,
-                                            joints=joints,
-                                            torques=torques,
-                                            positions=positions + positions)
+                                            joint_angles=joints,
+                                            joint_torques=torques,
+                                            tcp_positions=positions + positions)

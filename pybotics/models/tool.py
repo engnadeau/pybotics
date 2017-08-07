@@ -1,5 +1,7 @@
 """Tool module."""
-import numpy as np  # type: ignore
+import numpy as np
+
+from pybotics.data_validation import validate_1d_vector, validate_4x4_matrix
 
 
 class Tool:
@@ -16,18 +18,25 @@ class Tool:
         :param mass: mass of tool [kg]
         :param cg: center of gravity xyz position [mm]
         """
+        # validate input
+        validate_4x4_matrix(tcp)
+        validate_1d_vector(cg, 3)
+
         self.tcp = tcp
         self.mass = mass
         self.cg = cg
 
-    def tcp_xyz(self, xyz: np.ndarray) -> None:
+    @property
+    def tcp_xyz(self) -> np.ndarray:
+        return self.tcp[:-1, -1]
+
+    @tcp_xyz.setter
+    def tcp_xyz(self, value: np.ndarray) -> None:
         """
         Set the tool center point (TCP) xyz position.
 
         :param xyz: position [mm]
         :return:
         """
-        if len(xyz) != 3:
-            pass
-        for i, parameter in enumerate(xyz):
-            self.tcp[i, -1] = parameter
+        validate_1d_vector(value, 3)
+        self.tcp[:-1, -1] = value

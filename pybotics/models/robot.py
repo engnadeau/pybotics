@@ -1,41 +1,50 @@
 """Robot module."""
-from copy import copy, deepcopy
 import itertools
+from copy import copy, deepcopy
+from typing import List, Optional
+
 import numpy as np  # type: ignore
 import scipy.optimize  # type: ignore
-from typing import Tuple, Union, List, Optional
 
-from pybotics.constants import Constant
-from pybotics.pybot_types import RobotBound
-from pybotics.tool import Tool
 from pybotics import geometry
 from pybotics import kinematics
+from pybotics.constants import Constant
+from pybotics.data_validation import validate_4x4_matrix, validate_1d_vector
+from pybotics.models.tool import Tool
 
 
 class Robot:
     """Robot class."""
-
+    
     def __init__(self,
                  robot_model: np.ndarray,
-                 tool: Tool = Tool(),
-                 world_frame: np.ndarray = None) -> None:
+                 tool: Optional[Tool] = None,
+                 world_frame: Optional[np.ndarray] = None,
+                 random_state: Optional[np.random.RandomState] = None) -> None:
         """Construct a Robot object.
 
-        :param robot_model: Modified Denavit-Hartenberg (MDH) parameters, size=[number of joints, 4]
+        :param robot_model: Modified Denavit-Hartenberg (MDH) parameters, shape=[number of joints, 4]
         :param tool: tool object
         :param world_frame: 4x4 transformation locating robot base with respect to a reference frame
         :param name: robot name
         """
+        # validate input
+        if robot_model.shape[1] != 4:
+            raise ValueError('Required: robot_model.shape[1] == 4')
+
+        validate_4x4_matrix(world_frame)
+
         # public members
-        self.robot_model = robot_model.reshape((-1, 4))
-        self.tool = tool
+        self.robot_model = robot_model
+        self.tool = Tool() if tool is None else tool
         self.world_frame = np.eye(4) if world_frame is None else world_frame
+        self.random_state = np.random.RandomState() if random_state is None else random_state
 
         # private members
-        self._joint_angles = [0] * self.num_dof()
-        self._joint_torques = [0] * self.num_dof()
-        self._joint_stiffness = [0] * self.num_dof()
-        self._joint_angle_limits = [(-np.pi, np.pi)] * self.num_dof()
+        self._joint_angles = np.zeros(self.num_dof())
+        self._joint_torques = np.zeros(self.num_dof())
+        self._joint_compliances = np.zeros(self.num_dof())
+        self._joint_angle_limits = np.repeat((-np.pi, np.pi), self.num_dof()).reshape((2, -1))
 
     @property
     def joint_angles(self) -> np.ndarray:
@@ -52,14 +61,16 @@ class Robot:
         :param value: vector of joint angles [rad]
         :return:
         """
-        if len(value) != self.num_dof():
-            raise exceptions.PybotException
-        elif not self.validate_joint_angles(value):
-            raise exceptions.PybotException
+
+        validate_1d_vector(value, length=self.num_dof())
+
+        if not self.check_joint_angle_limits(value):
+            raise ValueError('Joint angles outside limits.')
+
         self._joint_angles = value
 
     @property
-    def joint_angle_limits(self) -> List[Tuple[float, float]]:
+    def joint_angle_limits(self) -> np.ndarray:
         """Get current joint angle limits.
 
         :return: sequence of joint angle limits [rad]
@@ -67,34 +78,38 @@ class Robot:
         return self._joint_angle_limits
 
     @joint_angle_limits.setter
-    def joint_angle_limits(self, value: List[Tuple[float, float]]) -> None:
+    def joint_angle_limits(self, value: np.ndarray) -> None:
         """Set joint angle limits.
 
         :param value: sequence of joint angle limits [rad]
         :return:
         """
-        if len(value) != self.num_dof():
-            raise exceptions.PybotException
+        # validate input
+        if not np.array_equal(value.shape, [self.num_dof(), 2]):
+            raise ValueError('Required: value.shape == [{}, 2].'.format(self.num_dof()))
+
+        if np.any(np.greater_equal(value[0, :], value[1, :])):
+            raise ValueError('Required: first row (lower limits) must be less than second row (upper limits).')
+
         self._joint_angle_limits = value
 
     @property
-    def joint_compliance(self) -> np.ndarray:
+    def joint_compliances(self) -> np.ndarray:
         """Get joint stiffnesses.
 
         :return: sequence of joint stiffnesses [rad/N-mm]
         """
-        return self._joint_stiffness
+        return self._joint_compliances
 
-    @joint_compliance.setter
-    def joint_compliance(self, value: np.ndarray) -> None:
+    @joint_compliances.setter
+    def joint_compliances(self, value: np.ndarray) -> None:
         """Set joint stiffnesses.
 
         :param value: sequence of joint stiffnesses [rad/N-mm]
         :return:
         """
-        if len(value) != self.num_dof():
-            raise exceptions.PybotException
-        self._joint_stiffness = value
+        validate_1d_vector(value, length=self.num_dof())
+        self._joint_compliances = value
 
     @property
     def joint_torques(self) -> np.ndarray:
@@ -111,21 +126,20 @@ class Robot:
         :param value: sequence of joint torques [N-mm]
         :return:
         """
-        if len(value) != self.num_dof():
-            raise exceptions.PybotException
+        validate_1d_vector(value, length=self.num_dof())
         self._joint_torques = value
 
-    def validate_joint_angles(self, joint_angles: np.ndarray) -> bool:
+    def check_joint_angle_limits(self, joint_angles: np.ndarray) -> bool:
         """Validate a sequence of joint angles with respect to current limits.
 
         :param joint_angles: sequence of joint angles [rad]
         :return:
         """
-        is_success = True
-        for limit, joint_angle in zip(self.joint_angle_limits, joint_angles):
-            if joint_angle > max(limit) or joint_angle < min(limit):
-                is_success = False
-                break
+        lower_limit_truth = np.greater_equal(joint_angles, self._joint_angle_limits[0, :])
+        upper_limit_truth = np.less_equal(joint_angles, self._joint_angle_limits[1, :])
+
+        is_success = np.all(lower_limit_truth) and np.all(upper_limit_truth)
+
         return is_success
 
     def num_dof(self) -> int:
@@ -133,27 +147,42 @@ class Robot:
 
         :return: number of degrees of freedom
         """
-        return len(self.robot_model)
+        return self.robot_model.shape[0]
 
-    def fk(self) -> np.ndarray:
+    def fk(self,
+           joint_angles: Optional[np.ndarray] = None,
+           joint_torques: Optional[np.ndarray] = None) -> np.ndarray:
         """Calculate the forward kinematic 4x4 pose of the robot wrt the world frame.
 
          Uses the current joint angles and torques.
 
         :return: 4x4 transform
         """
-        # define transform to carry matrix multiplications through joints
-        transform = self.world_frame.copy()
+        # parse input
+        if joint_angles is None:
+            joint_angles = self._joint_angles.copy()  # type: np.ndarray
+        else:
+            self._validate_joint_angles(joint_angles)
 
-        # multiply through the forward transforms of the joints
-        for i, (joint, torque) in enumerate(zip(self._joint_angles, self._joint_torques)):
-            # add the current joint pose to the forward transform
-            transform = np.dot(transform, self.calculate_link_transform(i, joint, torque))
+        if joint_torques is None:
+            joint_torques = self._joint_torques.copy()  # type: np.ndarray
+        else:
+            self._validate_joint_torques(joint_torques)
 
-        # add tool transform
-        transform = np.dot(transform, self.tool.tcp)
+        # collect the needed transforms
+        transforms = [self.world_frame.copy()]
+        # TODO: investigate why pycharm warns here.
+        # noinspection PyArgumentList
+        transforms.extend(list(map(self.calculate_link_transform,
+                                   range(self.num_dof()),
+                                   joint_angles,
+                                   joint_torques)))
+        transforms.append(self.tool.tcp)
 
-        return transform
+        # matrix multiply
+        fk_pose = np.linalg.multi_dot(transforms)
+
+        return fk_pose
 
     def calculate_link_transform(self,
                                  link_index: int,
@@ -168,25 +197,9 @@ class Robot:
         """
         link = self.robot_model[link_index].copy()
         link[2] += joint_angle
-        link[2] += torque * self.joint_compliance[link_index]
+        link[2] += torque * self.joint_compliances[link_index]
         transform = kinematics.forward_transform(link)
         return transform
-
-    def generate_optimization_vector(self, optimization_mask: List[bool]) -> List[float]:
-        """Generate an optimization vector from a given mask.
-
-        :param optimization_mask: sequence of booleans describing desired parameters
-        :return: sequence of parameters
-        """
-        parameters = list(itertools.chain(
-            geometry.pose_2_xyzrpw(self.world_frame),
-            self.robot_model.ravel(),
-            geometry.pose_2_xyzrpw(self.tool.tcp),
-            self.joint_compliance
-        ))
-        parameters = list(itertools.compress(parameters, optimization_mask))
-
-        return parameters
 
     def apply_optimization_vector(self,
                                   optimization_vector: List[float],
@@ -197,14 +210,15 @@ class Robot:
         :param optimization_mask: mask sequence of booleans
         :return:
         """
+        # TODO: review and clean code
         optimization_vector = copy(optimization_vector)
 
         # create parameter vector
         parameters = list(itertools.chain(
-            geometry.pose_2_xyzrpw(self.world_frame),
+            geometry.pose_2_euler_zyx(self.world_frame),
             self.robot_model.ravel(),
-            geometry.pose_2_xyzrpw(self.tool.tcp),
-            self.joint_compliance
+            geometry.pose_2_euler_zyx(self.tool.tcp),
+            self.joint_compliances
         ))
 
         # update vector wrt optimizations and mask
@@ -213,106 +227,29 @@ class Robot:
                 parameters[i] = optimization_vector.pop(0)
 
         # update self wrt new vector
-        self.world_frame = geometry.xyzrpw_2_pose(parameters[:6])
+        self.world_frame = geometry.euler_zyx_2_pose(parameters[:6])
         del parameters[:6]
 
         self.robot_model = np.array(parameters[:self.robot_model.size]).reshape((-1, 4))
         del parameters[:self.robot_model.size]
 
-        self.tool.tcp = geometry.xyzrpw_2_pose(parameters[:6])
+        self.tool.tcp = geometry.euler_zyx_2_pose(parameters[:6])
         del parameters[:6]
 
-        self.joint_compliance = parameters[:self.num_dof()]
+        self.joint_compliances = parameters[:self.num_dof()]
         del parameters[:self.num_dof()]
 
-    def generate_optimization_mask(self,
-                                   world_mask: Union[bool, List[bool]] = False,
-                                   robot_model_mask: Union[bool, List[bool]] = False,
-                                   tool_mask: Union[bool, List[bool]] = False,
-                                   joint_compliance_mask: Union[bool, List[bool]] = False) -> List[bool]:
-        """Generate a mask used for optimization.
-
-        :param world_mask: sequence of booleans representing the world frame parameters
-        :param robot_model_mask: sequence of booleans representing the robot model parameters
-        :param tool_mask: sequence of booleans representing the tool frame parameters
-        :param joint_compliance_mask: sequence of booleans representing the joint compliance parameters
-        :return: optimization mask
-        """
-        # TODO: use namedtuple for masks?
-
-        if isinstance(world_mask, bool):
-            world_mask = [world_mask] * 6
-        elif len(world_mask) != 6:
-            raise exceptions.PybotException
-
-        if isinstance(robot_model_mask, bool):
-            robot_model_mask = [robot_model_mask] * self.robot_model.size
-        elif len(robot_model_mask) != self.robot_model.size:
-            raise exceptions.PybotException
-
-        if isinstance(tool_mask, bool):
-            tool_mask = [tool_mask] * 6
-        elif len(tool_mask) != 6:
-            raise exceptions.PybotException
-
-        if isinstance(joint_compliance_mask, bool):
-            joint_compliance_mask = [joint_compliance_mask] * self.num_dof()
-        elif len(joint_compliance_mask) != self.num_dof():
-            raise exceptions.PybotException
-
-        mask = list(itertools.chain(
-            world_mask,
-            robot_model_mask,
-            tool_mask,
-            joint_compliance_mask
-        ))
-
-        return mask
-
-    def generate_parameter_bounds(self,
-                                  optimization_mask: List[bool],
-                                  world_bounds: Union[RobotBound, None] = None,
-                                  robot_model_bounds: Union[RobotBound, None] = None,
-                                  tool_bounds: Union[RobotBound, None] = None,
-                                  joint_compliance_bounds: Union[RobotBound, None] = None
-                                  ) -> RobotBound:
-        """
-        Generate optimization bounds.
-
-        :param optimization_mask: optimization parameters boolean mask
-        :param world_bounds: world transform bounds
-        :param robot_model_bounds: MDH parameter bounds
-        :param tool_bounds: tool transform bounds
-        :param joint_compliance_bounds: joint compliance bounds
-        :return: optimization bounds
-        """
-        world_bounds = [(None, None)] * 6 if world_bounds is None else world_bounds
-        robot_model_bounds = [(
-            None, None)] * self.robot_model.size if robot_model_bounds is None else robot_model_bounds
-        tool_bounds = [(None, None)] * 6 if tool_bounds is None else tool_bounds
-        joint_compliance_bounds = [(
-            None, None)] * self.num_dof() if joint_compliance_bounds is None else joint_compliance_bounds
-
-        bounds = list(itertools.chain(
-            world_bounds,
-            robot_model_bounds,
-            tool_bounds,
-            joint_compliance_bounds
-        ))
-
-        bounds = list(itertools.compress(bounds, optimization_mask))
-
-        return bounds
-
-    def ik(self, pose: np.ndarray) -> Optional[np.ndarray]:
+    def ik(self,
+           pose: np.ndarray,
+           joint_angles: Optional[np.ndarray] = None) -> Optional[np.ndarray]:
         """
         Calculate iteratively the inverse kinematics for a given pose.
-
-        Uses the current joint angles as a seed value.
 
         :param pose: 4x4 transform of the current tool in the world frame
         :return: sequence of joint angles [rad]
         """
+        # TODO: fix SOLVER
+        # TODO: use given joint angles
         # copy self for iterative solver
         robot = deepcopy(self)
 
@@ -329,22 +266,25 @@ class Robot:
                                                            bounds=bounds)
 
             joint_angles = optimize_result.x
-            if optimize_result.fun.max() < 1e-1 and robot.validate_joint_angles(joint_angles):
+            if optimize_result.fun.max() < 1e-1 and robot.check_joint_angle_limits(joint_angles):
                 result = joint_angles
                 break
             else:
-                robot.random_joints()
+                robot.generate_random_joints()
 
         return result
 
-    def calculate_tool_wrench(self) -> np.ndarray:
+    def calculate_tool_wrench(self,
+                              joint_angles: Optional[np.ndarray] = None,
+                              joint_torques: Optional[np.ndarray] = None) -> np.ndarray:
         """
-        Calculate the wrench (force and moment/torque) generated by the tool in the flange frame.
+        Calculate the wrench (force and moment) generated by the tool in the flange frame.
 
         :return: tool wrench vector (force [N] + torque [N-mm])
         """
+        # TODO: review and clean code
         # find FK, get flange position and weight vector of tool
-        tool_pose = self.fk()
+        tool_pose = self.fk(joint_angles=joint_angles, joint_torques=joint_torques)
         flange_pose = np.dot(tool_pose, np.linalg.inv(self.tool.tcp))
         weight_vector = flange_pose[2, :-1]  # reference frame z-direction wrt flange
         weight_vector /= np.linalg.norm(weight_vector)  # make sure it's a unit vector
@@ -370,6 +310,7 @@ class Robot:
         :param wrench: external wrench (force [N] + torque [N-mm])
         :return: sequence of joint torques [N-mm]
         """
+        # TODO: review and clean code
         # split wrench into components
         force = wrench[:3]
         moment = wrench[-3:]
@@ -400,16 +341,14 @@ class Robot:
         # reverse torques into correct order
         return list(reversed(joint_torques))
 
-    def random_joints(self) -> None:
+    def generate_random_joints(self) -> np.ndarray:
         """
-        Set random joint angle values within the limits.
+        Generate random joint angle values within the limits.
 
         :return:
         """
-        joint_angles = []
-        for limits in self.joint_angle_limits:
-            joint_angles.append(np.random.uniform(min(limits), max(limits)))
-        self.joint_angles = joint_angles
+        return self.random_state.uniform(low=self._joint_angle_limits[0, :],
+                                         high=self._joint_angle_limits[1, :])
 
 
 def _ik_fit_func(joint_angles: np.ndarray,
@@ -422,6 +361,7 @@ def _ik_fit_func(joint_angles: np.ndarray,
     :param pose: 4x4 transform
     :return:
     """
+    # TODO: review and clean code
     joint_angles = geometry.wrap_2_pi(joint_angles)
     robot.joint_angles = joint_angles
     actual_pose = robot.fk()

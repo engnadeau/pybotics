@@ -111,8 +111,8 @@ def test_validate_joint_angles(robot):
         [-10, 20, -30, 40, -50, 191]
     ])
 
-    assert robot.validate_joint_angles(test_joints_list[0])
-    assert not robot.validate_joint_angles(test_joints_list[1])
+    assert robot.check_joint_angle_limits(test_joints_list[0])
+    assert not robot.check_joint_angle_limits(test_joints_list[1])
 
 
 def test_generate_optimization_vector(robot):
@@ -135,10 +135,10 @@ def test_apply_optimization_vector(robot):
     robot.apply_optimization_vector(vector, mask)
 
     parameters = list(itertools.chain(
-        geometry.pose_2_xyzrpw(robot.world_frame),
+        geometry.pose_2_euler_zyx(robot.world_frame),
         robot.robot_model.ravel(),
-        geometry.pose_2_xyzrpw(robot.tool.tcp),
-        robot.joint_compliance
+        geometry.pose_2_euler_zyx(robot.tool.tcp),
+        robot.joint_compliances
     ))
 
     np.testing.assert_allclose(parameters, vector)
@@ -183,7 +183,7 @@ def test_generate_parameter_bounds(robot):
 
 
 def test_random_joints(robot):
-    robot.random_joints()
+    robot.generate_random_joints()
     for limit, joint in zip(robot.joint_angle_limits, robot.joint_angles):
         assert min(limit) < joint
         assert max(limit) > joint
@@ -249,12 +249,12 @@ def test_joint_angle_limits(robot):
 def test_joint_compliance(robot):
     # test regular setting
     values = [0] * robot.num_dof()
-    robot.joint_compliance = values
-    np.testing.assert_allclose(robot.joint_compliance, values)
+    robot.joint_compliances = values
+    np.testing.assert_allclose(robot.joint_compliances, values)
 
     # test too many values
     with pytest.raises(exceptions.PybotException):
-        robot.joint_compliance = values + values
+        robot.joint_compliances = values + values
 
 
 def test_fixtures():

@@ -16,13 +16,13 @@ def test_xyzrpw_2_pose():
         [0, 0, 0, 1]
     ])
 
-    actual_transform = geometry.xyzrpw_2_pose(xyzrpw)
+    actual_transform = geometry.euler_zyx_2_pose(xyzrpw)
     np.testing.assert_allclose(actual=actual_transform,
                                desired=expected_transform,
                                rtol=1e-6, atol=1e-6)
 
     with pytest.raises(exceptions.PybotException):
-        geometry.xyzrpw_2_pose(xyzrpw + xyzrpw)
+        geometry.euler_zyx_2_pose(xyzrpw + xyzrpw)
 
 
 def test_xyzrpw_2_pose_2_xyzrpw_2_pose():
@@ -37,10 +37,10 @@ def test_xyzrpw_2_pose_2_xyzrpw_2_pose():
         for p in angles:
             for w in angles:
                 xyzrpw_original = [x, y, z, r, p, w]
-                pose_original = geometry.xyzrpw_2_pose(xyzrpw_original)
+                pose_original = geometry.euler_zyx_2_pose(xyzrpw_original)
 
-                xyzrpw_result = geometry.pose_2_xyzrpw(pose_original)
-                pose_result = geometry.xyzrpw_2_pose(xyzrpw_result)
+                xyzrpw_result = geometry.pose_2_euler_zyx(pose_original)
+                pose_result = geometry.euler_zyx_2_pose(xyzrpw_result)
 
                 np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
 

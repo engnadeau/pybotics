@@ -1,6 +1,5 @@
 """Kinematic functions and utilities."""
-import math
-import numpy as np  # type: ignore
+import numpy as np
 
 
 def forward_transform(mdh_parameters: np.ndarray) -> np.ndarray:
@@ -14,10 +13,10 @@ def forward_transform(mdh_parameters: np.ndarray) -> np.ndarray:
     """
     rx, tx, rz, tz = mdh_parameters
 
-    crx = math.cos(rx)
-    srx = math.sin(rx)
-    crz = math.cos(rz)
-    srz = math.sin(rz)
+    crx = np.cos(rx)
+    srx = np.sin(rx)
+    crz = np.cos(rz)
+    srz = np.sin(rz)
 
     transform = [
         [crz, -srz, 0, tx],
