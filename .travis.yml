@@ -32,9 +32,6 @@ addons:
     - python3-wheel
     - pandoc
 
-before_install:
-- python $TRAVIS_BUILD_DIR/utilities/print_system_specs.py
-
 install:
 - pip install -r ci-requirements.txt
 - python update_version.py
@@ -93,3 +90,6 @@ deploy:
       branch: master
       repo: nnadeau/pybotics
       python: 3.6
+
+after_script:
+- python $TRAVIS_BUILD_DIR/utilities/print_system_specs.py
