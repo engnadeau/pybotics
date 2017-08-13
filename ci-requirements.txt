@@ -1,5 +1,5 @@
 # tests
-flake8==3.3.0
+flake8==3.4.1
 pydocstyle==2.0.0
 mypy==0.521
 vulture==0.15
