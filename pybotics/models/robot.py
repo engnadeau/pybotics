@@ -1,7 +1,8 @@
 """Robot module."""
 import itertools
+from collections import namedtuple
 from copy import copy, deepcopy
-from typing import List, Optional
+from typing import List, Optional, Union, Iterable
 
 import numpy as np  # type: ignore
 import scipy.optimize  # type: ignore
@@ -10,12 +11,14 @@ from pybotics import geometry
 from pybotics import kinematics
 from pybotics.constants import Constant
 from pybotics.data_validation import validate_4x4_matrix, validate_1d_vector
+
+from pybotics.calibration.optimization_mask import OptimizationMask
 from pybotics.models.tool import Tool
 
 
 class Robot:
     """Robot class."""
-    
+
     def __init__(self,
                  robot_model: np.ndarray,
                  tool: Optional[Tool] = None,
@@ -45,6 +48,24 @@ class Robot:
         self._joint_torques = np.zeros(self.num_dof())
         self._joint_compliances = np.zeros(self.num_dof())
         self._joint_angle_limits = np.repeat((-np.pi, np.pi), self.num_dof()).reshape((2, -1))
+
+        # calibration members
+        self._optimization_mask = OptimizationMask()
+
+    @property
+    def optimization_mask(self):
+        return self._optimization_mask
+
+    @optimization_mask.setter
+    def optimization_mask(self, mask: OptimizationMask):
+        self._optimization_mask = mask
+
+    def generate_optimization_vector(self):
+        # noinspection PyProtectedMember
+        for field in self._optimization_mask._fields:
+            attr = getattr(self, field)
+
+
 
     @property
     def joint_angles(self) -> np.ndarray:

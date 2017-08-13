@@ -1,0 +1,2 @@
+class KinematicChain:
+    pass

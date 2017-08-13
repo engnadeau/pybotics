@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Iterable
 
 import numpy as np
 
@@ -8,7 +8,7 @@ def validate_4x4_matrix(value: np.ndarray):
         raise ValueError('Required: 4x4 matrix.')
 
 
-def validate_1d_vector(value: np.ndarray, length: Optional[int] = None):
+def validate_1d_ndarray(value: np.ndarray, length: Optional[int] = None):
     if value.ndim != 1:
         raise ValueError('Required: 1D ndarray.')
 
