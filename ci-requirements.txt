@@ -2,7 +2,7 @@
 flake8==3.4.1
 pydocstyle==2.0.0
 mypy==0.521
-vulture==0.25
+vulture==0.26
 bandit==1.4.0
 pipdeptree==0.10.1
 
