@@ -15,7 +15,7 @@ pytest-cov==2.5.1
 GitPython==2.1.5
 pandocfilters==1.4.2
 pytest==3.2.1
-setuptools==36.2.7
+setuptools==36.3.0
 
 # examples
 pandas==0.20.3
