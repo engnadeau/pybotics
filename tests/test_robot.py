@@ -3,10 +3,9 @@ import itertools
 import pytest
 import os
 
-from pybotics import Constant
-from pybotics import Robot
-from pybotics import Tool
-from pybotics import geometry
+from pytest import fail
+
+from pybotics.models.robot import Robot
 
 
 @pytest.fixture(name='robot')
@@ -259,3 +258,7 @@ def test_joint_compliance(robot):
 
 def test_fixtures():
     robot_fixture()
+
+
+def test_generate_optimization_vector(robot):
+    robot.generate_optimization_vector()

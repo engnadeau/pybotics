@@ -1,0 +1,1 @@
+for F in examples/*.ipynb; do jupyter nbconvert --to script --execute --stdout $F | python; done

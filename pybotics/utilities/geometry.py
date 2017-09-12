@@ -4,10 +4,8 @@ from typing import Union
 
 import numpy as np  # type: ignore
 
-from pybotics.data_validation import validate_1d_vector, validate_4x4_matrix
 
-
-def euler_zyx_2_pose(vector: np.ndarray) -> np.ndarray:
+def euler_zyx_2_frame(vector: np.ndarray) -> np.ndarray:
     """
     Calculate the pose from the position and euler angles ([x,y,z,rx,ry,rz] vector).
 
@@ -16,9 +14,6 @@ def euler_zyx_2_pose(vector: np.ndarray) -> np.ndarray:
     :param vector:
     :return:
     """
-    # validate input
-    validate_1d_vector(vector, length=6)
-
     # get individual variables
     [x, y, z, rx, ry, rz] = vector
 
@@ -43,7 +38,7 @@ def euler_zyx_2_pose(vector: np.ndarray) -> np.ndarray:
     return np.array(transform, dtype=np.float)
 
 
-def pose_2_euler_zyx(pose: np.ndarray) -> np.ndarray:
+def frame_2_euler_zyx(pose: np.ndarray) -> np.ndarray:
     """
     Calculate the equivalent position and euler angles ([x,y,z,rx,ry,rz] vector) of the given pose.
 

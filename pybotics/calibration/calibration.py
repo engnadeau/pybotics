@@ -1,5 +1,5 @@
 """Calibration functions and utilities."""
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import numpy as np  # type: ignore
 
@@ -92,12 +92,12 @@ def generate_optimization_mask(robot: Robot,
     if isinstance(world_mask, bool):
         world_mask = [world_mask] * 6
     elif len(world_mask) != 6:
-        raise exceptions.PybotException
+        pass
 
     if isinstance(robot_model_mask, bool):
         robot_model_mask = [robot_model_mask] * self.robot_model.size
     elif len(robot_model_mask) != self.robot_model.size:
-        raise exceptions.PybotException
+        pass
 
     if isinstance(tool_mask, bool):
         tool_mask = [tool_mask] * 6
@@ -119,37 +119,37 @@ def generate_optimization_mask(robot: Robot,
     return mask
 
 
-def generate_parameter_bounds(robot: Robot,
-                              optimization_mask: List[bool],
-                              world_bounds: Union[RobotBound, None] = None,
-                              robot_model_bounds: Union[RobotBound, None] = None,
-                              tool_bounds: Union[RobotBound, None] = None,
-                              joint_compliance_bounds: Union[RobotBound, None] = None
-                              ) -> RobotBound:
-    """
-    Generate optimization bounds.
-
-    :param optimization_mask: optimization parameters boolean mask
-    :param world_bounds: world transform bounds
-    :param robot_model_bounds: MDH parameter bounds
-    :param tool_bounds: tool transform bounds
-    :param joint_compliance_bounds: joint compliance bounds
-    :return: optimization bounds
-    """
-    world_bounds = [(None, None)] * 6 if world_bounds is None else world_bounds
-    robot_model_bounds = [(
-        None, None)] * self.robot_model.size if robot_model_bounds is None else robot_model_bounds
-    tool_bounds = [(None, None)] * 6 if tool_bounds is None else tool_bounds
-    joint_compliance_bounds = [(
-        None, None)] * self.num_dof() if joint_compliance_bounds is None else joint_compliance_bounds
-
-    bounds = list(itertools.chain(
-        world_bounds,
-        robot_model_bounds,
-        tool_bounds,
-        joint_compliance_bounds
-    ))
-
-    bounds = list(itertools.compress(bounds, optimization_mask))
-
-    return bounds
+# def generate_parameter_bounds(robot: Robot,
+#                               optimization_mask: List[bool],
+#                               world_bounds: Union[RobotBound, None] = None,
+#                               robot_model_bounds: Union[RobotBound, None] = None,
+#                               tool_bounds: Union[RobotBound, None] = None,
+#                               joint_compliance_bounds: Union[RobotBound, None] = None
+#                               ) -> RobotBound:
+#     """
+#     Generate optimization bounds.
+#
+#     :param optimization_mask: optimization parameters boolean mask
+#     :param world_bounds: world transform bounds
+#     :param robot_model_bounds: MDH parameter bounds
+#     :param tool_bounds: tool transform bounds
+#     :param joint_compliance_bounds: joint compliance bounds
+#     :return: optimization bounds
+#     """
+#     world_bounds = [(None, None)] * 6 if world_bounds is None else world_bounds
+#     robot_model_bounds = [(
+#         None, None)] * self.robot_model.size if robot_model_bounds is None else robot_model_bounds
+#     tool_bounds = [(None, None)] * 6 if tool_bounds is None else tool_bounds
+#     joint_compliance_bounds = [(
+#         None, None)] * self.num_dof() if joint_compliance_bounds is None else joint_compliance_bounds
+#
+#     bounds = list(itertools.chain(
+#         world_bounds,
+#         robot_model_bounds,
+#         tool_bounds,
+#         joint_compliance_bounds
+#     ))
+#
+#     bounds = list(itertools.compress(bounds, optimization_mask))
+#
+#     return bounds

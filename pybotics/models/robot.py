@@ -1,19 +1,11 @@
 """Robot module."""
-import itertools
-from collections import namedtuple
-from copy import copy, deepcopy
-from typing import List, Optional, Union, Iterable
+from typing import Optional, List
 
-import numpy as np  # type: ignore
-import scipy.optimize  # type: ignore
-
-from pybotics import geometry
-from pybotics import kinematics
-from pybotics.constants import Constant
-from pybotics.data_validation import validate_4x4_matrix, validate_1d_vector
-
+import numpy as np
+from pybotics import Tool
 from pybotics.calibration.optimization_mask import OptimizationMask
-from pybotics.models.tool import Tool
+from pybotics.utilities.geometry import frame_2_euler_zyx
+from pybotics.utilities.validation import is_4x4_ndarray
 
 
 class Robot:
@@ -35,7 +27,8 @@ class Robot:
         if robot_model.shape[1] != 4:
             raise ValueError('Required: robot_model.shape[1] == 4')
 
-        validate_4x4_matrix(world_frame)
+        if world_frame is not None:
+            is_4x4_ndarray(world_frame)
 
         # public members
         self.robot_model = robot_model
@@ -65,8 +58,12 @@ class Robot:
         for field in self._optimization_mask._fields:
             attr = getattr(self, field)
 
-
-
+            #
+            if isinstance(attr, Tool):
+                vector = frame_2_euler_zyx(attr.tcp)
+            elif isinstance(attr, np.ndarray):
+                # vector =
+                pass
     @property
     def joint_angles(self) -> np.ndarray:
         """Get current joint angles.
