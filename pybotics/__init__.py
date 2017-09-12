@@ -1,12 +1,12 @@
 """Import pybotics packages."""
 from pybotics.models.tool import Tool
+from pybotics.utilities import kinematics
 from .calibration import calibration
 from .utilities import geometry
-from .kinematics import kinematics
 
 __all__ = (
     'geometry',
-    'kinematics',
+    'utilities.py',
     'calibration',
     'exceptions',
     'Constant',
