@@ -4,20 +4,40 @@ from typing import Optional, List
 import numpy as np
 from pybotics.kinematics.kinematic_chain import KinematicChain
 from pybotics.models.frame import Frame
+
+from pybotics.models.optimizable import Optimizable
 from pybotics.models.tool import Tool
 
 
-class Robot:
-    def __init__(self, kinematic_chain: KinematicChain, tool: Optional[Tool] = None,
-                 world_frame: Optional[Frame] = None) -> None:
+class Robot(KinematicChain, Optimizable):
+    @property
+    def optimization_vector(self):
+        world_vector = self.world_frame.optimization_vector
+        tool_vector = self.tool.optimization_vector
+        robot_vector = np.array(list(compress(self.vector, self.optimization_mask)))
+
+    @optimization_vector.setter
+    def optimization_vector(self, value):
+        pass
+
+    @property
+    def optimization_mask(self):
+        return
+
+    @optimization_mask.setter
+    def optimization_mask(self, value):
+        pass
+
+    def __init__(self, links, tool: Optional[Tool] = None, world_frame: Optional[Frame] = None) -> None:
+        super().__init__(links)
         # public members
-        self.kinematic_chain = kinematic_chain
         self.tool = Tool() if tool is None else tool
         self.world_frame = Frame() if world_frame is None else world_frame
 
         # private members
         self._position = np.zeros(self.num_dof())
         self._position_limits = np.repeat((-np.inf, np.inf), self.num_dof()).reshape((2, -1))
+        self._optimization_mask = OptimizationMask()
 
     @property
     def position(self):
@@ -43,7 +63,7 @@ class Robot:
 
         transforms = [self.world_frame.matrix]
         transforms.extend(self.kinematic_chain.transforms(position))
-        transforms.append(self.tool.tcp.matrix)
+        transforms.append(self.tool.matrix)
 
         pose = np.linalg.multi_dot(transforms)
 

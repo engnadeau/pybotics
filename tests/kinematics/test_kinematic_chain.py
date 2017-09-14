@@ -60,7 +60,7 @@ def test_from_array(kc):
     # TODO: implement __eq__() for kc
     assert len(new_kc.links) == len(kc.links)
     for new_link, link in zip(new_kc.links, kc.links):
-        np.testing.assert_allclose(new_link.vector(), link.vector())
+        np.testing.assert_allclose(new_link.vector, link.vector)
 
 
 def test_from_revolute_mdh(kc):
@@ -69,7 +69,7 @@ def test_from_revolute_mdh(kc):
     # TODO: implement __eq__() for kc
     assert len(new_kc.links) == len(kc.links)
     for new_link, link in zip(new_kc.links, kc.links):
-        np.testing.assert_allclose(new_link.vector(), link.vector())
+        np.testing.assert_allclose(new_link.vector, link.vector)
 
 
 def test_num_dof(kc):

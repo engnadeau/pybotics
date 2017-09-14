@@ -12,9 +12,11 @@ def link_fixture():
 
 
 def test_vector(link):
-    assert len(link.vector()) == len(LINK_PARAMETERS)
-    np.testing.assert_allclose(link.vector(), LINK_PARAMETERS)
+    assert len(link.vector) == len(LINK_PARAMETERS)
+    np.testing.assert_allclose(link.vector, LINK_PARAMETERS)
 
+
+def test_displace(link):
     new_link_parameters = LINK_PARAMETERS.copy()
     new_link_parameters[2] -= np.pi / 2
-    np.testing.assert_allclose(link.vector(-np.pi / 2), new_link_parameters)
+    np.testing.assert_allclose(link.displace(-np.pi / 2), new_link_parameters)

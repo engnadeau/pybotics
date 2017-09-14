@@ -1,9 +1,16 @@
+from itertools import chain
+
 import numpy as np
 from pybotics.kinematics.convention import Convention
 from pybotics.kinematics.revolute_mdh_link import RevoluteMDHLink
+from pybotics.models.vector import Vector
 
 
-class KinematicChain:
+class KinematicChain(Vector):
+    @property
+    def vector(self):
+        return np.array(list(chain(self.links)))
+
     def __init__(self, links) -> None:
         self._links = None
         self.links = links

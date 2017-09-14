@@ -1,3 +1,3 @@
 GitPython==2.1.5
-pytest==3.2.1
-setuptools==36.2.7
+pytest==3.2.2
+setuptools==36.4.0

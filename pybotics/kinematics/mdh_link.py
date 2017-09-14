@@ -1,18 +1,24 @@
+from abc import abstractmethod
+
 import numpy as np
 
 from pybotics.kinematics.convention import Convention
-from pybotics.kinematics.kinematic_pair import KinematicPair
 from pybotics.kinematics.link import Link
 
 
 class MDHLink(Link):
-    def vector(self, position=0):
+    @property
+    def vector(self):
         return np.array([
             self.alpha,
             self.a,
             self.theta,
             self.d
         ])
+
+    @abstractmethod
+    def displace(self, position):
+        pass
 
     def __init__(self, alpha, a, theta, d) -> None:
         super().__init__()
@@ -33,7 +39,7 @@ class MDHLink(Link):
         :return: 4x4 transform
         """
 
-        vector = self.vector(position)
+        vector = self.displace(position)
 
         alpha = vector[0]
         a = vector[1]

@@ -2,18 +2,16 @@ from abc import ABC, abstractmethod
 
 from pybotics.kinematics.convention import Convention
 from pybotics.kinematics.kinematic_pair import KinematicPair
+from pybotics.models.vector import Vector
 
 
-class Link(ABC):
+class Link(Vector):
+    @property
+    @abstractmethod
+    def vector(self):
+        pass
+
     def __init__(self) -> None:
         super().__init__()
         self.convention = Convention.UNDEFINED
         self.kinematic_pair = KinematicPair.UNDEFINED
-
-    @abstractmethod
-    def vector(self, position=0):
-        pass
-
-    @abstractmethod
-    def transform(self, position=0):
-        pass
