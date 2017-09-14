@@ -30,27 +30,17 @@ addons:
     - python-wheel
     - python-wheel-common
     - python3-wheel
-    - pandoc
 
 install:
-- pip install -r ci-requirements.txt
+- pip install -r utilities/ci-requirements/coverage.txt
+- pip install -r utilities/ci-requirements/examples.txt
+- pip install -r utilities/ci-requirements/packaging.txt
+- pip install -r utilities/ci-requirements/static.txt
 - python update_version.py
--
--
--
--
--
 - pip install .
 
 script:
 - python setup.py test
--
--
--
--
--
--
--
 
 after_success:
 - coveralls
