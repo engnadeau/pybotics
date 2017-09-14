@@ -2,5 +2,5 @@ from enum import Enum, unique, auto
 
 
 @unique
-class VectorConvention(Enum):
+class OrientationConvention(Enum):
     EULER_ZYX = auto()

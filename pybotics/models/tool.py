@@ -31,3 +31,11 @@ class Tool:
         self.tcp = Frame() if tcp is None else tcp
         self.mass = mass
         self.cg = cg
+
+    @property
+    def tcp_position(self):
+        return self.tcp.matrix[:-1, -1]
+
+    @tcp_position.setter
+    def tcp_position(self, value):
+        self.tcp.matrix[:-1, -1] = value

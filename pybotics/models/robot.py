@@ -6,7 +6,7 @@ from pybotics import Tool
 from pybotics.calibration.optimization_mask import OptimizationMask
 from pybotics.kinematics.kinematic_chain import KinematicChain
 from pybotics.models.frame import Frame
-from pybotics.utilities.geometry import frame_2_euler_zyx
+from pybotics.utilities.geometry import matrix_2_euler_zyx
 from pybotics.utilities.validation import is_4x4_ndarray
 
 
@@ -43,7 +43,11 @@ class Robot:
 
     def fk(self, position=None):
         position = self.position if position is None else position
-        transforms = []
-        transforms.append(self.world_frame.matrix)
+
+        transforms = [self.world_frame.matrix]
         transforms.extend(self.kinematic_chain.transforms(position))
         transforms.append(self.tool.tcp)
+
+        pose = np.linalg.multi_dot(transforms)
+
+        return pose

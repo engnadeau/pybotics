@@ -1,5 +1,7 @@
 import numpy as np
 
+from pybotics.kinematics.convention import Convention
+from pybotics.kinematics.kinematic_pair import KinematicPair
 from pybotics.kinematics.link import Link
 
 
@@ -13,6 +15,8 @@ class MDHLink(Link):
         ])
 
     def __init__(self, alpha, a, theta, d) -> None:
+        super().__init__()
+        self.convention = Convention.MDH
         self.alpha = alpha
         self.a = a
         self.theta = theta
