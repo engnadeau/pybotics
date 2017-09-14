@@ -6,7 +6,10 @@ logging.basicConfig(level=logging.INFO)
 
 logging.info('Updating package version info')
 
-root_path = os.path.dirname(__file__)
+root_path = os.path.abspath(os.path.join(
+    os.path.dirname(__file__),
+    os.pardir
+))
 logging.info('Root path:\t{}'.format(root_path))
 
 repo = git.Repo(root_path)
