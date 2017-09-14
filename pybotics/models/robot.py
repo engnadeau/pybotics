@@ -2,12 +2,9 @@
 from typing import Optional, List
 
 import numpy as np
-from pybotics import Tool
-from pybotics.calibration.optimization_mask import OptimizationMask
 from pybotics.kinematics.kinematic_chain import KinematicChain
 from pybotics.models.frame import Frame
-from pybotics.utilities.geometry import matrix_2_euler_zyx
-from pybotics.utilities.validation import is_4x4_ndarray
+from pybotics.models.tool import Tool
 
 
 class Robot:
@@ -27,16 +24,16 @@ class Robot:
         return self._position
 
     @position.setter
-    def position(self, position):
-        self._position = position
+    def position(self, value):
+        self._position = value
 
     @property
-    def position(self):
-        return self._position
+    def position_limits(self):
+        return self._position_limits
 
-    @position.setter
-    def position(self, position):
-        self._position = position
+    @position_limits.setter
+    def position_limits(self, value):
+        self._position_limits = value
 
     def num_dof(self):
         return self.kinematic_chain.num_dof()
@@ -46,7 +43,7 @@ class Robot:
 
         transforms = [self.world_frame.matrix]
         transforms.extend(self.kinematic_chain.transforms(position))
-        transforms.append(self.tool.tcp)
+        transforms.append(self.tool.tcp.matrix)
 
         pose = np.linalg.multi_dot(transforms)
 
