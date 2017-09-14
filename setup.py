@@ -1,9 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-with open('README.rst', encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     description = f.read()
 
 with open('VERSION', encoding='utf-8') as f:
@@ -12,7 +12,7 @@ with open('VERSION', encoding='utf-8') as f:
 setup(
     name='pybotics',
     version=version,
-    packages=['pybotics'],
+    packages=find_packages(exclude=['*tests*', 'utilities', 'examples']),
     url='https://github.com/nnadeau/pybotics',
     license='MIT',
     author='Nicholas Nadeau',
