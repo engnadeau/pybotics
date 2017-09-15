@@ -6,6 +6,10 @@ from pybotics.kinematics.link import Link
 
 
 class DHLink(Link):
+    def displace(self, position):
+        # TODO: implement method
+        raise NotImplementedError
+
     def vector(self, position=0):
         return np.array([
             self.alpha,
@@ -23,4 +27,5 @@ class DHLink(Link):
         self.d = d
 
     def transform(self, position=0) -> np.ndarray:
+        # TODO: implement method
         raise NotImplementedError

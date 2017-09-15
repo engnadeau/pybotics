@@ -11,6 +11,10 @@ class Link(Vector):
     def vector(self):
         pass
 
+    @abstractmethod
+    def displace(self, position):
+        pass
+
     def __init__(self) -> None:
         super().__init__()
         self.convention = Convention.UNDEFINED

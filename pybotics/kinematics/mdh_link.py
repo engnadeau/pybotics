@@ -1,12 +1,19 @@
 from abc import abstractmethod
+from warnings import warn
 
 import numpy as np
 
 from pybotics.kinematics.convention import Convention
+from pybotics.kinematics.kinematic_pair import KinematicPair
 from pybotics.kinematics.link import Link
 
 
 class MDHLink(Link):
+    def displace(self, position):
+        warn('{} is not associated with a {}, use a subclass instead'.format(self.__class__.__name__,
+                                                                             KinematicPair.__name__), UserWarning)
+        return self.vector
+
     @property
     def vector(self):
         return np.array([
@@ -15,10 +22,6 @@ class MDHLink(Link):
             self.theta,
             self.d
         ])
-
-    @abstractmethod
-    def displace(self, position):
-        pass
 
     def __init__(self, alpha, a, theta, d) -> None:
         super().__init__()

@@ -1,6 +1,6 @@
 """Robot module."""
-from typing import Optional, List
-
+from typing import Optional
+from itertools import compress
 import numpy as np
 from pybotics.kinematics.kinematic_chain import KinematicChain
 from pybotics.models.frame import Frame
@@ -37,7 +37,6 @@ class Robot(KinematicChain, Optimizable):
         # private members
         self._position = np.zeros(self.num_dof())
         self._position_limits = np.repeat((-np.inf, np.inf), self.num_dof()).reshape((2, -1))
-        self._optimization_mask = OptimizationMask()
 
     @property
     def position(self):
@@ -55,14 +54,11 @@ class Robot(KinematicChain, Optimizable):
     def position_limits(self, value):
         self._position_limits = value
 
-    def num_dof(self):
-        return self.kinematic_chain.num_dof()
-
     def fk(self, position=None):
         position = self.position if position is None else position
 
         transforms = [self.world_frame.matrix]
-        transforms.extend(self.kinematic_chain.transforms(position))
+        transforms.extend(self.transforms(position))
         transforms.append(self.tool.matrix)
 
         pose = np.linalg.multi_dot(transforms)

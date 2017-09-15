@@ -4,10 +4,6 @@ from pybotics.kinematics.mdh_link import MDHLink
 
 
 class RevoluteMDHLink(MDHLink):
-    @property
-    def matrix(self):
-        pass
-
     def __init__(self, alpha, a, theta, d) -> None:
         super().__init__(alpha, a, theta, d)
         self._kinematic_pair = KinematicPair.REVOLUTE

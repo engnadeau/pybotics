@@ -1,5 +1,5 @@
 import numpy as np
-from pytest import fixture
+from pytest import fixture, warns
 
 from pybotics.kinematics.mdh_link import MDHLink
 
@@ -14,8 +14,8 @@ def link_fixture():
 
 
 def test_vector(link):
-    assert len(link.vector()) == len(LINK_PARAMETERS)
-    np.testing.assert_allclose(link.vector(), LINK_PARAMETERS)
+    assert len(link.vector) == len(LINK_PARAMETERS)
+    np.testing.assert_allclose(link.vector, LINK_PARAMETERS)
 
 
 def test_transform(link):
@@ -25,4 +25,5 @@ def test_transform(link):
         0, 0, 1, 30,
         0, 0, 0, 1
     ]).reshape((4, 4))
-    np.testing.assert_allclose(desired=desired_transform, actual=link.transform(), atol=1e-7)
+    with warns(UserWarning):
+        np.testing.assert_allclose(desired=desired_transform, actual=link.transform(), atol=1e-7)

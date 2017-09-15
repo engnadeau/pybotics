@@ -37,10 +37,10 @@ class KinematicChain(Vector):
         else:
             raise ValueError('Supported conventions: {}'.format([e for e in Convention]))
 
-    @staticmethod
-    def from_revolute_mdh(array):
+    @classmethod
+    def from_revolute_mdh(cls, array):
         links = [RevoluteMDHLink(*row) for row in array]
-        return KinematicChain(links)
+        return cls(links)
 
     def num_dof(self):
         return len(self.links)

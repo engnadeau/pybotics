@@ -19,8 +19,8 @@ ROBOT_MDH_PATH = os.path.abspath(os.path.join(
 
 @fixture(name='robot')
 def robot_fixture():
-    kc = KinematicChain.from_revolute_mdh(np.loadtxt(ROBOT_MDH_PATH, delimiter=','))
-    return Robot(kc)
+    robot = Robot.from_revolute_mdh(np.loadtxt(ROBOT_MDH_PATH, delimiter=','))
+    return robot
 
 
 def test_position(robot):
