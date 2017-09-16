@@ -1,8 +1,8 @@
-from enum import Enum, unique, auto
+from enum import unique, IntEnum
 
 
 @unique
-class Convention(Enum):
-    UNDEFINED = auto()
-    MDH = auto(),
-    DH = auto()
+class Convention(IntEnum):
+    UNDEFINED = 0
+    MDH = 1,
+    DH = 2

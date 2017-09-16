@@ -1,8 +1,8 @@
-from enum import Enum, unique, auto
+from enum import IntEnum, unique
 
 
 @unique
-class KinematicPair(Enum):
-    UNDEFINED = auto(),
-    REVOLUTE = auto(),
-    PRISMATIC = auto()
+class KinematicPair(IntEnum):
+    UNDEFINED = 0,
+    REVOLUTE = 1,
+    PRISMATIC = 2
