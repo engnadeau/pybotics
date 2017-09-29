@@ -12,7 +12,7 @@ coveralls==1.2.0
 pytest-cov==2.5.1
 
 # misc
-GitPython==2.1.6
+GitPython==2.1.7
 pandocfilters==1.4.2
 pytest==3.2.2
 setuptools==36.5.0
