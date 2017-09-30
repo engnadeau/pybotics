@@ -61,6 +61,8 @@ class Robot(KinematicChain, Optimizable):
         transforms.extend(self.transforms(position))
         transforms.append(self.tool.matrix)
 
-        pose = np.linalg.multi_dot(transforms)
+        pose = np.eye(4)
+        for t in transforms:
+            pose = np.dot(pose, t)
 
         return pose
