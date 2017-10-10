@@ -1,4 +1,4 @@
-from pybotics.kinematics.kinematic_pair import KinematicPair
+from pybotics.kinematic_pair import KinematicPair
 
 
 def test_unique():

@@ -1,14 +1,10 @@
 """Tool module."""
-from typing import Union
 
 import numpy as np
+from pybotics.frame import Frame
+from pybotics.validation import is_1d_ndarray
 
-from pybotics.models.frame import Frame
-from pybotics.models.matrix import Matrix
-from pybotics.models.optimizable import Optimizable
-from pybotics.models.vector import Vector
-from pybotics.utilities.constant import Constant
-from pybotics.utilities.validation import is_4x4_ndarray, is_1d_ndarray
+from pybotics.constant import Constant
 
 
 class Tool(Frame):

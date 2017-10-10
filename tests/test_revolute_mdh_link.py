@@ -1,7 +1,7 @@
-from pytest import fixture
 import numpy as np
+from pytest import fixture
 
-from pybotics.kinematics.revolute_mdh_link import RevoluteMDHLink
+from pybotics.revolute_mdh_link import RevoluteMDHLink
 
 LINK_PARAMETERS = [0, 10, np.pi / 2, 30]
 

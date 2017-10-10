@@ -3,8 +3,7 @@ import os
 import numpy as np
 from pytest import fixture
 
-from pybotics.kinematics.kinematic_chain import KinematicChain
-from pybotics.models.robot import Robot
+from pybotics.robot import Robot
 
 np.set_printoptions(suppress=True)
 

@@ -1,18 +1,13 @@
 from abc import abstractmethod
-from warnings import warn
-
 import numpy as np
-
-from pybotics.kinematics.convention import Convention
-from pybotics.kinematics.kinematic_pair import KinematicPair
-from pybotics.kinematics.link import Link
+from pybotics.link import Link
+from pybotics.convention import Convention
 
 
 class MDHLink(Link):
-    def displace(self, position):
-        warn('{} is not associated with a {}, use a subclass instead'.format(self.__class__.__name__,
-                                                                             KinematicPair.__name__), UserWarning)
-        return self.vector
+    @abstractmethod
+    def displace(self, position: float) -> np.ndarray:
+        pass
 
     @property
     def vector(self):
@@ -23,7 +18,7 @@ class MDHLink(Link):
             self.d
         ])
 
-    def __init__(self, alpha, a, theta, d) -> None:
+    def __init__(self, alpha: float, a: float, theta: float, d: float) -> None:
         super().__init__()
         self.convention = Convention.MDH
         self.alpha = alpha
@@ -31,7 +26,7 @@ class MDHLink(Link):
         self.theta = theta
         self.d = d
 
-    def transform(self, position=0) -> np.ndarray:
+    def transform(self, position: float = 0) -> np.ndarray:
         """Return the Modified Denavit-Hartenberg (MDH) 4x4 matrix for a robot link (Craig 1986).
 
         Angular arguments are in radians.

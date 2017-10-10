@@ -1,6 +1,6 @@
 import numpy as np
 
-from pybotics.utilities.geometry import wrap_2_pi, euler_zyx_2_matrix, matrix_2_euler_zyx
+from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, matrix_2_euler_zyx
 
 np.set_printoptions(suppress=True)
 

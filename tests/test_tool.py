@@ -1,7 +1,7 @@
 import numpy as np
 from pytest import fixture
 
-from pybotics.models.tool import Tool
+from pybotics.tool import Tool
 
 
 @fixture(name='tool')

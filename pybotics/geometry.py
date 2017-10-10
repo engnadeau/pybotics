@@ -4,7 +4,7 @@ from typing import Union
 
 import numpy as np  # type: ignore
 
-from pybotics.utilities.validation import is_4x4_ndarray
+from pybotics.validation import is_4x4_ndarray
 
 
 def euler_zyx_2_matrix(vector: np.ndarray) -> np.ndarray:

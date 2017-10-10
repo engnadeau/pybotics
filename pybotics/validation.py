@@ -1,9 +1,8 @@
 from typing import Optional
-
 import numpy as np
 
 
-def is_4x4_ndarray(value: np.ndarray):
+def is_4x4_ndarray(value: np.ndarray) -> bool:
     result = isinstance(value, np.ndarray)
 
     if result:
@@ -12,7 +11,7 @@ def is_4x4_ndarray(value: np.ndarray):
     return result
 
 
-def is_1d_ndarray(value: np.ndarray, length: Optional[int] = None):
+def is_1d_ndarray(value: np.ndarray, length: Optional[int] = None) -> bool:
     result = isinstance(value, np.ndarray)
 
     if result:

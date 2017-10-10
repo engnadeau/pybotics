@@ -1,6 +1,6 @@
 import numpy as np
 
-from pybotics.utilities.validation import is_1d_ndarray, is_4x4_ndarray
+from pybotics.validation import is_1d_ndarray, is_4x4_ndarray
 
 
 def test_is_1d_ndarray():

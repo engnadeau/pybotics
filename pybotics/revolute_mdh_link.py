@@ -1,6 +1,8 @@
 from copy import deepcopy
-from pybotics.kinematics.kinematic_pair import KinematicPair
+
 from pybotics.kinematics.mdh_link import MDHLink
+
+from pybotics.kinematic_pair import KinematicPair
 
 
 class RevoluteMDHLink(MDHLink):

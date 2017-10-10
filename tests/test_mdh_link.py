@@ -1,7 +1,7 @@
 import numpy as np
 from pytest import fixture, warns
 
-from pybotics.kinematics.mdh_link import MDHLink
+from pybotics.mdh_link import MDHLink
 
 np.set_printoptions(suppress=True)
 

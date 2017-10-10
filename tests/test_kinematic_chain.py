@@ -1,10 +1,10 @@
-from pytest import fixture, raises
 import numpy as np
-
 from pybotics.kinematics.convention import Convention
 from pybotics.kinematics.dh_link import DHLink
 from pybotics.kinematics.kinematic_chain import KinematicChain
-from pybotics.kinematics.revolute_mdh_link import RevoluteMDHLink
+from pytest import fixture, raises
+
+from pybotics.revolute_mdh_link import RevoluteMDHLink
 
 # three link planar manipulator
 MDH_ARRAY = np.array([
