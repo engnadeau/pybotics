@@ -77,11 +77,11 @@ def matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
     return np.array([x, y, z, rx, ry, rz])
 
 
-def wrap_2_pi(angles: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
+def wrap_2_pi(angle: float) -> float:
     """
     Recursively wrap given angles to +/- PI.
 
-    :param angles:
+    :param angle:
     :return:
     """
-    return (angles + np.pi) % (2 * np.pi) - np.pi
+    return (angle + np.pi) % (2 * np.pi) - np.pi

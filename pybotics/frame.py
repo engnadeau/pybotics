@@ -1,6 +1,6 @@
 from copy import deepcopy
 from itertools import compress
-from typing import Iterable, Union
+from typing import Union, List
 
 import numpy as np  # type: ignore
 from pybotics.matrix import Matrix
@@ -13,11 +13,11 @@ from pybotics.optimizable import Optimizable
 
 class Frame(Optimizable, Vector, Matrix):
     @property
-    def optimization_mask(self) -> Iterable[bool]:
+    def optimization_mask(self) -> List[bool]:
         return self._optimization_mask
 
     @optimization_mask.setter
-    def optimization_mask(self, value: Union[bool, Iterable[bool]]) -> None:
+    def optimization_mask(self, value: Union[bool, List[bool]]) -> None:
         if isinstance(value, bool):
             self._optimization_mask = [value] * Constant.TRANSFORM_VECTOR_LENGTH.value
         else:

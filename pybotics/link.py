@@ -10,9 +10,8 @@ class Link(Vector):
     def __init__(self):
         self._convention = Convention.UNDEFINED
 
-    @property
     @abstractmethod
-    def vector(self) -> np.ndarray:
+    def transform(self, position: float) -> np.ndarray:
         pass
 
     @abstractmethod

@@ -35,7 +35,7 @@ def test_wrap_2_pi():
     test_angles = angles[:, 0]
     expected_angles = angles[:, 1]
 
-    actual_angles = wrap_2_pi(test_angles)
+    actual_angles = np.array(map(wrap_2_pi, test_angles))
     assert len(test_angles) == len(expected_angles)
     assert len(actual_angles) == len(expected_angles)
     np.testing.assert_allclose(actual_angles, expected_angles)

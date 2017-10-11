@@ -1,4 +1,4 @@
-from typing import Iterable, Union
+from typing import Union
 
 import numpy as np  # type:ignore
 from abc import ABC, abstractmethod
@@ -20,10 +20,10 @@ class Optimizable(ABC):
 
     @property
     @abstractmethod
-    def optimization_mask(self) -> Iterable[bool]:
+    def optimization_mask(self) -> List[bool]:
         pass
 
     @optimization_mask.setter  # type: ignore
     @abstractmethod
-    def optimization_mask(self, value: Union[bool, Iterable[bool]]) -> None:
+    def optimization_mask(self, value: Union[bool, List[bool]]) -> None:
         pass
