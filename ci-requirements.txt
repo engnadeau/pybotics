@@ -1,8 +1,8 @@
 # tests
 flake8==3.4.1
-pydocstyle==2.0.0
-mypy==0.521
-vulture==0.25
+pydocstyle==2.1.1
+mypy==0.540
+vulture==0.26
 bandit==1.4.0
 pipdeptree==0.10.1
 
@@ -12,10 +12,10 @@ coveralls==1.2.0
 pytest-cov==2.5.1
 
 # misc
-GitPython==2.1.5
+GitPython==2.1.7
 pandocfilters==1.4.2
-pytest==3.2.1
-setuptools==36.2.7
+pytest==3.2.3
+setuptools==36.6.0
 
 # examples
 pandas==0.20.3
