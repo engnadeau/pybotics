@@ -13,6 +13,9 @@ python:
 - 3.6-dev
 - 3.7-dev
 - nightly
+- pypy-5.7
+- pypy3-2.4
+- pypy3.3-5.5-alpha
 
 matrix:
   fast_finish: true
