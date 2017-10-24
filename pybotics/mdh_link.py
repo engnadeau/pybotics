@@ -1,16 +1,23 @@
 from abc import abstractmethod
-import numpy as np
-from pybotics.link import Link
+from typing import Sequence
+
+import numpy as np  # type: ignore
+
 from pybotics.convention import Convention
+from pybotics.link import Link
 
 
 class MDHLink(Link):
+    @property
+    def convention(self) -> Convention:
+        return Convention.MDH
+
     @abstractmethod
     def displace(self, position: float) -> np.ndarray:
         pass
 
     @property
-    def vector(self):
+    def vector(self) -> np.ndarray:
         return np.array([
             self.alpha,
             self.a,
@@ -18,9 +25,15 @@ class MDHLink(Link):
             self.d
         ])
 
+    @vector.setter
+    def vector(self, value: Sequence) -> None:
+        self.alpha = value[0]
+        self.a = value[1]
+        self.theta = value[2]
+        self.d = value[3]
+
     def __init__(self, alpha: float, a: float, theta: float, d: float) -> None:
         super().__init__()
-        self.convention = Convention.MDH
         self.alpha = alpha
         self.a = a
         self.theta = theta

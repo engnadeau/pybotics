@@ -1,7 +1,4 @@
 """Geometry functions and utilities."""
-import math
-from typing import Union
-
 import numpy as np  # type: ignore
 
 from pybotics.validation import is_4x4_ndarray
@@ -61,18 +58,18 @@ def matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
             ry = np.pi / 2
             rz = np.arctan2(matrix[1, 0], -matrix[2, 0])
         else:
-            ry = -math.pi / 2
-            rz = math.atan2(matrix[1, 0], matrix[2, 0])
+            ry = -np.pi / 2
+            rz = np.arctan2(matrix[1, 0], matrix[2, 0])
     else:
         sin_rx = -matrix[1, 2] / cos_ry
         cos_rx = matrix[2, 2] / cos_ry
-        rx = math.atan2(sin_rx, cos_rx)
+        rx = np.arctan2(sin_rx, cos_rx)
 
-        ry = math.atan2(sin_ry, cos_ry)
+        ry = np.arctan2(sin_ry, cos_ry)
 
         sin_rz = -matrix[0, 1] / cos_ry
         cos_rz = matrix[0, 0] / cos_ry
-        rz = math.atan2(sin_rz, cos_rz)
+        rz = np.arctan2(sin_rz, cos_rz)
 
     return np.array([x, y, z, rx, ry, rz])
 
@@ -84,4 +81,6 @@ def wrap_2_pi(angle: float) -> float:
     :param angle:
     :return:
     """
-    return (angle + np.pi) % (2 * np.pi) - np.pi
+    # TODO: remove float() cast when numpy is supported in mypy
+    result = float((angle + np.pi) % (2 * np.pi) - np.pi)
+    return result

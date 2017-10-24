@@ -1,15 +1,17 @@
 """Tool module."""
 
-import numpy as np
+import numpy as np  # type: ignore
+
+from pybotics.constant import Constant
 from pybotics.frame import Frame
 from pybotics.validation import is_1d_ndarray
-from pybotics.constant import Constant
 
 
 class Tool(Frame):
     """Tool class."""
 
-    def __init__(self, matrix: np.ndarray = None, mass: float = 0, cg: np.ndarray = np.zeros(3)) -> None:
+    def __init__(self, matrix: np.ndarray = None, mass: float = 0,
+                 cg: np.ndarray = np.zeros(3)) -> None:
         super().__init__(matrix)
         self._cg = None
 

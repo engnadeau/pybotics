@@ -1,13 +1,14 @@
 from abc import abstractmethod
 
+import numpy as np  # type: ignore
+
 from pybotics.convention import Convention
 from pybotics.kinematic_pair import KinematicPair
 from pybotics.vector import Vector
-import numpy as np  # type: ignore
 
 
 class Link(Vector):
-    def __init__(self):
+    def __init__(self) -> None:
         self._convention = Convention.UNDEFINED
 
     @abstractmethod
@@ -21,10 +22,6 @@ class Link(Vector):
     @property
     @abstractmethod
     def convention(self) -> Convention:
-        pass
-
-    @convention.setter
-    def convention(self, value: Convention):
         pass
 
     @property

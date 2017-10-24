@@ -1,7 +1,7 @@
-from typing import Union
+from abc import ABC, abstractmethod
+from typing import List
 
 import numpy as np  # type:ignore
-from abc import ABC, abstractmethod
 
 
 class Optimizable(ABC):
@@ -13,17 +13,7 @@ class Optimizable(ABC):
     def optimization_vector(self) -> np.ndarray:
         pass
 
-    @optimization_vector.setter  # type: ignore
-    @abstractmethod
-    def optimization_vector(self, value: np.ndarray) -> None:
-        pass
-
     @property
     @abstractmethod
     def optimization_mask(self) -> List[bool]:
-        pass
-
-    @optimization_mask.setter  # type: ignore
-    @abstractmethod
-    def optimization_mask(self, value: Union[bool, List[bool]]) -> None:
         pass

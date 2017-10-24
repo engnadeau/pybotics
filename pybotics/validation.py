@@ -1,5 +1,6 @@
 from typing import Optional, List
-import numpy as np
+
+import numpy as np  # type: ignore
 
 from pybotics.link import Link
 

@@ -2,22 +2,21 @@
 from itertools import compress
 from typing import Optional, List, Union
 
-import numpy as np
+import numpy as np  # type: ignore
 
-from pybotics.convention import Convention
 from pybotics.frame import Frame
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.link import Link
-from pybotics.optimizable import Optimizable
 from pybotics.tool import Tool
 
 
-class Robot(KinematicChain, Optimizable):
+class Robot(KinematicChain):
     @property
     def optimization_vector(self) -> np.ndarray:
         world_vector = self.world_frame.optimization_vector
         tool_vector = self.tool.optimization_vector
-        robot_vector = np.array(list(compress(self.vector, self.optimization_mask)))
+        robot_vector = np.array(
+            list(compress(self.vector, self.optimization_mask)))
 
         return np.hstack((world_vector, robot_vector, tool_vector))
 
@@ -32,20 +31,23 @@ class Robot(KinematicChain, Optimizable):
     @optimization_mask.setter
     def optimization_mask(self, value: Union[bool, List[bool]]) -> None:
         if isinstance(value, bool):
-            self._optimization_mask = [value] * self.num_dof() * len(self.links[0])
+            self._optimization_mask = [value] * self.num_dof() * len(
+                self.links[0])
         else:
             self._optimization_mask = value
 
-    def __init__(self, links: Union[List[Link], np.ndarray] = None, convention: Convention = None,
-                 tool: Optional[Tool] = None, world_frame: Optional[Frame] = None) -> None:
-        super().__init__(links, convention)
+    def __init__(self, links: List[Link],
+                 tool: Optional[Tool] = None,
+                 world_frame: Optional[Frame] = None) -> None:
+        super().__init__(links)
         # public members
         self.tool = Tool() if tool is None else tool
         self.world_frame = Frame() if world_frame is None else world_frame
 
         # private members
         self._position = np.zeros(self.num_dof())
-        self._position_limits = np.repeat((-np.inf, np.inf), self.num_dof()).reshape((2, -1))
+        self._position_limits = np.repeat((-np.inf, np.inf),
+                                          self.num_dof()).reshape((2, -1))
 
     @property
     def position(self) -> np.ndarray:

@@ -1,39 +1,41 @@
 from itertools import chain
-from typing import Optional, List, Iterable, Union
+from typing import List, Iterable, Any, Sequence
 
-import numpy as np
+import numpy as np  # type: ignore
+
 from pybotics.convention import Convention
 from pybotics.link import Link
-
+from pybotics.optimizable import Optimizable
 from pybotics.revolute_mdh_link import RevoluteMDHLink
 from pybotics.validation import is_same_link_conventions
 from pybotics.vector import Vector
 
 
-class KinematicChain(Vector):
+class KinematicChain(Vector, Optimizable):
     @property
     def vector(self) -> np.ndarray:
         return np.array(list(chain(self.links)))
 
-    def __init__(self, links: Union[List[Link], np.ndarray] = None, convention: Convention = None) -> None:
+    def __init__(self, links: Sequence[Link]) -> None:
         # init private variables
-        self._links = None
+        self._links = links
 
-        if isinstance(links, np.ndarray):
-            if convention is None:
-                raise ValueError('convention must be set if isinstance(links, np.ndarray)')
-            else:
-                if convention is Convention.MDH:
-                    self.links = [RevoluteMDHLink(*row) for row in links]
-                elif convention in Convention:
-                    raise NotImplementedError('{} has not been implemented'.format(convention))
-                else:
-                    raise ValueError('Supported conventions: {}'.format([e for e in Convention]))
+    @classmethod
+    def from_array(cls, array: np.ndarray,
+                   convention: Convention) -> Any:
+        if convention is Convention.MDH:
+            links = [RevoluteMDHLink(*row) for row in array]
+        elif convention in Convention:
+            raise NotImplementedError(
+                '{} has not been implemented'.format(convention))
         else:
-            self.links = links
+            raise ValueError('Supported conventions: {}'.format(
+                [e for e in Convention]))
+
+        return cls(links=links)
 
     @property
-    def links(self) -> List[Link]:
+    def links(self) -> Sequence[Link]:
         return self._links
 
     @links.setter

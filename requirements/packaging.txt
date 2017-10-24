@@ -1,3 +1,4 @@
 GitPython==2.1.7
 pytest==3.2.3
+pytest-runner==2.12.1
 setuptools==36.6.0
