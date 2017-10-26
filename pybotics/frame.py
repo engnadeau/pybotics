@@ -16,11 +16,12 @@ class Frame(Optimizable, Vector):
     def optimization_mask(self) -> List[bool]:
         return self._optimization_mask
 
+    # noinspection PyMethodOverriding
     @optimization_mask.setter
     def optimization_mask(self, value: Union[bool, List[bool]]) -> None:
         if isinstance(value, bool):
-            self._optimization_mask = [
-                                          value] * Constant.TRANSFORM_VECTOR_LENGTH.value
+            self._optimization_mask = \
+                [value] * Constant.TRANSFORM_VECTOR_LENGTH.value
         else:
             self._optimization_mask = value
 
