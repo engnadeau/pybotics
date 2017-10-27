@@ -5,7 +5,8 @@ from typing import Any, Sequence, Union, Sized, Optional
 import numpy as np  # type: ignore
 
 from pybotics.errors import LinkConventionError, LinkSequenceError, \
-    SequenceLengthError
+    SequenceLengthError, KinematicPairError
+from pybotics.kinematic_pair import KinematicPair
 from pybotics.link import Link
 from pybotics.link_convention import LinkConvention
 from pybotics.revolute_mdh_link import RevoluteMDHLink
@@ -58,21 +59,37 @@ class KinematicChain(Sized):
         self.links = updated_links
 
     @staticmethod
-    def array_2_links(array: np.ndarray,
-                      convention: LinkConvention) -> Sequence[Link]:
+    def array_2_links(
+            array: np.ndarray,
+            convention: LinkConvention = LinkConvention.MDH,
+            kinematic_pairs:
+            Union[KinematicPair,
+                  Sequence[KinematicPair]] = KinematicPair.REVOLUTE
+    ) -> Sequence[Link]:
         """
         Generate a sequence of links from a given array of link parameters.
 
+        :param kinematic_pairs:
         :param array: link parameters
         :param convention: link convention
         :return: sequence of links
         """
-        # create link sequences based on convention;
         # vectors are reshaped to a 2D array based
         # on number of parameters per link
+        array = array.reshape((-1, convention.value))
+
+        # default to serial revolute manipulator
+        if isinstance(kinematic_pairs, KinematicPair):
+            kinematic_pairs = [kinematic_pairs] * len(array)
+
+        # create link sequences based on convention;
+        links = []
         if convention is LinkConvention.MDH:
-            links = [RevoluteMDHLink(*row) for row in
-                     array.reshape((-1, LinkConvention.MDH.value))]
+            for row, kp in zip(array, kinematic_pairs):
+                if kp is KinematicPair.REVOLUTE:
+                    links.append(RevoluteMDHLink(*row))
+                else:
+                    raise KinematicPairError()
         else:
             raise LinkConventionError()
 
@@ -88,16 +105,21 @@ class KinematicChain(Sized):
         return self.links[0].convention
 
     @classmethod
-    def from_array(cls, array: np.ndarray,
-                   convention: LinkConvention) -> Any:
+    def from_array(
+            cls, array: np.ndarray,
+            link_convention: LinkConvention = LinkConvention.MDH,
+            kinematic_pairs: Union[
+                KinematicPair,
+                Sequence[KinematicPair]] = KinematicPair.REVOLUTE) -> Any:
         """
         Generate a kinematic chain from a given array of link parameters.
 
         :param array: link parameters
-        :param convention: link convention
+        :param link_convention:
+        :param kinematic_pairs:
         :return: kinematic chain instance
         """
-        return cls(links=cls.array_2_links(array, convention))
+        return cls(cls.array_2_links(array, link_convention, kinematic_pairs))
 
     @property
     def links(self) -> Sequence[Link]:

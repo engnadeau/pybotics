@@ -12,4 +12,4 @@ class KinematicPair(IntEnum):
 
     UNDEFINED = 0,
     REVOLUTE = 1,
-    PRISMATIC = 2
+    # TODO: add PRISMATIC = 2

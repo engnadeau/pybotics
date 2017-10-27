@@ -1,6 +1,7 @@
 """Pybotics errors."""
 from typing import Optional
 
+from pybotics.kinematic_pair import KinematicPair
 from pybotics.link_convention import LinkConvention
 from pybotics.orientation_convention import OrientationConvention
 
@@ -30,32 +31,11 @@ class PyboticsError(Exception):
             return self.message
 
 
-class SequenceLengthError(PyboticsError):
-    """Inappropriate sequence length."""
+class KinematicPairError(PyboticsError):
+    """Inappropriate KinematicPair."""
 
-    def __init__(self, name: str, required_length: int) -> None:
-        """
-        Construct exception.
-
-        :param name: name of parameter causing error
-        :param required_length: required length of parameter
-        """
-        message = '{} must be a ndarray with len=={}'.format(name,
-                                                             required_length)
-        super().__init__(message)
-
-
-class Matrix4x4Error(PyboticsError):
-    """Inappropriate matrix value."""
-
-    def __init__(self, name: str) -> None:
-        """
-        Construct exception.
-
-        :param name: name of parameter causing error
-        """
-        message = '{} must be a 4x4 ndarray'.format(name)
-        super().__init__(message)
+    _default_message = 'Supported pairs: {}'.format(
+        [e.name for e in KinematicPair])
 
 
 class LinkConventionError(PyboticsError):
@@ -71,8 +51,36 @@ class LinkSequenceError(PyboticsError):
     _default_message = 'All links must use the same convention'
 
 
+class Matrix4x4Error(PyboticsError):
+    """Inappropriate matrix value."""
+
+    def __init__(self, name: str) -> None:
+        """
+        Construct exception.
+
+        :param name: name of parameter causing error
+        """
+        message = '{} must be a 4x4 ndarray'.format(name)
+        super().__init__(message)
+
+
 class OrientationConventionError(PyboticsError):
     """Inappropriate OrientationConvention."""
 
     _default_message = 'Supported conventions: {}'.format(
         [e.name for e in OrientationConvention])
+
+
+class SequenceLengthError(PyboticsError):
+    """Inappropriate sequence length."""
+
+    def __init__(self, name: str, required_length: int) -> None:
+        """
+        Construct exception.
+
+        :param name: name of parameter causing error
+        :param required_length: required length of parameter
+        """
+        message = '{} must be a ndarray with len=={}'.format(name,
+                                                             required_length)
+        super().__init__(message)
