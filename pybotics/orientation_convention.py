@@ -1,6 +1,9 @@
-from enum import Enum, unique, auto
+"""Orientation convention module."""
+from enum import Enum, unique
 
 
 @unique
 class OrientationConvention(Enum):
-    EULER_ZYX = auto()
+    """Orientation of a body with respect to a fixed coordinate system."""
+
+    EULER_ZYX = 0

@@ -1,16 +1,22 @@
 """Geometry functions and utilities."""
 import numpy as np  # type: ignore
 
-from pybotics.validation import is_4x4_ndarray
+from pybotics.constants import TRANSFORM_VECTOR_LENGTH
+from pybotics.errors import Matrix4x4Error, SequenceLengthError
+from pybotics.validation import is_4x4_ndarray, is_1d_ndarray
 
 
 def euler_zyx_2_matrix(vector: np.ndarray) -> np.ndarray:
     """
     Calculate the pose from the position and euler angles.
 
-    :param vector:
-    :return:
+    :param vector: transform vector
+    :return: 4x4 transform matrix
     """
+    # validate input
+    if not is_1d_ndarray(vector, TRANSFORM_VECTOR_LENGTH):
+        raise SequenceLengthError('vector', TRANSFORM_VECTOR_LENGTH)
+
     # get individual variables
     [x, y, z, a, b, c] = vector
 
@@ -40,9 +46,11 @@ def matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
     Calculate the equivalent position and euler angles of the given pose.
 
     From: Craig, John J. Introduction to robotics: mechanics and control, 2005
+    :param matrix: 4x4 transform matrix
+    :return: transform vector
     """
     if not is_4x4_ndarray(matrix):
-        raise ValueError('4x4 transformation matrix is required')
+        raise Matrix4x4Error('matrix')
 
     x = matrix[0, 3]
     y = matrix[1, 3]
@@ -76,11 +84,11 @@ def matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
 
 def wrap_2_pi(angle: float) -> float:
     """
-    Recursively wrap given angles to +/- PI.
+    Wrap given angle to +/- PI.
 
-    :param angle:
-    :return:
+    :param angle: angle to wrap
+    :return: wrapped angle
     """
-    # TODO: remove float() cast when numpy is supported in mypy
+    # FIXME: remove float() cast when numpy is supported in mypy
     result = float((angle + np.pi) % (2 * np.pi) - np.pi)
     return result

@@ -1,79 +1,139 @@
 """Robot module."""
-from itertools import compress
-from typing import Optional, List, Union
+from typing import Optional, Sequence
 
 import numpy as np  # type: ignore
 
+from pybotics.errors import SequenceLengthError
 from pybotics.frame import Frame
 from pybotics.kinematic_chain import KinematicChain
-from pybotics.link import Link
+from pybotics.robot_optimization_mask import RobotOptimizationMask
 from pybotics.tool import Tool
+from pybotics.validation import is_1d_ndarray, is_sequence_length_correct
 
 
-class Robot(KinematicChain):
-    @property
-    def optimization_vector(self) -> np.ndarray:
-        world_vector = self.world_frame.optimization_vector
-        tool_vector = self.tool.optimization_vector
-        robot_vector = np.array(
-            list(compress(self.vector, self.optimization_mask)))
+class Robot:
+    """Robot manipulator class."""
 
-        return np.hstack((world_vector, robot_vector, tool_vector))
-
-    @optimization_vector.setter
-    def optimization_vector(self, value: np.ndarray) -> None:
-        pass
-
-    @property
-    def optimization_mask(self) -> List[bool]:
-        return self._optimization_mask
-
-    @optimization_mask.setter
-    def optimization_mask(self, value: Union[bool, List[bool]]) -> None:
-        if isinstance(value, bool):
-            self._optimization_mask = [value] * self.num_dof() * len(
-                self.links[0])
-        else:
-            self._optimization_mask = value
-
-    def __init__(self, links: List[Link],
+    def __init__(self, kinematic_chain: KinematicChain,
                  tool: Optional[Tool] = None,
                  world_frame: Optional[Frame] = None) -> None:
-        super().__init__(links)
-        # public members
-        self.tool = Tool() if tool is None else tool
-        self.world_frame = Frame() if world_frame is None else world_frame
+        """
+        Construct a robot instance.
 
-        # private members
-        self._position = np.zeros(self.num_dof())
+        :param kinematic_chain: kinematic chain of the manipulator
+        :param tool: attached tool
+        :param world_frame: transform of robot base with respect to the world
+        """
+        self._position = np.zeros(kinematic_chain.num_dof)
         self._position_limits = np.repeat((-np.inf, np.inf),
-                                          self.num_dof()).reshape((2, -1))
+                                          kinematic_chain.num_dof
+                                          ).reshape((2, -1))
 
-    @property
-    def position(self) -> np.ndarray:
-        return self._position
+        self.world_frame = Frame() if world_frame is None else world_frame
+        self.kinematic_chain = kinematic_chain
+        self.tool = Tool() if tool is None else tool
 
-    @position.setter
-    def position(self, value: np.ndarray) -> None:
-        self._position = value
+    def fk(self, position: Optional[Sequence[float]] = None) -> np.ndarray:
+        """
+        Compute the forward kinematics of a given position.
 
-    @property
-    def position_limits(self) -> np.ndarray:
-        return self._position_limits
+        Uses the current position if None is given.
+        :param position:
+        :return: 4x4 transform matrix of the FK pose
+        """
+        # validate
+        if position is not None:
+            if not is_sequence_length_correct(position, self.num_dof):
+                raise SequenceLengthError('position', self.num_dof)
+        else:
+            position = self.position
 
-    @position_limits.setter
-    def position_limits(self, value: np.ndarray) -> None:
-        self._position_limits = value
-
-    def fk(self, position: np.ndarray = None) -> np.ndarray:
-        position = self.position if position is None else position
-
+        # gather transforms
         transforms = [self.world_frame.matrix]
-        transforms.extend(self.transforms(position))
+        transforms.extend(self.kinematic_chain.transforms(position))
         transforms.append(self.tool.matrix)
 
+        # matrix multiply through transforms
         pose = np.eye(4)
         for t in transforms:
             pose = np.dot(pose, t)
 
         return pose
+
+    @property
+    def num_dof(self) -> int:
+        """
+        Get the number of degrees of freedom.
+
+        :return: number of degrees of freedom
+        """
+        return self.kinematic_chain.num_dof
+
+    @property
+    def optimization_mask(self) -> RobotOptimizationMask:
+        """
+        Return the mask used to select the optimization parameters.
+
+        :return: mask
+        """
+        mask = RobotOptimizationMask(
+            world=self.world_frame.optimization_mask,
+            kinematic_chain=self.kinematic_chain.optimization_mask,
+            tool=self.tool.optimization_mask)
+        return mask
+
+    @optimization_mask.setter
+    def optimization_mask(self, value: RobotOptimizationMask) -> None:
+        # FIXME: remove `# type: ignore`
+        # FIXME: remove kc; it's there to shorten line length for flake8
+        # https://github.com/python/mypy/issues/4167
+        self.world_frame.optimization_mask = value.world  # type: ignore
+        kc = value.kinematic_chain
+        self.kinematic_chain.optimization_mask = kc  # type: ignore
+        self.tool.optimization_mask = value.tool  # type: ignore
+
+    @property
+    def optimization_vector(self) -> np.ndarray:
+        """
+        Return the values of parameters being optimized.
+
+        :return: optimization parameter values
+        """
+        world = self.world_frame.optimization_vector
+        kinematic_chain = self.kinematic_chain.optimization_vector
+        tool = self.tool.optimization_vector
+
+        vector = np.hstack((world, kinematic_chain, tool))
+        return vector
+
+    @property
+    def position(self) -> np.ndarray:
+        """
+        Get the robot configuration (e.g., joint positions for serial robot).
+
+        :return: robot position
+        """
+        return self._position
+
+    @position.setter
+    def position(self, value: np.ndarray) -> None:
+        if is_1d_ndarray(value, self.num_dof):
+            self._position = value
+        else:
+            raise SequenceLengthError('value', self.num_dof)
+
+    @property
+    def position_limits(self) -> np.ndarray:
+        """
+        Limits of the robot position (e.g., joint limits).
+
+        :return: limits with shape (2,num_dof) where first row is upper limits
+        """
+        return self._position_limits
+
+    @position_limits.setter
+    def position_limits(self, value: np.ndarray) -> None:
+        if is_1d_ndarray(value, self.num_dof):
+            self._position_limits = value
+        else:
+            raise SequenceLengthError('value', self.num_dof)

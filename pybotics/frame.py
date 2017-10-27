@@ -1,61 +1,102 @@
-from copy import deepcopy
+"""Frame module."""
 from itertools import compress
-from typing import Union, List
+from typing import Union, Sequence
 
 import numpy as np  # type: ignore
 
-from pybotics.constant import Constant
+from pybotics.constants import TRANSFORM_VECTOR_LENGTH
+from pybotics.errors import OrientationConventionError, Matrix4x4Error
 from pybotics.geometry import matrix_2_euler_zyx, euler_zyx_2_matrix
-from pybotics.optimizable import Optimizable
+from pybotics.orientation_convention import OrientationConvention
 from pybotics.validation import is_4x4_ndarray
-from pybotics.vector import Vector
 
 
-class Frame(Optimizable, Vector):
-    @property
-    def optimization_mask(self) -> List[bool]:
-        return self._optimization_mask
-
-    # noinspection PyMethodOverriding
-    @optimization_mask.setter
-    def optimization_mask(self, value: Union[bool, List[bool]]) -> None:
-        if isinstance(value, bool):
-            self._optimization_mask = \
-                [value] * Constant.TRANSFORM_VECTOR_LENGTH.value
-        else:
-            self._optimization_mask = value
-
-    @property
-    def optimization_vector(self) -> np.ndarray:
-        return np.array(list(compress(self.vector, self.optimization_mask)))
-
-    @optimization_vector.setter
-    def optimization_vector(self, value: np.ndarray) -> None:
-        vector = deepcopy(self.vector)
-        mask = deepcopy(self.optimization_mask)
-        it = iter(value)
-        self.vector = [v if not m else next(it) for v, m in zip(vector, mask)]
+class Frame:
+    """Frame class representing a 4x4 spatial transform."""
 
     def __init__(self, matrix: np.ndarray = None) -> None:
-        super().__init__()
+        """
+        Construct a frame.
+
+        :param matrix:
+        """
         self._matrix = None
+        self._optimization_mask = [False] * TRANSFORM_VECTOR_LENGTH
+
         self.matrix = np.eye(4) if matrix is None else matrix
 
-    @property
-    def vector(self) -> np.ndarray:
-        return matrix_2_euler_zyx(self.matrix)
+    def apply_optimization_vector(self, vector: np.ndarray) -> None:
+        # we are going to iterate through the given vector;
+        # an iterator allows us to next()
+        # (aka `pop`) the values only when desired;
+        # we only update the current vector where the mask is True
+        """
+        Update the current instance with new optimization parameters.
 
-    @vector.setter
-    def vector(self, vector: np.ndarray) -> None:
-        self.matrix = euler_zyx_2_matrix(vector)
+        :param vector: new parameters to apply
+        """
+        vector_iterator = iter(vector)
+        updated_vector = [v if not m else next(vector_iterator)
+                          for v, m in zip(self.vector(),
+                                          self.optimization_mask)]
+
+        updated_matrix = euler_zyx_2_matrix(np.array(updated_vector))
+        self.matrix = updated_matrix
 
     @property
     def matrix(self) -> np.ndarray:
+        """
+        Return the internal matrix representation of the frame.
+
+        :return: 4x4 matrix
+        """
         return self._matrix
 
     @matrix.setter
     def matrix(self, value: np.ndarray) -> None:
         if not is_4x4_ndarray(value):
-            raise ValueError('Matrix must be 4x4 ndarray')
+            raise Matrix4x4Error('value')
         else:
             self._matrix = value
+
+    @property
+    def optimization_mask(self) -> Sequence[bool]:
+        """
+        Return the mask used to select the optimization parameters.
+
+        :return: mask
+        """
+        return self._optimization_mask
+
+    @optimization_mask.setter
+    def optimization_mask(self, mask: Union[bool, Sequence[bool]]) -> None:
+        if isinstance(mask, bool):
+            self._optimization_mask = \
+                [mask] * TRANSFORM_VECTOR_LENGTH
+        else:
+            self._optimization_mask = list(mask)
+
+    @property
+    def optimization_vector(self) -> np.ndarray:
+        """
+        Return the values of parameters being optimized.
+
+        :return: optimization parameter values
+        """
+        filtered_iterator = compress(self.vector(), self.optimization_mask)
+        vector = np.array(list(filtered_iterator))
+        return vector
+
+    def vector(self,
+               convention: OrientationConvention =
+               OrientationConvention.EULER_ZYX) -> np.ndarray:
+        """
+        Return the vector representation of the frame.
+
+        :param convention: selectable vector convention
+        :return: vectorized matrix
+        """
+        if convention is OrientationConvention.EULER_ZYX:
+            return matrix_2_euler_zyx(self.matrix)
+        else:
+            raise OrientationConventionError()
