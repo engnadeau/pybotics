@@ -1,10 +1,13 @@
 """Robot optimization mask module."""
 from typing import NamedTuple, Union, Sequence
 
-
-class RobotOptimizationMask(NamedTuple):
-    """Optimization mask used in the robot class."""
-
-    world_frame: Union[bool, Sequence[bool]] = False
-    kinematic_chain: Union[bool, Sequence[bool]] = False
-    tool: Union[bool, Sequence[bool]] = False
+# TODO: move to Python 3.6 style one day...
+# https://docs.python.org/3/library/typing.html#typing.NamedTuple
+RobotOptimizationMask = NamedTuple(
+    'RobotOptimizationMask',
+    [
+        ('world_frame', Union[bool, Sequence[bool]]),
+        ('kinematic_chain', Union[bool, Sequence[bool]]),
+        ('tool', Union[bool, Sequence[bool]])
+    ]
+)
