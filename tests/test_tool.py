@@ -7,6 +7,12 @@ from pybotics.errors import SequenceLengthError
 
 
 def test_cg(tool):
+    """
+    Test tool.
+
+    :param tool:
+    :return:
+    """
     new_cg = [9, 9, 9]
     tool.cg = new_cg
     np.testing.assert_allclose(tool.cg, new_cg)
@@ -16,5 +22,11 @@ def test_cg(tool):
 
 
 def test_mass(tool):
+    """
+    Test tool.
+
+    :param tool:
+    :return:
+    """
     m = tool.mass
     tool.mass = m

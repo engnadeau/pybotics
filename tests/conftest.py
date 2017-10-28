@@ -9,8 +9,6 @@ from pybotics.kinematic_chain import KinematicChain
 from pybotics.robot import Robot
 from pybotics.tool import Tool
 
-np.set_printoptions(suppress=True)
-
 
 @fixture(name='serial_robot')
 def serial_robot_fixture(serial_kc):

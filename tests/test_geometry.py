@@ -6,8 +6,6 @@ from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import SequenceLengthError, Matrix4x4Error
 from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, matrix_2_euler_zyx
 
-np.set_printoptions(suppress=True)
-
 EULER_ZYX_VECTOR = np.array([100, 200, 300,
                              np.deg2rad(-30), np.deg2rad(50), np.deg2rad(90)])
 TRANSFORM = np.array([
@@ -19,6 +17,11 @@ TRANSFORM = np.array([
 
 
 def test_euler_zyx_2_matrix():
+    """
+    Test conversion.
+
+    :return:
+    """
     actual = euler_zyx_2_matrix(EULER_ZYX_VECTOR)
     np.testing.assert_allclose(actual=actual, desired=TRANSFORM, atol=1e-6)
 
@@ -27,6 +30,11 @@ def test_euler_zyx_2_matrix():
 
 
 def test_matrix_2_euler_zyx():
+    """
+    Test conversion.
+
+    :return:
+    """
     # test normal function
     actual = matrix_2_euler_zyx(TRANSFORM)
     np.testing.assert_allclose(actual=actual, desired=EULER_ZYX_VECTOR,
@@ -60,6 +68,11 @@ def test_matrix_2_euler_zyx():
 
 
 def test_wrap_2_pi():
+    """
+    Test angle wrapping.
+
+    :return:
+    """
     angles = np.array([
         [0, 0],
         [-np.pi, -np.pi],

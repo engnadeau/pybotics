@@ -84,3 +84,18 @@ class SequenceLengthError(PyboticsError):
         message = '{} must be a sequence with len=={}'.format(name,
                                                               required_length)
         super().__init__(message)
+
+
+class ShapeMismatchError(PyboticsError):
+    """Inappropriate shapes for two paired sequences."""
+
+    def __init__(self, name_a: str, name_b: str) -> None:
+        """
+        Construct exception.
+
+        :param name_a: name of parameter causing error
+        :param name_b: name of parameter causing error
+        """
+        message = '{} and {} must be the same size'.format(name_a,
+                                                           name_b)
+        super().__init__(message)

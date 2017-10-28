@@ -8,6 +8,12 @@ from pybotics.errors import Matrix4x4Error, SequenceLengthError, \
 
 
 def test_optimization(world_frame):
+    """
+    Test frame.
+
+    :param world_frame:
+    :return:
+    """
     masked_index = 1
 
     # test mask
@@ -33,6 +39,12 @@ def test_optimization(world_frame):
 
 
 def test_matrix(world_frame):
+    """
+    Test frame.
+
+    :param world_frame:
+    :return:
+    """
     new_matrix = np.ones(TRANSFORM_MATRIX_SHAPE)
     world_frame.matrix = new_matrix
     np.testing.assert_allclose(world_frame.matrix, new_matrix)
@@ -43,6 +55,12 @@ def test_matrix(world_frame):
 
 
 def test_position(world_frame):
+    """
+    Test frame.
+
+    :param world_frame:
+    :return:
+    """
     new_position = np.ones(3)
     world_frame.position = new_position
     np.testing.assert_allclose(world_frame.position, new_position)
@@ -53,5 +71,11 @@ def test_position(world_frame):
 
 
 def test_vector(world_frame):
+    """
+    Test frame.
+
+    :param world_frame:
+    :return:
+    """
     with raises(OrientationConventionError):
         world_frame.vector(123)

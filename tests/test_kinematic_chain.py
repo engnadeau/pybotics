@@ -2,21 +2,32 @@
 import numpy as np
 from pytest import raises
 
-from pybotics import KinematicPair, MDHLink
+from pybotics import KinematicPair
 from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import LinkConventionError, KinematicPairError, \
     SequenceLengthError, LinkSequenceError
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.link import Link
-from pybotics.link_convention import LinkConvention
 from pybotics.revolute_mdh_link import RevoluteMDHLink
 
 
 def test_len(planar_kc):
+    """
+    Test KC.
+
+    :param planar_kc:
+    :return:
+    """
     assert len(planar_kc) == 3
 
 
 def test_optimization(planar_kc):
+    """
+    Test KC.
+
+    :param planar_kc:
+    :return:
+    """
     masked_index = 1
 
     # test mask
@@ -48,6 +59,11 @@ def test_optimization(planar_kc):
 
 
 def test_array_2_links():
+    """
+    Test KC.
+
+    :return:
+    """
     KinematicChain.array_2_links(np.ones((3, 4)),
                                  kinematic_pairs=3 * [KinematicPair.REVOLUTE])
 
@@ -63,6 +79,11 @@ def test_array_2_links():
 
 
 def test_links():
+    """
+    Test KC.
+
+    :return:
+    """
     with raises(LinkSequenceError):
         links = [
             RevoluteMDHLink(1, 2, 3, 4),
@@ -72,10 +93,22 @@ def test_links():
 
 
 def test_num_dof(planar_kc):
+    """
+    Test KC.
+
+    :param planar_kc:
+    :return:
+    """
     assert len(planar_kc) == planar_kc.num_dof
 
 
 def test_transforms(planar_kc):
+    """
+    Test KC.
+
+    :param planar_kc:
+    :return:
+    """
     # test normal case
     transforms = planar_kc.transforms()
     assert len(transforms) == len(planar_kc)
@@ -91,4 +124,9 @@ def test_transforms(planar_kc):
 
 
 def test_from_array():
+    """
+    Test KC.
+
+    :return:
+    """
     KinematicChain.from_array(np.ones(4))

@@ -14,6 +14,12 @@ from pybotics.robot_optimization_mask import RobotOptimizationMask
 
 
 def test_fk(serial_robot):
+    """
+    Test robot.
+
+    :param serial_robot:
+    :return:
+    """
     joints = np.deg2rad([10, 20, 30, 40, 50, 60])
     desired_pose = np.array(
         [-0.786357, -0.607604, 0.111619, -776.143784,
@@ -37,6 +43,12 @@ def test_fk(serial_robot):
 
 
 def test_optimization(serial_robot):
+    """
+    Test robot.
+
+    :param serial_robot:
+    :return:
+    """
     masked_index = 1
     serial_robot.world_frame.matrix = euler_zyx_2_matrix([1, 2, 3,
                                                           np.deg2rad(10),
@@ -123,11 +135,23 @@ def test_optimization(serial_robot):
 
 
 def test_position(serial_robot):
+    """
+    Test robot.
+
+    :param serial_robot:
+    :return:
+    """
     with raises(SequenceLengthError):
         serial_robot.position = np.ones(len(serial_robot) * 2)
 
 
 def test_position_limits(serial_robot):
+    """
+    Test robot.
+
+    :param serial_robot:
+    :return:
+    """
     # test normal usage
     limits = serial_robot.position_limits
     serial_robot.position_limits = limits * 2
@@ -139,4 +163,9 @@ def test_position_limits(serial_robot):
 
 
 def test_init():
+    """
+    Test robot.
+
+    :return:
+    """
     Robot(KinematicChain.from_array(np.ones(4)))
