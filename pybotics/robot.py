@@ -1,4 +1,5 @@
 """Robot module."""
+import json
 from typing import Optional, Sequence, Sized
 
 import numpy as np  # type: ignore
@@ -40,6 +41,33 @@ class Robot(Sized):
         :return: number of degrees of freedom
         """
         return self.kinematic_chain.num_dof
+
+    def __repr__(self) -> str:
+        """
+        Get the debug representation of the robot model.
+
+        :return:
+        """
+        return json.dumps(self,
+                          default=self._json_encoder,
+                          sort_keys=True,
+                          indent=4)
+
+    def __str__(self) -> str:
+        """
+        Get the string representation of the robot model.
+
+        :return:
+        """
+        return self.__repr__()
+
+    @staticmethod
+    def _json_encoder(obj):
+        if isinstance(obj, np.ndarray):
+            x = obj.tolist()
+        else:
+            x = obj.__dict__
+        return x
 
     def apply_optimization_vector(self, vector: np.ndarray) -> None:
         """
