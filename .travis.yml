@@ -37,6 +37,7 @@ install:
 - pip install -r requirements/packaging.txt
 - pip install -r requirements/requirements.txt
 - pip install .
+- chmod +x ci/run-static-tests.sh
 
 script:
 - ./ci/run-static-tests.sh
