@@ -1,5 +1,6 @@
 """Pybotics modules."""
 from pybotics import version
+from . import calibration
 from . import constants
 from . import errors
 from . import geometry
@@ -17,6 +18,7 @@ from .robot_optimization_mask import RobotOptimizationMask
 from .tool import Tool
 
 __all__ = [
+    'calibration',
     'constants',
     'errors',
     'Frame',
