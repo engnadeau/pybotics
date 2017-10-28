@@ -1,8 +1,9 @@
 """Pybotics modules."""
 from . import constants
 from . import errors
-from .frame import Frame
 from . import geometry
+from . import validation
+from .frame import Frame
 from .kinematic_chain import KinematicChain
 from .kinematic_pair import KinematicPair
 from .link import Link
@@ -13,7 +14,6 @@ from .revolute_mdh_link import RevoluteMDHLink
 from .robot import Robot
 from .robot_optimization_mask import RobotOptimizationMask
 from .tool import Tool
-from . import validation
 
 __all__ = [
     'constants',

@@ -81,6 +81,6 @@ class SequenceLengthError(PyboticsError):
         :param name: name of parameter causing error
         :param required_length: required length of parameter
         """
-        message = '{} must be a ndarray with len=={}'.format(name,
-                                                             required_length)
+        message = '{} must be a sequence with len=={}'.format(name,
+                                                              required_length)
         super().__init__(message)

@@ -24,6 +24,7 @@ def test_is_1d_ndarray():
 
     # bad list
     x = list(np.eye(1, 3))
+    # noinspection PyTypeChecker
     assert not is_1d_ndarray(x)
 
 
@@ -38,4 +39,5 @@ def test_is_4x4_ndarray():
 
     # bad list
     x = list(np.eye(4))
+    # noinspection PyTypeChecker
     assert not is_4x4_ndarray(x)

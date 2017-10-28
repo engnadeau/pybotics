@@ -50,6 +50,7 @@ class Link:
         """
         pass
 
+    @property
     @abstractmethod
     def vector(self) -> np.ndarray:
         """

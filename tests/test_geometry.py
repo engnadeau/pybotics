@@ -1,6 +1,9 @@
 """Test geometry."""
 import numpy as np
+from pytest import raises
 
+from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
+from pybotics.errors import SequenceLengthError, Matrix4x4Error
 from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, matrix_2_euler_zyx
 
 np.set_printoptions(suppress=True)
@@ -19,11 +22,41 @@ def test_euler_zyx_2_matrix():
     actual = euler_zyx_2_matrix(EULER_ZYX_VECTOR)
     np.testing.assert_allclose(actual=actual, desired=TRANSFORM, atol=1e-6)
 
+    with raises(SequenceLengthError):
+        euler_zyx_2_matrix(np.ones(TRANSFORM_VECTOR_LENGTH * 2))
+
 
 def test_matrix_2_euler_zyx():
+    # test normal function
     actual = matrix_2_euler_zyx(TRANSFORM)
     np.testing.assert_allclose(actual=actual, desired=EULER_ZYX_VECTOR,
                                atol=1e-6)
+
+    # test validation
+    with raises(Matrix4x4Error):
+        matrix_2_euler_zyx(np.ones(TRANSFORM_VECTOR_LENGTH))
+
+    # test matrix decomposition corner cases when y=90deg
+    corner_case_matrix = np.array(
+        [0, 0, 1, 0,
+         0, 1, 0, 0,
+         -1, 0, 0, 0,
+         0, 0, 0, 1]
+    ).reshape(TRANSFORM_MATRIX_SHAPE)
+    desired = [0, 0, 0, 0, np.deg2rad(90), 0]
+    actual = matrix_2_euler_zyx(corner_case_matrix)
+    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
+
+    # test matrix decomposition corner cases when y=-90deg
+    corner_case_matrix = np.array(
+        [0, 0, -1, 0,
+         0, 1, 0, 0,
+         1, 0, 0, 0,
+         0, 0, 0, 1]
+    ).reshape(TRANSFORM_MATRIX_SHAPE)
+    desired = [0, 0, 0, 0, np.deg2rad(-90), 0]
+    actual = matrix_2_euler_zyx(corner_case_matrix)
+    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
 
 
 def test_wrap_2_pi():

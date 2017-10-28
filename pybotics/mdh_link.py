@@ -4,8 +4,8 @@ from abc import abstractmethod
 import numpy as np  # type: ignore
 
 from pybotics.kinematic_pair import KinematicPair
-from pybotics.link_convention import LinkConvention
 from pybotics.link import Link
+from pybotics.link_convention import LinkConvention
 
 
 class MDHLink(Link):

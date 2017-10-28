@@ -4,11 +4,12 @@ from typing import Union, Sequence
 
 import numpy as np  # type: ignore
 
-from pybotics.constants import TRANSFORM_VECTOR_LENGTH
-from pybotics.errors import OrientationConventionError, Matrix4x4Error
+from pybotics.constants import TRANSFORM_VECTOR_LENGTH, POSITION_VECTOR_LENGTH
+from pybotics.errors import OrientationConventionError, Matrix4x4Error, \
+    SequenceLengthError
 from pybotics.geometry import matrix_2_euler_zyx, euler_zyx_2_matrix
 from pybotics.orientation_convention import OrientationConvention
-from pybotics.validation import is_4x4_ndarray
+from pybotics.validation import is_4x4_ndarray, is_sequence_length_correct
 
 
 class Frame:
@@ -86,6 +87,22 @@ class Frame:
         filtered_iterator = compress(self.vector(), self.optimization_mask)
         vector = np.array(list(filtered_iterator))
         return vector
+
+    @property
+    def position(self) -> np.ndarray:
+        """
+        Get the position XYZ of the frame.
+
+        :return:
+        """
+        return self.matrix[:-1, -1]
+
+    @position.setter
+    def position(self, value: Sequence[float]) -> None:
+        if is_sequence_length_correct(value, POSITION_VECTOR_LENGTH):
+            self.matrix[:-1, -1] = value
+        else:
+            raise SequenceLengthError('value', POSITION_VECTOR_LENGTH)
 
     def vector(self,
                convention: OrientationConvention =

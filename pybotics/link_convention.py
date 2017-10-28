@@ -1,9 +1,8 @@
 """Link convention module."""
-from enum import Enum
+from enum import IntEnum
 
 
-class LinkConvention(Enum):
+class LinkConvention(IntEnum):
     """Conventions for attaching frames to the links of a kinematic chain."""
 
-    UNDEFINED = 0
-    MDH = 4,
+    MDH = 4

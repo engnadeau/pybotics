@@ -9,15 +9,8 @@ def test_pybotics_error():
     with raises(PyboticsError):
         raise PyboticsError()
 
-
-def test_sequence_length_error():
-    with raises(SequenceLengthError):
-        raise SequenceLengthError('test', 123)
-
-
-def test_matrix_4x4_error():
-    with raises(Matrix4x4Error):
-        raise Matrix4x4Error('test')
+    assert str(PyboticsError()) is PyboticsError._default_message
+    assert str(PyboticsError('test')) is 'test'
 
 
 def test_link_convention_error():
@@ -30,6 +23,16 @@ def test_link_sequence_error():
         raise LinkSequenceError()
 
 
+def test_matrix_4x4_error():
+    with raises(Matrix4x4Error):
+        raise Matrix4x4Error('test')
+
+
 def test_orientation_convention_error():
     with raises(OrientationConventionError):
         raise OrientationConventionError()
+
+
+def test_sequence_length_error():
+    with raises(SequenceLengthError):
+        raise SequenceLengthError('test', 123)

@@ -1,11 +1,12 @@
 """Tool module."""
+from typing import Sequence
 
 import numpy as np  # type: ignore
 
 from pybotics.constants import POSITION_VECTOR_LENGTH
 from pybotics.errors import SequenceLengthError
 from pybotics.frame import Frame
-from pybotics.validation import is_1d_ndarray
+from pybotics.validation import is_sequence_length_correct
 
 
 class Tool(Frame):
@@ -36,25 +37,8 @@ class Tool(Frame):
         return self._cg
 
     @cg.setter
-    def cg(self, value: np.ndarray) -> None:
-        if is_1d_ndarray(value, POSITION_VECTOR_LENGTH):
-            self._cg = value
-        else:
-            raise SequenceLengthError('value', POSITION_VECTOR_LENGTH)
-
-    @property
-    def tcp_position(self) -> np.ndarray:
-        """
-        Tool centre point (TCP) position.
-
-        with respect to the root of the frame (i.e., robot flange)
-        :return: tcp [x,y,z]
-        """
-        return self.matrix[:-1, -1]
-
-    @tcp_position.setter
-    def tcp_position(self, value: np.ndarray) -> None:
-        if is_1d_ndarray(value, POSITION_VECTOR_LENGTH):
-            self.matrix[:-1, -1] = value
+    def cg(self, value: Sequence[float]) -> None:
+        if is_sequence_length_correct(value, POSITION_VECTOR_LENGTH):
+            self._cg = np.array(value)
         else:
             raise SequenceLengthError('value', POSITION_VECTOR_LENGTH)

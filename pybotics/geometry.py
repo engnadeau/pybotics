@@ -1,12 +1,14 @@
 """Geometry functions and utilities."""
+from typing import Sequence
+
 import numpy as np  # type: ignore
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH
 from pybotics.errors import Matrix4x4Error, SequenceLengthError
-from pybotics.validation import is_4x4_ndarray, is_1d_ndarray
+from pybotics.validation import is_4x4_ndarray, is_sequence_length_correct
 
 
-def euler_zyx_2_matrix(vector: np.ndarray) -> np.ndarray:
+def euler_zyx_2_matrix(vector: Sequence[float]) -> np.ndarray:
     """
     Calculate the pose from the position and euler angles.
 
@@ -14,7 +16,7 @@ def euler_zyx_2_matrix(vector: np.ndarray) -> np.ndarray:
     :return: 4x4 transform matrix
     """
     # validate input
-    if not is_1d_ndarray(vector, TRANSFORM_VECTOR_LENGTH):
+    if not is_sequence_length_correct(vector, TRANSFORM_VECTOR_LENGTH):
         raise SequenceLengthError('vector', TRANSFORM_VECTOR_LENGTH)
 
     # get individual variables

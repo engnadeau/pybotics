@@ -1,5 +1,5 @@
 """Kinematic chain module."""
-from itertools import chain, compress
+from itertools import compress
 from typing import Any, Sequence, Union, Sized, Optional
 
 import numpy as np  # type: ignore
@@ -61,7 +61,7 @@ class KinematicChain(Sized):
     @staticmethod
     def array_2_links(
             array: np.ndarray,
-            convention: LinkConvention = LinkConvention.MDH,
+            link_convention: LinkConvention = LinkConvention.MDH,
             kinematic_pairs:
             Union[KinematicPair,
                   Sequence[KinematicPair]] = KinematicPair.REVOLUTE
@@ -71,25 +71,32 @@ class KinematicChain(Sized):
 
         :param kinematic_pairs:
         :param array: link parameters
-        :param convention: link convention
+        :param link_convention: link convention
         :return: sequence of links
         """
-        # vectors are reshaped to a 2D array based
-        # on number of parameters per link
-        array = array.reshape((-1, convention.value))
+        # validate
+        if link_convention in LinkConvention:
+            # vectors are reshaped to a 2D array based
+            # on number of parameters per link
+            array = array.reshape((-1, link_convention.value))
 
-        # default to serial revolute manipulator
-        if isinstance(kinematic_pairs, KinematicPair):
-            kinematic_pairs = [kinematic_pairs] * len(array)
-
-        # create link sequences based on convention;
-        links = []
-        if convention is LinkConvention.MDH:
-            for row, kp in zip(array, kinematic_pairs):
-                if kp is KinematicPair.REVOLUTE:
-                    links.append(RevoluteMDHLink(*row))
-                else:
+            # validate
+            if isinstance(kinematic_pairs, KinematicPair):
+                # turn single KinematicPair into sequence
+                kinematic_pairs = [kinematic_pairs] * len(array)
+            else:
+                if not is_sequence_length_correct(kinematic_pairs, len(array)):
+                    raise SequenceLengthError('kinematic_pairs', len(array))
+                if not all([isinstance(kp, KinematicPair) for kp in
+                            kinematic_pairs]):
                     raise KinematicPairError()
+
+            # create link sequences based on convention;
+            links = []
+            # TODO: add `if link_convention is LinkConvention.MDH:` check
+            for row, kp in zip(array, kinematic_pairs):
+                # TODO: add `if kp is KinematicPair.REVOLUTE:` check
+                links.append(RevoluteMDHLink(*row))
         else:
             raise LinkConventionError()
 
@@ -146,6 +153,15 @@ class KinematicChain(Sized):
         return len(self)
 
     @property
+    def num_parameters(self) -> int:
+        """
+        Get the number of kinematic parameters.
+
+        :return: number of degrees of freedom
+        """
+        return len(self) * self.convention.value
+
+    @property
     def optimization_mask(self) -> Sequence[bool]:
         """
         Get the mask used to select the optimization parameters.
@@ -194,7 +210,7 @@ class KinematicChain(Sized):
         # "Optional[Iterable[float]]"; expected "Iterable[float]";
         # error: Call to untyped function "transform"
         # of "Link" in typed context
-        transforms = [link.transform(p) for link, p in  # type: ignore
+        transforms = [link.transform(p) for link, p in
                       zip(self.links, position)]  # type: ignore
         return transforms
 
@@ -205,4 +221,6 @@ class KinematicChain(Sized):
 
         :return: vectorized kinematic chain
         """
-        return np.array(list(chain(self.links)))
+        link_vectors = [link.vector for link in self.links]
+        v = np.array(link_vectors).ravel()
+        return v

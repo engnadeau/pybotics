@@ -1,9 +1,9 @@
 """Robot module."""
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Sized
 
 import numpy as np  # type: ignore
 
-from pybotics.errors import SequenceLengthError
+from pybotics.errors import SequenceLengthError, PyboticsError
 from pybotics.frame import Frame
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.robot_optimization_mask import RobotOptimizationMask
@@ -11,7 +11,7 @@ from pybotics.tool import Tool
 from pybotics.validation import is_1d_ndarray, is_sequence_length_correct
 
 
-class Robot:
+class Robot(Sized):
     """Robot manipulator class."""
 
     def __init__(self, kinematic_chain: KinematicChain,
@@ -32,6 +32,30 @@ class Robot:
         self.world_frame = Frame() if world_frame is None else world_frame
         self.kinematic_chain = kinematic_chain
         self.tool = Tool() if tool is None else tool
+
+    def __len__(self) -> int:
+        """
+        Get the number of degrees of freedom.
+
+        :return: number of degrees of freedom
+        """
+        return self.kinematic_chain.num_dof
+
+    def apply_optimization_vector(self, vector: np.ndarray) -> None:
+        """
+        Update the current instance with new optimization parameters.
+
+        :param vector: new parameters to apply
+        """
+        split_vector = np.split(
+            vector,
+            np.cumsum(
+                [len(self.world_frame.optimization_vector),
+                 len(self.kinematic_chain.optimization_vector)]
+            ))
+        self.world_frame.apply_optimization_vector(split_vector[0])
+        self.kinematic_chain.apply_optimization_vector(split_vector[1])
+        self.tool.apply_optimization_vector(split_vector[2])
 
     def fk(self, position: Optional[Sequence[float]] = None) -> np.ndarray:
         """
@@ -77,7 +101,7 @@ class Robot:
         :return: mask
         """
         mask = RobotOptimizationMask(
-            world=self.world_frame.optimization_mask,
+            world_frame=self.world_frame.optimization_mask,
             kinematic_chain=self.kinematic_chain.optimization_mask,
             tool=self.tool.optimization_mask)
         return mask
@@ -87,7 +111,7 @@ class Robot:
         # FIXME: remove `# type: ignore`
         # FIXME: remove kc; it's there to shorten line length for flake8
         # https://github.com/python/mypy/issues/4167
-        self.world_frame.optimization_mask = value.world  # type: ignore
+        self.world_frame.optimization_mask = value.world_frame  # type: ignore
         kc = value.kinematic_chain
         self.kinematic_chain.optimization_mask = kc  # type: ignore
         self.tool.optimization_mask = value.tool  # type: ignore
@@ -117,6 +141,7 @@ class Robot:
 
     @position.setter
     def position(self, value: np.ndarray) -> None:
+        # TODO: check if position is in limits
         if is_1d_ndarray(value, self.num_dof):
             self._position = value
         else:
@@ -133,7 +158,7 @@ class Robot:
 
     @position_limits.setter
     def position_limits(self, value: np.ndarray) -> None:
-        if is_1d_ndarray(value, self.num_dof):
-            self._position_limits = value
-        else:
-            raise SequenceLengthError('value', self.num_dof)
+        if value.shape[0] != 2 or value.shape[1] != len(self):
+            raise PyboticsError(
+                'position_limits must have shape=(2,{})'.format(len(self)))
+        self._position_limits = value
