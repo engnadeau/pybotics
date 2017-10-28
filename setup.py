@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 import git
 import os
+import logging
 
 REPO_ROOT_PATH = os.path.dirname(__file__)
 VERSION = 'dev'
@@ -8,7 +9,7 @@ GIT_SHA = ''
 GIT_SHA_SHORT = ''
 IS_RELEASE = False
 TAG = ''
-LAST_TAG = ''
+LAST_TAG = '0.0.0'
 
 
 def write_version_py():
@@ -39,19 +40,22 @@ def update_git_info():
     :return:
     """
     repo = git.Repo(REPO_ROOT_PATH)
-    print('Repo:\t{}'.format(repo))
+    logging.info('Repo:\t{}'.format(repo))
 
     global GIT_SHA
     GIT_SHA = repo.head.object.hexsha
-    print('Git sha:\t{}'.format(GIT_SHA))
+    logging.info('Git sha:\t{}'.format(GIT_SHA))
 
     global GIT_SHA_SHORT
     GIT_SHA_SHORT = repo.git.rev_parse(GIT_SHA, short=4)
-    print('Git short sha:\t{}'.format(GIT_SHA_SHORT))
+    logging.info('Git short sha:\t{}'.format(GIT_SHA_SHORT))
 
-    global LAST_TAG
-    LAST_TAG = repo.tags[-1]
-    print('Last tag:\t{}'.format(LAST_TAG))
+    if len(repo.tags) > 0:
+        global LAST_TAG
+        LAST_TAG = repo.tags[-1]
+        logging.info('Last tag:\t{}'.format(LAST_TAG))
+    else:
+        logging.warning('No tags found:\t{}'.format(LAST_TAG))
 
 
 def check_travis_ci():
@@ -61,17 +65,17 @@ def check_travis_ci():
     :return:
     """
     travis_commit = os.environ.get('TRAVIS_COMMIT')
-    print('Travis commit:\t{}'.format(travis_commit))
+    logging.info('Travis commit:\t{}'.format(travis_commit))
 
     travis_branch = os.environ.get('TRAVIS_BRANCH')
-    print('Travis branch:\t{}'.format(travis_branch))
+    logging.info('Travis branch:\t{}'.format(travis_branch))
 
     travis_pr_branch = os.environ.get('TRAVIS_PULL_REQUEST_BRANCH')
-    print('Travis PR branch:\t{}'.format(travis_pr_branch))
+    logging.info('Travis PR branch:\t{}'.format(travis_pr_branch))
 
     travis_tag = os.environ.get('TRAVIS_TAG')
     travis_tag = travis_tag if travis_tag is not None else ''
-    print('Travis tag:\t{}'.format(travis_tag))
+    logging.info('Travis tag:\t{}'.format(travis_tag))
 
     if len(travis_tag) > 0:
         global IS_RELEASE
@@ -93,10 +97,12 @@ def update_version():
     else:
         VERSION = '{}.dev{}'.format(LAST_TAG, int(GIT_SHA_SHORT, 16))
 
-    print('Package version:\t{}'.format(VERSION))
+    logging.info('Package version:\t{}'.format(VERSION))
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+
     update_git_info()
     check_travis_ci()
     update_version()
