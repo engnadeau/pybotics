@@ -18,5 +18,5 @@ pytest==3.2.3
 setuptools==36.6.0
 
 # examples
-pandas==0.20.3
+pandas==0.21.0
 jupyter==1.0.0
