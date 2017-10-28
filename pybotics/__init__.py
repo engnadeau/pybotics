@@ -1,4 +1,5 @@
 """Pybotics modules."""
+from pybotics import version
 from . import constants
 from . import errors
 from . import geometry
@@ -32,3 +33,5 @@ __all__ = [
     'Tool',
     'validation',
 ]
+
+__version__ = version.version

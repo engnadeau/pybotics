@@ -6,6 +6,10 @@ import pybotics
 import numpy
 import scipy
 
+print('---------------------------------------------------------------------')
+print('System Specs')
+print('---------------------------------------------------------------------')
+
 print('Platform: {}'.format(platform.platform()))
 print('Machine: {}'.format(platform.machine()))
 print('Python: {}'.format(sys.version))

@@ -32,11 +32,10 @@ addons:
     - python3-wheel
 
 install:
-- pip install -r utilities/ci-requirements/coverage.txt
-- pip install -r utilities/ci-requirements/examples.txt
-- pip install -r utilities/ci-requirements/packaging.txt
-- pip install -r utilities/ci-requirements/static-testing.txt
-- python utilities/update_version.py
+- pip install -r requirements/coverage.txt
+- pip install -r requirements/examples.txt
+- pip install -r requirements/packaging.txt
+- pip install -r requirements/requirements.txt
 - pip install .
 
 script:
