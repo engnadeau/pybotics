@@ -1,3 +1,4 @@
+"""Setup module."""
 from setuptools import setup, find_packages
 import git
 import os
@@ -149,5 +150,6 @@ if __name__ == '__main__':
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
         ],
-        keywords='python robot robotics research automation kinematics geometry',
+        keywords='python robot robotics research '
+                 'automation kinematics geometry',
     )
