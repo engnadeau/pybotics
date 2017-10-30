@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 python -V
-echo PWD: $PWD
+echo "PWD: $PWD"
 
 mypy --strict pybotics
 flake8
