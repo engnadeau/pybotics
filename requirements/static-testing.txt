@@ -1,5 +1,5 @@
 flake8==3.5.0
-flake8_docstrings
+flake8-docstrings
 mypy==0.540
 vulture==0.26
 bandit==1.4.0
