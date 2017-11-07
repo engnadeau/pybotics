@@ -21,10 +21,10 @@ def write_version_py():
     """
     content = """
 # THIS FILE IS GENERATED FROM SETUP.PY
-version = '{version}'
-git_sha = '{git_sha}'
-git_sha_short = '{git_sha_short}'
-release = {is_release}
+VERSION = '{version}'
+GIT_SHA = '{git_sha}'
+GIT_SHA_SHORT = '{git_sha_short}'
+IS_RELEASE = {is_release}
 """
     filename = os.path.join(REPO_ROOT_PATH, 'pybotics', 'version.py')
     with open(filename, 'w') as file:
