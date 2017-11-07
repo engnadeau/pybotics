@@ -1,5 +1,5 @@
 """Pybotics modules."""
-from pybotics import version
+from .version import VERSION
 from . import calibration
 from . import constants
 from . import errors
