@@ -48,6 +48,7 @@ pose = ur10_robot.fk() # forward kinematics, returns 4x4 pose transform
 ## Development
 - All branches are deployed to [PyPI's Test Site](https://testpypi.python.org/pypi/pybotics/)
 - Only tags on the `master` branch are deployed to [PyPI](https://pypi.python.org/pypi/pybotics)
+- Requirements used for CI (e.g., `requirements/static-testing.txt`) are pinned to a specific version to avoid the `master` branch from suddenly failing due to a package update.
 
 ## References
 - Craig, John J. Introduction to robotics: mechanics and control. Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
