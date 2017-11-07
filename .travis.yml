@@ -38,9 +38,11 @@ install:
 - pip install -r requirements/requirements.txt
 - pip install -r requirements/static-testing.txt
 - pip install .
+- chmod +x ci/log-system-info.sh
 - chmod +x ci/run-static-tests.sh
 
 script:
+- ./ci/log-system-info.sh
 - ./ci/run-static-tests.sh
 - python setup.py test
 
