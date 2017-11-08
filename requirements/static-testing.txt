@@ -1,6 +1,6 @@
 flake8==3.5.0
 flake8-docstrings
-flake8-bugbear
+flake8-bugbear;python_version>="3.5"
 flake8-import-order
 mccabe
 pep8-naming
