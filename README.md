@@ -1,3 +1,6 @@
+# ![](media/robotic-arm.png) pybotics
+The Python Toolbox for Robotics
+
 |Component|Badges|
 |---|---|
 |GitHub|[![GitHub issues](https://img.shields.io/github/issues/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/issues) [![GitHub forks](https://img.shields.io/github/forks/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/network) [![GitHub stars](https://img.shields.io/github/stars/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/stargazers) [![GitHub tag](https://img.shields.io/github/tag/nnadeau/pybotics.svg?maxAge=2592000?style=flat-square)](https://github.com/nnadeau/pybotics/releases)|
@@ -8,9 +11,6 @@
 |Dependencies|[![Requirements Status](https://requires.io/github/nnadeau/pybotics/requirements.svg?branch=big-refactor)](https://requires.io/github/nnadeau/pybotics/requirements/?branch=big-refactor) [![Updates](https://pyup.io/repos/github/nnadeau/pybotics/shield.svg)](https://pyup.io/repos/github/nnadeau/pybotics/) [![Dependency Status](https://dependencyci.com/github/nnadeau/pybotics/badge)](https://dependencyci.com/github/nnadeau/pybotics)|
 |Coverage|[![Coverage Status](https://coveralls.io/repos/github/nnadeau/pybotics/badge.svg?branch=master)](https://coveralls.io/github/nnadeau/pybotics?branch=master) [![codecov](https://codecov.io/gh/nnadeau/pybotics/branch/master/graph/badge.svg)](https://codecov.io/gh/nnadeau/pybotics)|
 |Code Quality|[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nnadeau/pybotics/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nnadeau/pybotics/?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9d4f77b167874a049e97731181e2b53a)](https://www.codacy.com/app/nicholas-nadeau/pybotics?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nnadeau/pybotics&amp;utm_campaign=Badge_Grade) [![Code Climate](https://codeclimate.com/github/nnadeau/pybotics/badges/gpa.svg)](https://codeclimate.com/github/nnadeau/pybotics) [![Issue Count](https://codeclimate.com/github/nnadeau/pybotics/badges/issue_count.svg)](https://codeclimate.com/github/nnadeau/pybotics)|
-
-# ![](media/robotic-arm.png) pybotics
-Python Toolbox for Robotics
 
 ## Usage
 ### Installation
