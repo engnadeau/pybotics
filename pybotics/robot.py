@@ -7,6 +7,7 @@ import numpy as np  # type: ignore
 from pybotics.errors import SequenceLengthError, PyboticsError
 from pybotics.frame import Frame
 from pybotics.kinematic_chain import KinematicChain
+from pybotics.robot_json_encoder import RobotJSONEncoder
 from pybotics.robot_optimization_mask import RobotOptimizationMask
 from pybotics.tool import Tool
 from pybotics.validation import is_1d_ndarray, is_sequence_length_correct
@@ -48,10 +49,8 @@ class Robot(Sized):
 
         :return:
         """
-        return json.dumps(self,
-                          default=self._json_encoder,
-                          sort_keys=True,
-                          indent=4)
+        encoder = RobotJSONEncoder(sort_keys=True, indent=4)
+        return encoder.encode(self)
 
     def __str__(self) -> str:
         """
@@ -60,14 +59,6 @@ class Robot(Sized):
         :return:
         """
         return self.__repr__()
-
-    @staticmethod
-    def _json_encoder(obj):
-        if isinstance(obj, np.ndarray):
-            x = obj.tolist()
-        else:
-            x = obj.__dict__
-        return x
 
     def apply_optimization_vector(self, vector: np.ndarray) -> None:
         """
