@@ -1,0 +1,12 @@
+flake8==3.5.0
+flake8-docstrings
+flake8-bugbear;python_version>="3.5"
+flake8-import-order
+mccabe
+pep8-naming
+mypy==0.540
+vulture==0.26
+bandit==1.4.0
+pipdeptree==0.10.1
+safety
+xenon

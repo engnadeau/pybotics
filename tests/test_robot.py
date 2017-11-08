@@ -1,262 +1,189 @@
+"""Test robot."""
+import json
+from itertools import chain
+from typing import Sequence
+
 import numpy as np
-import itertools
-import pytest
-import os
+from pytest import raises
 
-from pybotics import Constant
-from pybotics import Robot
-from pybotics import Tool
-from pybotics import exceptions
-from pybotics import geometry
-
-
-@pytest.fixture(name='robot')
-def robot_fixture():
-    model_path = os.path.abspath(__file__)
-    model_path = os.path.dirname(model_path)
-    model_path = os.path.dirname(model_path)
-    model_path = os.path.join(model_path, 'robot-models')
-    model_path = os.path.join(model_path, 'ur10-mdh.csv')
-    return Robot(np.loadtxt(model_path, delimiter=','))
+from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
+from pybotics.errors import SequenceError, PyboticsError
+from pybotics.geometry import euler_zyx_2_matrix
+from pybotics.kinematic_chain import KinematicChain
+from pybotics.robot import Robot
+from pybotics.robot_optimization_mask import RobotOptimizationMask
 
 
-def test_num_dof(robot):
-    assert robot.num_dof() == robot.robot_model.shape[0]
-
-
-def test_fk(robot):
-    expected_transform = np.array([
-        [0, 0, -1, -663.8],
-        [-1, 0, -0, -163.9],
-        [-0, 1, 0, 615],
-        [0, 0, 0, 1]
-    ])
-
-    robot.joint_angles = np.deg2rad([0, -90, 90, 0, 90, 0])
-    actual_transform = robot.fk()
-
-    assert actual_transform.shape[0] == expected_transform.shape[0]
-    assert actual_transform.shape[1] == expected_transform.shape[1]
-    assert actual_transform.size == expected_transform.size
-    np.testing.assert_allclose(actual=actual_transform, desired=expected_transform, rtol=1e-6, atol=1e-6)
-
-
-def test_ik(robot):
-    test_joints_list = np.deg2rad([
-        [0, -90, 90, 0, 90, 0],
-        [10, 90, 80, 20, 90, 123],
-        [20, -40, 90, 10, 20, 0],
-        [-10, 20, -30, 40, -50, 60]
-    ])
-
-    for test_joints in test_joints_list:
-        robot.joint_angles = test_joints
-        expected_transform = robot.fk()
-
-        robot.joint_angles = test_joints_list[0]
-        ik_joints = robot.ik(expected_transform)
-
-        # TODO: design IK to not be iterative?
-        # TODO: deal with IK returning None if no solution is found
-        if ik_joints is None:
-            continue
-
-        robot.joint_angles = ik_joints
-        result_transform = robot.fk()
-
-        assert len(ik_joints) == len(test_joints)
-        np.testing.assert_allclose(actual=result_transform, desired=expected_transform, rtol=1e-1, atol=1e-1)
-
-
-def test_calculate_joint_torques():
+def test_fk(serial_robot):
     """
-    From EXAMPLE 5.7 of
-    Craig, John J. Introduction to robotics: mechanics and control.
-    Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+    Test robot.
+
+    :param serial_robot:
+    :return:
+    """
+    joints = np.deg2rad([10, 20, 30, 40, 50, 60])
+    desired_pose = np.array(
+        [-0.786357, -0.607604, 0.111619, -776.143784,
+         -0.527587, 0.566511, -0.633022, -363.462788,
+         0.321394, -0.556670, -0.766044, -600.056043,
+         0, 0, 0, 1]
+    ).reshape(TRANSFORM_MATRIX_SHAPE)
+
+    # test with position argument
+    actual_pose = serial_robot.fk(position=joints)
+    np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
+
+    # test with internal position attribute
+    serial_robot.position = joints
+    actual_pose = serial_robot.fk()
+    np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
+
+    # test validation
+    with raises(SequenceError):
+        serial_robot.fk(position=np.ones(len(serial_robot) * 2))
+
+
+def test_optimization(serial_robot):
+    """
+    Test robot.
+
+    :param serial_robot:
+    :return:
+    """
+    masked_index = 1
+    serial_robot.world_frame.matrix = euler_zyx_2_matrix([1, 2, 3,
+                                                          np.deg2rad(10),
+                                                          np.deg2rad(20),
+                                                          np.deg2rad(30)])
+    serial_robot.tool.matrix = euler_zyx_2_matrix([1, 2, 3,
+                                                   np.deg2rad(10),
+                                                   np.deg2rad(20),
+                                                   np.deg2rad(30)])
+
+    # test mask
+    mask = RobotOptimizationMask(world_frame=True,
+                                 kinematic_chain=True,
+                                 tool=True)
+    serial_robot.optimization_mask = mask
+
+    assert isinstance(serial_robot.optimization_mask.world_frame, Sequence)
+    assert all(serial_robot.optimization_mask.world_frame)
+    assert len(serial_robot.
+               optimization_mask.
+               world_frame) == TRANSFORM_VECTOR_LENGTH
+
+    assert isinstance(serial_robot.optimization_mask.kinematic_chain, Sequence)
+    assert all(serial_robot.optimization_mask.kinematic_chain)
+    assert len(serial_robot.
+               optimization_mask.
+               kinematic_chain) == serial_robot.kinematic_chain.num_parameters
+
+    assert isinstance(serial_robot.optimization_mask.tool, Sequence)
+    assert all(serial_robot.optimization_mask.tool)
+    assert len(serial_robot.
+               optimization_mask.
+               tool) == TRANSFORM_VECTOR_LENGTH
+
+    # test optimization vector
+    # apply mask with single False
+    # check to make sure everything is properly set
+    frame_mask = [True] * TRANSFORM_VECTOR_LENGTH
+    frame_mask[masked_index] = False
+
+    kc_mask = [True] * serial_robot.kinematic_chain.num_parameters
+    kc_mask[masked_index] = False
+
+    mask = RobotOptimizationMask(world_frame=frame_mask,
+                                 kinematic_chain=kc_mask,
+                                 tool=frame_mask)
+    serial_robot.optimization_mask = mask
+
+    # these masked elements should not change after the optimization applied
+    masked_world_element = serial_robot.world_frame.vector()[masked_index]
+    masked_kc_element = serial_robot.kinematic_chain.vector[masked_index]
+    masked_tool_element = serial_robot.tool.vector()[masked_index]
+
+    new_optimization_vector = serial_robot.optimization_vector * 2
+    serial_robot.apply_optimization_vector(new_optimization_vector)
+
+    np.testing. \
+        assert_almost_equal(serial_robot.world_frame.vector()[masked_index],
+                            masked_world_element)
+    np.testing. \
+        assert_almost_equal(serial_robot.
+                            kinematic_chain.vector[masked_index],
+                            masked_kc_element)
+    np.testing. \
+        assert_almost_equal(serial_robot.tool.vector()[masked_index],
+                            masked_tool_element)
+
+    leftover_world_vector = [e for i, e in
+                             enumerate(serial_robot.world_frame.vector()) if
+                             i != masked_index]
+    leftover_kc_vector = [e for i, e in
+                          enumerate(serial_robot.kinematic_chain.vector) if
+                          i != masked_index]
+    leftover_tool_vector = [e for i, e in
+                            enumerate(serial_robot.tool.vector()) if
+                            i != masked_index]
+
+    leftover_vector = list(chain(leftover_world_vector,
+                                 leftover_kc_vector,
+                                 leftover_tool_vector))
+    np.testing.assert_allclose(leftover_vector,
+                               new_optimization_vector,
+                               atol=1e-6)
+
+
+def test_position(serial_robot):
+    """
+    Test robot.
+
+    :param serial_robot:
+    :return:
+    """
+    with raises(SequenceError):
+        serial_robot.position = np.ones(len(serial_robot) * 2)
+
+
+def test_position_limits(serial_robot):
+    """
+    Test robot.
+
+    :param serial_robot:
+    :return:
+    """
+    # test normal usage
+    limits = serial_robot.position_limits
+    serial_robot.position_limits = limits * 2
+
+    with raises(PyboticsError):
+        serial_robot.position_limits = np.ones((2, len(serial_robot) * 2))
+    with raises(PyboticsError):
+        serial_robot.position_limits = np.ones((1, len(serial_robot)))
+
+
+def test_init():
+    """
+    Test robot.
 
     :return:
     """
-
-    # set robot
-    link_length = [10, 20]
-    robot_model = np.array([
-        [0, 0, 0, 0],
-        [0, link_length[0], 0, 0],
-        [0, link_length[1], 0, 0]
-    ], dtype=np.float)
-    robot = Robot(robot_model)
-
-    # set test force and angles
-    force = [-100, -200, 0]
-    moment = [0] * 3
-    wrench = force + moment
-    joint_angles = np.deg2rad([30, 60, 0])
-
-    # calculate expected torques
-    expected_torques = [
-        link_length[0] * np.sin(joint_angles[1]) * force[0] +
-        (link_length[1] + link_length[0] * np.cos(joint_angles[1])) * force[1],
-        link_length[1] * force[1],
-        0
-    ]
-
-    # test
-    robot.joint_angles = joint_angles
-    torques = robot.calculate_external_wrench_joint_torques(wrench)
-    np.testing.assert_allclose(torques, expected_torques)
+    Robot(KinematicChain.from_array(np.ones(4)))
 
 
-def test_validate_joint_angles(robot):
-    test_joints_list = np.deg2rad([
-        [10, 90, 80, 20, 90, 123],
-        [-10, 20, -30, 40, -50, 191]
-    ])
+def test_repr(serial_robot):
+    s = repr(serial_robot)
 
-    assert robot.validate_joint_angles(test_joints_list[0])
-    assert not robot.validate_joint_angles(test_joints_list[1])
+    # check for important attributes
+    assert '_position' in s
+    assert '_position_limits' in s
+    assert 'world_frame' in s
+    assert 'kinematic_chain' in s
+    assert 'tool' in s
 
+    # check if valid json
+    json.loads(s)
 
-def test_generate_optimization_vector(robot):
-    mask = robot.generate_optimization_mask()
-    vector = robot.generate_optimization_vector(mask)
-    assert len(vector) == 0
-
-    mask = robot.generate_optimization_mask(world_mask=True)
-    vector = robot.generate_optimization_vector(mask)
-    assert len(vector) == 6
-
-
-def test_apply_optimization_vector(robot):
-    mask = robot.generate_optimization_mask(world_mask=True,
-                                            robot_model_mask=True,
-                                            tool_mask=True,
-                                            joint_compliance_mask=True)
-    vector = robot.generate_optimization_vector(mask)
-    vector = [x + 1 for x in vector]
-    robot.apply_optimization_vector(vector, mask)
-
-    parameters = list(itertools.chain(
-        geometry.pose_2_xyzrpw(robot.world_frame),
-        robot.robot_model.ravel(),
-        geometry.pose_2_xyzrpw(robot.tool.tcp),
-        robot.joint_compliance
-    ))
-
-    np.testing.assert_allclose(parameters, vector)
-
-
-def test_generate_optimization_mask(robot):
-    mask = robot.generate_optimization_mask()
-    assert sum(mask) == 0
-
-    mask = robot.generate_optimization_mask(world_mask=True)
-    assert sum(mask) == 6
-
-    assert len(robot.generate_optimization_mask()) == len(robot.generate_optimization_mask(world_mask=True,
-                                                                                           robot_model_mask=True,
-                                                                                           tool_mask=True,
-                                                                                           joint_compliance_mask=True))
-
-    with pytest.raises(exceptions.PybotException):
-        robot.generate_optimization_mask(world_mask=[True])
-    with pytest.raises(exceptions.PybotException):
-        robot.generate_optimization_mask(robot_model_mask=[True])
-    with pytest.raises(exceptions.PybotException):
-        robot.generate_optimization_mask(tool_mask=[True])
-    with pytest.raises(exceptions.PybotException):
-        robot.generate_optimization_mask(joint_compliance_mask=[True])
-
-
-def test_generate_parameter_bounds(robot):
-    mask = robot.generate_optimization_mask()
-    bounds = robot.generate_parameter_bounds(mask)
-    assert len(bounds) == 0
-
-    mask = robot.generate_optimization_mask(world_mask=True,
-                                            robot_model_mask=True,
-                                            tool_mask=True,
-                                            joint_compliance_mask=True)
-    bounds = robot.generate_parameter_bounds(mask)
-    assert len(bounds) > 0
-    for bound in bounds:
-        for b in bound:
-            assert b is None
-
-
-def test_random_joints(robot):
-    robot.random_joints()
-    for limit, joint in zip(robot.joint_angle_limits, robot.joint_angles):
-        assert min(limit) < joint
-        assert max(limit) > joint
-
-
-def test_calculate_tool_wrench(robot):
-    # test mass directly on flange
-    robot.tool = Tool(mass=10)
-    wrench = robot.calculate_tool_wrench()
-    wrench[1] -= robot.tool.mass * Constant.GRAVITY.value  # only y-force should see load
-    np.testing.assert_allclose(wrench, [0] * 6, atol=1e-7)
-
-    # test mass further from flange
-    robot.tool.cg = [0, 0, 100]
-    wrench = robot.calculate_tool_wrench()
-    wrench[1] -= robot.tool.mass * Constant.GRAVITY.value  # only y-force should see load
-    wrench[3] += robot.tool.mass * Constant.GRAVITY.value * robot.tool.cg[2]  # only x-moment should see load
-    np.testing.assert_allclose(wrench, [0] * 6, atol=1e-7)
-
-    # test new directions
-    robot.joint_angles = np.deg2rad([0, 0, 0, 0, 0, 90])
-    wrench = robot.calculate_tool_wrench()
-    wrench[0] -= robot.tool.mass * Constant.GRAVITY.value  # only x-force should see load
-    wrench[4] -= robot.tool.mass * Constant.GRAVITY.value * robot.tool.cg[2]  # only y-moment should see load
-    np.testing.assert_allclose(wrench, [0] * 6, atol=1e-7)
-
-
-def test_joint_torques(robot):
-    torques = [1, 2, 3, -4, -5, -6]
-    robot.joint_torques = torques
-    np.testing.assert_allclose(robot.joint_torques, torques)
-
-    with pytest.raises(exceptions.PybotException):
-        robot.joint_torques = torques + torques
-
-
-def test_joint_angles(robot):
-    # test regular setting
-    values = [1, 2, 3, -1, -2, -3]
-    robot.joint_angles = values
-    np.testing.assert_allclose(robot.joint_angles, values)
-
-    # test too many values
-    with pytest.raises(exceptions.PybotException):
-        robot.joint_angles = values + values
-
-    # test values over the limit
-    with pytest.raises(exceptions.PybotException):
-        robot.joint_angles = 2 * np.array(values)
-
-
-def test_joint_angle_limits(robot):
-    # test regular setting
-    values = [(-np.pi, np.pi)] * robot.num_dof()
-    robot.joint_angle_limits = values
-    np.testing.assert_allclose(robot.joint_angle_limits, values)
-
-    # test too many values
-    with pytest.raises(exceptions.PybotException):
-        robot.joint_angle_limits = values + values
-
-
-def test_joint_compliance(robot):
-    # test regular setting
-    values = [0] * robot.num_dof()
-    robot.joint_compliance = values
-    np.testing.assert_allclose(robot.joint_compliance, values)
-
-    # test too many values
-    with pytest.raises(exceptions.PybotException):
-        robot.joint_compliance = values + values
-
-
-def test_fixtures():
-    robot_fixture()
+    # check str()
+    assert str(serial_robot) == s

@@ -1,29 +1,32 @@
+"""Test tool."""
 import numpy as np
-import pytest
+from pytest import raises
 
-from pybotics import Tool
-from pybotics.exceptions import PybotException
-
-
-@pytest.fixture(name='tool')
-def tool_fixture():
-    return Tool()
+from pybotics.constants import POSITION_VECTOR_LENGTH
+from pybotics.errors import SequenceError
 
 
-def test_init(tool):
-    assert isinstance(tool.tcp, np.ndarray)
-    assert isinstance(tool.mass, (float, int))
-    assert isinstance(tool.cg, np.ndarray)
+def test_cg(tool):
+    """
+    Test tool.
+
+    :param tool:
+    :return:
+    """
+    new_cg = [9, 9, 9]
+    tool.cg = new_cg
+    np.testing.assert_allclose(tool.cg, new_cg)
+
+    with raises(SequenceError):
+        tool.cg = np.ones(POSITION_VECTOR_LENGTH * 2)
 
 
-def test_xyz(tool):
-    values = [1.1, 2.2, 3.3]
-    tool.tcp_xyz(values)
-    np.testing.assert_allclose(values, tool.tcp[:-1, -1])
+def test_mass(tool):
+    """
+    Test tool.
 
-    with pytest.raises(PybotException):
-        tool.tcp_xyz(values + values)
-
-
-def test_fixtures():
-    tool_fixture()
+    :param tool:
+    :return:
+    """
+    m = tool.mass
+    tool.mass = m

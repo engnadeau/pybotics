@@ -1,8 +1,14 @@
+#!/usr/bin/env python
+
 import platform
 import sys
 import pybotics
 import numpy
 import scipy
+
+print('---------------------------------------------------------------------')
+print('System Specs')
+print('---------------------------------------------------------------------')
 
 print('Platform: {}'.format(platform.platform()))
 print('Machine: {}'.format(platform.machine()))

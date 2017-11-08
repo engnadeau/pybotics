@@ -5,7 +5,6 @@ language: python
 cache: pip
 
 python:
-- 3.3
 - 3.4
 - 3.5
 - 3.6
@@ -17,7 +16,6 @@ python:
 matrix:
   fast_finish: true
   allow_failures:
-  - python: 3.3
   - python: 3.7-dev
   - python: nightly
 
@@ -30,27 +28,21 @@ addons:
     - python-wheel
     - python-wheel-common
     - python3-wheel
-    - pandoc
 
 install:
-- pip install -r ci-requirements.txt
-- python update_version.py
-- pandoc -v
-- pandoc -s -f markdown_github -t json -o README.json README.md
-- cat README.json
-- pandoc -s -f markdown_github -t json README.md | python clean_readme.py | pandoc -s -f json -t rst -o README.rst
-- cat README.rst
-- pip install .
+- pip install -r requirements/coverage.txt
+- pip install -r requirements/examples.txt
+- pip install -r requirements/packaging.txt
+- pip install -r requirements/requirements.txt
+- pip install -r requirements/static-testing.txt
+- pip install -v .
+- chmod +x ci/log-system-info.sh
+- chmod +x ci/run-static-tests.sh
 
 script:
+- ./ci/log-system-info.sh
+- ./ci/run-static-tests.sh
 - python setup.py test
-- for F in examples/*.ipynb; do jupyter nbconvert --to script --execute --stdout $F | python; done
-- mypy --strict pybotics
-- flake8 --show-source -v --count --statistics pybotics
-- vulture --exclude=docs .
-- bandit -r -v pybotics
-- pydocstyle -e -s -v pybotics
-- pipdeptree -w fail -p pybotics
 
 after_success:
 - coveralls

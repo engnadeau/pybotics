@@ -1,51 +1,78 @@
-import math
+"""Test geometry."""
 import numpy as np
-import pytest
+from pytest import raises
 
-from pybotics import exceptions
-from pybotics import geometry
+from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
+from pybotics.errors import SequenceError, Matrix4x4Error
+from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, matrix_2_euler_zyx
 
-
-def test_xyzrpw_2_pose():
-    xyzrpw = [100, 200, 300, np.deg2rad(-30), np.deg2rad(50), np.deg2rad(90)]
-
-    expected_transform = np.array([
-        [0, -0.642788, 0.766044, 100],
-        [0.866025, 0.383022, 0.321394, 200],
-        [-0.5, 0.663414, 0.556670, 300],
-        [0, 0, 0, 1]
-    ])
-
-    actual_transform = geometry.xyzrpw_2_pose(xyzrpw)
-    np.testing.assert_allclose(actual=actual_transform,
-                               desired=expected_transform,
-                               rtol=1e-6, atol=1e-6)
-
-    with pytest.raises(exceptions.PybotException):
-        geometry.xyzrpw_2_pose(xyzrpw + xyzrpw)
+EULER_ZYX_VECTOR = np.array([100, 200, 300,
+                             np.deg2rad(-30), np.deg2rad(50), np.deg2rad(90)])
+TRANSFORM = np.array([
+    [0, -0.642788, 0.766044, 100],
+    [0.866025, 0.383022, 0.321394, 200],
+    [-0.5, 0.663414, 0.556670, 300],
+    [0, 0, 0, 1]
+])
 
 
-def test_xyzrpw_2_pose_2_xyzrpw_2_pose():
-    """We can only compare 4x4 transform matrices, rpw combinations are arbitrary."""
-    x = 1.1
-    y = 2.2
-    z = 3.3
+def test_euler_zyx_2_matrix():
+    """
+    Test conversion.
 
-    angles = np.linspace(-math.pi, math.pi, 25)
+    :return:
+    """
+    actual = euler_zyx_2_matrix(EULER_ZYX_VECTOR)
+    np.testing.assert_allclose(actual=actual, desired=TRANSFORM, atol=1e-6)
 
-    for r in angles:
-        for p in angles:
-            for w in angles:
-                xyzrpw_original = [x, y, z, r, p, w]
-                pose_original = geometry.xyzrpw_2_pose(xyzrpw_original)
+    with raises(SequenceError):
+        euler_zyx_2_matrix(np.ones(TRANSFORM_VECTOR_LENGTH * 2))
 
-                xyzrpw_result = geometry.pose_2_xyzrpw(pose_original)
-                pose_result = geometry.xyzrpw_2_pose(xyzrpw_result)
 
-                np.testing.assert_allclose(actual=pose_original, desired=pose_result, rtol=1e-6, atol=1e-6)
+def test_matrix_2_euler_zyx():
+    """
+    Test conversion.
+
+    :return:
+    """
+    # test normal function
+    actual = matrix_2_euler_zyx(TRANSFORM)
+    np.testing.assert_allclose(actual=actual, desired=EULER_ZYX_VECTOR,
+                               atol=1e-6)
+
+    # test validation
+    with raises(Matrix4x4Error):
+        matrix_2_euler_zyx(np.ones(TRANSFORM_VECTOR_LENGTH))
+
+    # test matrix decomposition corner cases when y=90deg
+    corner_case_matrix = np.array(
+        [0, 0, 1, 0,
+         0, 1, 0, 0,
+         -1, 0, 0, 0,
+         0, 0, 0, 1]
+    ).reshape(TRANSFORM_MATRIX_SHAPE)
+    desired = [0, 0, 0, 0, np.deg2rad(90), 0]
+    actual = matrix_2_euler_zyx(corner_case_matrix)
+    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
+
+    # test matrix decomposition corner cases when y=-90deg
+    corner_case_matrix = np.array(
+        [0, 0, -1, 0,
+         0, 1, 0, 0,
+         1, 0, 0, 0,
+         0, 0, 0, 1]
+    ).reshape(TRANSFORM_MATRIX_SHAPE)
+    desired = [0, 0, 0, 0, np.deg2rad(-90), 0]
+    actual = matrix_2_euler_zyx(corner_case_matrix)
+    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
 
 
 def test_wrap_2_pi():
+    """
+    Test angle wrapping.
+
+    :return:
+    """
     angles = np.array([
         [0, 0],
         [-np.pi, -np.pi],
@@ -57,12 +84,12 @@ def test_wrap_2_pi():
     test_angles = angles[:, 0]
     expected_angles = angles[:, 1]
 
-    actual_angles = geometry.wrap_2_pi(test_angles)
+    actual_angles = np.array(list(map(wrap_2_pi, test_angles)))
     assert len(test_angles) == len(expected_angles)
     assert len(actual_angles) == len(expected_angles)
     np.testing.assert_allclose(actual_angles, expected_angles)
 
     # test single elements
     for i, _ in enumerate(expected_angles):
-        actual_angle = geometry.wrap_2_pi(test_angles[i])
-        np.testing.assert_allclose(actual_angle, expected_angles[i])
+        actual_angle = wrap_2_pi(test_angles[i])
+        np.testing.assert_allclose([actual_angle], expected_angles[i])

@@ -1,34 +1,44 @@
 """Tool module."""
+from typing import Sequence
+
 import numpy as np  # type: ignore
-from pybotics.exceptions import PybotException
+
+from pybotics.constants import POSITION_VECTOR_LENGTH
+from pybotics.errors import SequenceError
+from pybotics.frame import Frame
+from pybotics.validation import is_1d_sequence
 
 
-class Tool:
+class Tool(Frame):
     """Tool class."""
 
-    def __init__(self,
-                 tcp: np.ndarray = np.eye(4),
-                 mass: float = 0,
+    def __init__(self, matrix: np.ndarray = None, mass: float = 0,
                  cg: np.ndarray = np.zeros(3)) -> None:
         """
-        Construct Tool object.
+        Construct tool instance.
 
-        :param tcp: tool center point 4x4 transform
-        :param mass: mass of tool [kg]
-        :param cg: center of gravity xyz position [mm]
+        :param matrix: 4x4 transform matrix of tool frame
+        :param mass: mass of tool located at CG
+        :param cg: centre of gravity
         """
-        self.tcp = tcp
-        self.mass = mass
+        super().__init__(matrix)
+        self._cg = None
+
         self.cg = cg
+        self.mass = mass
 
-    def tcp_xyz(self, xyz: np.ndarray) -> None:
+    @property
+    def cg(self) -> np.ndarray:
         """
-        Set the tool center point (TCP) xyz position.
+        Centre of gravity.
 
-        :param xyz: position [mm]
-        :return:
+        :return: centre of gravity [x,y,z]
         """
-        if len(xyz) != 3:
-            raise PybotException
-        for i, parameter in enumerate(xyz):
-            self.tcp[i, -1] = parameter
+        return self._cg
+
+    @cg.setter
+    def cg(self, value: Sequence[float]) -> None:
+        if is_1d_sequence(value, POSITION_VECTOR_LENGTH):
+            self._cg = np.array(value)
+        else:
+            raise SequenceError('value', POSITION_VECTOR_LENGTH)
