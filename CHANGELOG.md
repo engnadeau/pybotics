@@ -5,6 +5,33 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.4.0] - 2017-11-08
+- A big refactor of `pybotics`
+- Many breaking changes to how models are designed and used
+- The goal was to clean technical debt and simplify the architecture
+
+### Added
+- `pybotics.__version__`
+- `CODE_OF_CONDUCT.md`
+- CI helper scripts
+- `docs`
+
+### Fixed
+- New PyPI test server in `.travis.yml`
+
+### Changed
+- All modules have been significantly updated
+- Split requirements
+- Typing now heavily relies on `collections.abc`
+- Simplified `.travis.yml` configuration
+- Simplified `README.md`
+- More static testing
+- Simplified `setup.py`
+- `100%` test coverage requirement
+
+### Removed  
+- Inverse kinematics (IK) for the moment
+- `README.rst`
 
 ## [0.3.2] - 2017-06-20
 ### CI
