@@ -1,5 +1,4 @@
 """Robot module."""
-import json
 from typing import Optional, Sequence, Sized
 
 import numpy as np  # type: ignore
