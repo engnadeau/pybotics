@@ -94,7 +94,7 @@ class KinematicChain(Sized):
             # create link sequences based on convention;
             links = []
             # TODO: add `if link_convention is LinkConvention.MDH:` check
-            for row, kp in zip(array, kinematic_pairs):
+            for row, _ in zip(array, kinematic_pairs):
                 # TODO: add `if kp is KinematicPair.REVOLUTE:` check
                 links.append(RevoluteMDHLink(*row))
         else:
