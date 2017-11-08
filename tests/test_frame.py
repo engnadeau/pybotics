@@ -3,7 +3,7 @@ import numpy as np
 from pytest import raises
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
-from pybotics.errors import Matrix4x4Error, SequenceLengthError, \
+from pybotics.errors import Matrix4x4Error, SequenceError, \
     OrientationConventionError
 
 
@@ -66,7 +66,7 @@ def test_position(world_frame):
     np.testing.assert_allclose(world_frame.position, new_position)
 
     bad_position = np.ones(4)
-    with raises(SequenceLengthError):
+    with raises(SequenceError):
         world_frame.position = bad_position
 
 

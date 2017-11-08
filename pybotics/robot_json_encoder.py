@@ -17,6 +17,15 @@ class RobotJSONEncoder(JSONEncoder):
         # process ndarray
         if isinstance(o, np.ndarray):
             o = o.tolist()
+            return o
+
+        # process dict-like objects
+        try:
+            o = o.__dict__
+        except AttributeError:
+            pass
+        else:
+            return o
 
         # let the base class default method raise the TypeError
         # https://docs.python.org/3/library/json.html

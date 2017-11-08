@@ -5,13 +5,13 @@ from typing import Any, Sequence, Union, Sized, Optional
 import numpy as np  # type: ignore
 
 from pybotics.errors import LinkConventionError, LinkSequenceError, \
-    SequenceLengthError, KinematicPairError
+    SequenceError, KinematicPairError
 from pybotics.kinematic_pair import KinematicPair
 from pybotics.link import Link
 from pybotics.link_convention import LinkConvention
 from pybotics.revolute_mdh_link import RevoluteMDHLink
 from pybotics.validation import is_same_link_conventions, \
-    is_sequence_length_correct
+    is_1d_sequence
 
 
 class KinematicChain(Sized):
@@ -85,8 +85,8 @@ class KinematicChain(Sized):
                 # turn single KinematicPair into sequence
                 kinematic_pairs = [kinematic_pairs] * len(array)
             else:
-                if not is_sequence_length_correct(kinematic_pairs, len(array)):
-                    raise SequenceLengthError('kinematic_pairs', len(array))
+                if not is_1d_sequence(kinematic_pairs, len(array)):
+                    raise SequenceError('kinematic_pairs', len(array))
                 if not all([isinstance(kp, KinematicPair) for kp in
                             kinematic_pairs]):
                     raise KinematicPairError()
@@ -200,8 +200,8 @@ class KinematicChain(Sized):
         """
         # validate
         if position is not None:
-            if not is_sequence_length_correct(position, self.num_dof):
-                raise SequenceLengthError('position', self.num_dof)
+            if not is_1d_sequence(position, self.num_dof):
+                raise SequenceError('position', self.num_dof)
         else:
             position = np.zeros(len(self))
 

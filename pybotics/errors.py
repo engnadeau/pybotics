@@ -71,7 +71,7 @@ class OrientationConventionError(PyboticsError):
         [e.name for e in OrientationConvention])
 
 
-class SequenceLengthError(PyboticsError):
+class SequenceError(PyboticsError):
     """Inappropriate sequence length."""
 
     def __init__(self, name: str, required_length: int) -> None:
@@ -81,8 +81,8 @@ class SequenceLengthError(PyboticsError):
         :param name: name of parameter causing error
         :param required_length: required length of parameter
         """
-        message = '{} must be a sequence with len=={}'.format(name,
-                                                              required_length)
+        message = '{} must be a 1D sequence with len=={}'.format(
+            name, required_length)
         super().__init__(message)
 
 

@@ -3,7 +3,7 @@ import numpy as np
 from pytest import raises
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
-from pybotics.errors import SequenceLengthError, Matrix4x4Error
+from pybotics.errors import SequenceError, Matrix4x4Error
 from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, matrix_2_euler_zyx
 
 EULER_ZYX_VECTOR = np.array([100, 200, 300,
@@ -25,7 +25,7 @@ def test_euler_zyx_2_matrix():
     actual = euler_zyx_2_matrix(EULER_ZYX_VECTOR)
     np.testing.assert_allclose(actual=actual, desired=TRANSFORM, atol=1e-6)
 
-    with raises(SequenceLengthError):
+    with raises(SequenceError):
         euler_zyx_2_matrix(np.ones(TRANSFORM_VECTOR_LENGTH * 2))
 
 

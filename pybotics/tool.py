@@ -4,9 +4,9 @@ from typing import Sequence
 import numpy as np  # type: ignore
 
 from pybotics.constants import POSITION_VECTOR_LENGTH
-from pybotics.errors import SequenceLengthError
+from pybotics.errors import SequenceError
 from pybotics.frame import Frame
-from pybotics.validation import is_sequence_length_correct
+from pybotics.validation import is_1d_sequence
 
 
 class Tool(Frame):
@@ -38,7 +38,7 @@ class Tool(Frame):
 
     @cg.setter
     def cg(self, value: Sequence[float]) -> None:
-        if is_sequence_length_correct(value, POSITION_VECTOR_LENGTH):
+        if is_1d_sequence(value, POSITION_VECTOR_LENGTH):
             self._cg = np.array(value)
         else:
-            raise SequenceLengthError('value', POSITION_VECTOR_LENGTH)
+            raise SequenceError('value', POSITION_VECTOR_LENGTH)

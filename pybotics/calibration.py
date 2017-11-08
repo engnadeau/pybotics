@@ -3,7 +3,7 @@ from typing import Sequence
 import numpy as np  # type: ignore
 
 from pybotics.constants import POSITION_VECTOR_LENGTH
-from pybotics.errors import SequenceLengthError, ShapeMismatchError
+from pybotics.errors import SequenceError, ShapeMismatchError
 from pybotics.robot import Robot
 
 
@@ -15,8 +15,8 @@ def compute_absolute_errors(robot: Robot,
     Compute the absolute errors of a given set of positions.
 
     :param robot: robot model
-    :param link_positions:
-    :param measured_positions:
+    :param link_positions: sequence of positions of each link (e.g., joints)
+    :param measured_positions: sequence of XYZ positions measured
     :return:
     """
     # ensure ndarray
@@ -29,10 +29,10 @@ def compute_absolute_errors(robot: Robot,
         raise ShapeMismatchError('link_positions.shape[0]',
                                  'measured_positions.shape[0]')
     if link_positions.shape[1] != robot.num_dof:  # type: ignore
-        raise SequenceLengthError('link_positions.shape[1]', robot.num_dof)
+        raise SequenceError('link_positions.shape[1]', robot.num_dof)
     if measured_positions.shape[1] != POSITION_VECTOR_LENGTH:  # type: ignore
-        raise SequenceLengthError('measured_positions.shape[1]',
-                                  POSITION_VECTOR_LENGTH)
+        raise SequenceError('measured_positions.shape[1]',
+                            POSITION_VECTOR_LENGTH)
 
     actual_poses = np.array(list(map(robot.fk, link_positions)))
     actual_positions = actual_poses[:, :-1, -1]

@@ -1,13 +1,12 @@
 """MDH link module."""
-from abc import abstractmethod
 
 import numpy as np  # type: ignore
 
-from pybotics.kinematic_pair import KinematicPair
 from pybotics.link import Link
 from pybotics.link_convention import LinkConvention
 
 
+# noinspection PyAbstractClass
 class MDHLink(Link):
     """
     Link class that uses Modified DH parameters.
@@ -37,26 +36,6 @@ class MDHLink(Link):
         :return: link convention used
         """
         return LinkConvention.MDH
-
-    @abstractmethod
-    def displace(self, position: float) -> np.ndarray:
-        """
-        Generate a vector of the new link state given a displacement.
-
-        :param position: given displacement
-        :return vector of new displacement state
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def kinematic_pair(self) -> KinematicPair:
-        """
-        Get the KinematicPair.
-
-        :return: kinematic pair
-        """
-        pass
 
     def transform(self, position: float = 0) -> np.ndarray:
         """

@@ -3,7 +3,7 @@ import numpy as np
 from pytest import raises
 
 from pybotics.constants import POSITION_VECTOR_LENGTH
-from pybotics.errors import SequenceLengthError
+from pybotics.errors import SequenceError
 
 
 def test_cg(tool):
@@ -17,7 +17,7 @@ def test_cg(tool):
     tool.cg = new_cg
     np.testing.assert_allclose(tool.cg, new_cg)
 
-    with raises(SequenceLengthError):
+    with raises(SequenceError):
         tool.cg = np.ones(POSITION_VECTOR_LENGTH * 2)
 
 

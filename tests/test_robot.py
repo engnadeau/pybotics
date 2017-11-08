@@ -1,4 +1,5 @@
 """Test robot."""
+import json
 from itertools import chain
 from typing import Sequence
 
@@ -6,7 +7,7 @@ import numpy as np
 from pytest import raises
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
-from pybotics.errors import SequenceLengthError, PyboticsError
+from pybotics.errors import SequenceError, PyboticsError
 from pybotics.geometry import euler_zyx_2_matrix
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.robot import Robot
@@ -38,7 +39,7 @@ def test_fk(serial_robot):
     np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
 
     # test validation
-    with raises(SequenceLengthError):
+    with raises(SequenceError):
         serial_robot.fk(position=np.ones(len(serial_robot) * 2))
 
 
@@ -141,7 +142,7 @@ def test_position(serial_robot):
     :param serial_robot:
     :return:
     """
-    with raises(SequenceLengthError):
+    with raises(SequenceError):
         serial_robot.position = np.ones(len(serial_robot) * 2)
 
 
@@ -169,3 +170,20 @@ def test_init():
     :return:
     """
     Robot(KinematicChain.from_array(np.ones(4)))
+
+
+def test_repr(serial_robot):
+    s = repr(serial_robot)
+
+    # check for important attributes
+    assert '_position' in s
+    assert '_position_limits' in s
+    assert 'world_frame' in s
+    assert 'kinematic_chain' in s
+    assert 'tool' in s
+
+    # check if valid json
+    json.loads(s)
+
+    # check str()
+    assert str(serial_robot) == s

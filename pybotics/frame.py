@@ -6,10 +6,10 @@ import numpy as np  # type: ignore
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, POSITION_VECTOR_LENGTH
 from pybotics.errors import OrientationConventionError, Matrix4x4Error, \
-    SequenceLengthError
+    SequenceError
 from pybotics.geometry import matrix_2_euler_zyx, euler_zyx_2_matrix
 from pybotics.orientation_convention import OrientationConvention
-from pybotics.validation import is_4x4_ndarray, is_sequence_length_correct
+from pybotics.validation import is_4x4_ndarray, is_1d_sequence
 
 
 class Frame:
@@ -99,10 +99,10 @@ class Frame:
 
     @position.setter
     def position(self, value: Sequence[float]) -> None:
-        if is_sequence_length_correct(value, POSITION_VECTOR_LENGTH):
+        if is_1d_sequence(value, POSITION_VECTOR_LENGTH):
             self.matrix[:-1, -1] = value
         else:
-            raise SequenceLengthError('value', POSITION_VECTOR_LENGTH)
+            raise SequenceError('value', POSITION_VECTOR_LENGTH)
 
     def vector(self,
                convention: OrientationConvention =

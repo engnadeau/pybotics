@@ -1,5 +1,5 @@
 """Validation module."""
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Any
 
 import numpy as np  # type: ignore
 
@@ -22,6 +22,28 @@ def is_1d_ndarray(array: np.ndarray, length: Optional[int] = None) -> bool:
     return result
 
 
+def is_1d_sequence(sequence: Sequence,
+                   length: Optional[int] = None,
+                   sequence_type: Any = None) -> bool:
+    """
+    Check if value is a 1D sequence.
+
+    :param sequence:
+    :param length: optional length to check
+    :param sequence_type: defaults to `scalar` (i.e., float or int)
+    :return: validation result
+    """
+    if sequence_type is None:
+        result = isinstance(sequence[0], (float, int))
+    else:
+        result = isinstance(sequence[0], sequence_type)
+
+    if length is not None:
+        result = result and len(sequence) == length
+
+    return result
+
+
 def is_4x4_ndarray(array: np.ndarray) -> bool:
     """
     Check if value is a 4x4 ndarray.
@@ -30,17 +52,6 @@ def is_4x4_ndarray(array: np.ndarray) -> bool:
     :return: validation result
     """
     return is_ndarray(array) and np.array_equal(array.shape, [4, 4])
-
-
-def is_sequence_length_correct(sequence: Sequence, length: int) -> bool:
-    """
-    Check if sequence is the correct length.
-
-    :param sequence: value to check
-    :param length: length to check
-    :return: validation result
-    """
-    return len(sequence) == length
 
 
 def is_ndarray(array: np.ndarray) -> bool:

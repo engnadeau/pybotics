@@ -1,7 +1,7 @@
 """Test errors."""
 from pytest import raises
 
-from pybotics.errors import PyboticsError, SequenceLengthError, \
+from pybotics.errors import PyboticsError, SequenceError, \
     Matrix4x4Error, LinkConventionError, LinkSequenceError, \
     OrientationConventionError
 
@@ -65,5 +65,5 @@ def test_sequence_length_error():
 
     :return:
     """
-    with raises(SequenceLengthError):
-        raise SequenceLengthError('test', 123)
+    with raises(SequenceError):
+        raise SequenceError('test', 123)

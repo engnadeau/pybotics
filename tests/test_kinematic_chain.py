@@ -5,7 +5,7 @@ from pytest import raises
 from pybotics import KinematicPair
 from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import LinkConventionError, KinematicPairError, \
-    SequenceLengthError, LinkSequenceError
+    SequenceError, LinkSequenceError
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.link import Link
 from pybotics.revolute_mdh_link import RevoluteMDHLink
@@ -73,7 +73,7 @@ def test_array_2_links():
     with raises(KinematicPairError):
         # noinspection PyTypeChecker
         KinematicChain.array_2_links(np.ones(4), kinematic_pairs=[123])
-    with raises(SequenceLengthError):
+    with raises(SequenceError):
         KinematicChain.array_2_links(np.ones(TRANSFORM_MATRIX_SHAPE),
                                      kinematic_pairs=[KinematicPair.REVOLUTE])
 
@@ -119,7 +119,7 @@ def test_transforms(planar_kc):
     planar_kc.transforms(np.ones(len(planar_kc)))
 
     # test validation
-    with raises(SequenceLengthError):
+    with raises(SequenceError):
         planar_kc.transforms(np.ones(len(planar_kc) * 2))
 
 

@@ -3,13 +3,13 @@ from typing import Optional, Sequence, Sized
 
 import numpy as np  # type: ignore
 
-from pybotics.errors import SequenceLengthError, PyboticsError
+from pybotics.errors import SequenceError, PyboticsError
 from pybotics.frame import Frame
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.robot_json_encoder import RobotJSONEncoder
 from pybotics.robot_optimization_mask import RobotOptimizationMask
 from pybotics.tool import Tool
-from pybotics.validation import is_1d_ndarray, is_sequence_length_correct
+from pybotics.validation import is_1d_ndarray, is_1d_sequence
 
 
 class Robot(Sized):
@@ -85,8 +85,8 @@ class Robot(Sized):
         """
         # validate
         if position is not None:
-            if not is_sequence_length_correct(position, self.num_dof):
-                raise SequenceLengthError('position', self.num_dof)
+            if not is_1d_sequence(position, self.num_dof):
+                raise SequenceError('position', self.num_dof)
         else:
             position = self.position
 
@@ -163,7 +163,7 @@ class Robot(Sized):
         if is_1d_ndarray(value, self.num_dof):
             self._position = value
         else:
-            raise SequenceLengthError('value', self.num_dof)
+            raise SequenceError('value', self.num_dof)
 
     @property
     def position_limits(self) -> np.ndarray:
