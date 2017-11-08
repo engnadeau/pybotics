@@ -8,6 +8,5 @@ mypy==0.540
 vulture==0.26
 bandit==1.4.0
 pipdeptree==0.10.1
-pylint
 safety
 xenon

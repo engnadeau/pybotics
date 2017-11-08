@@ -5,7 +5,6 @@ mypy --strict pybotics
 
 # linters
 flake8
-pylint pybotics
 vulture --exclude=docs,conftest.py,__init__.py .
 
 # quality
