@@ -36,4 +36,4 @@ __all__ = [
     'validation',
 ]
 
-__version__ = VERSION.version
+__version__ = VERSION
