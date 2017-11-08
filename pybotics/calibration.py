@@ -40,4 +40,3 @@ def compute_absolute_errors(robot: Robot,
     distance_errors = np.linalg.norm(position_errors, axis=1)
 
     return distance_errors
-
