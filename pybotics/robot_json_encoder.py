@@ -8,6 +8,12 @@ class RobotJSONEncoder(JSONEncoder):
     """Robot JSON Encoder class."""
 
     def default(self, o: Any) -> Any:
+        """
+        Return serializable robot objects.
+
+        :param o:
+        :return:
+        """
         # process ndarray
         if isinstance(o, np.ndarray):
             o = o.tolist()
