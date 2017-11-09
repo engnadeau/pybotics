@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Error in `setup.py` when installing released package from PyPI
+
 ## [0.4.0] - 2017-11-08
 - A big refactor of `pybotics`
 - Many breaking changes to how models are designed and used

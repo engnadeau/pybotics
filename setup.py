@@ -104,10 +104,17 @@ def update_version():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
-    update_git_info()
-    check_travis_ci()
-    update_version()
-    write_version_py()
+    try:
+        # pypi package should already have version.py
+        from pybotics import version
+    except ImportError:
+        # in CI and on dev, we don't have version.py yet
+        update_git_info()
+        check_travis_ci()
+        update_version()
+        write_version_py()
+    else:
+        VERSION = version.VERSION
 
     with open(os.path.join(os.path.dirname(__file__),
                            'requirements', 'requirements.txt')) as f:
