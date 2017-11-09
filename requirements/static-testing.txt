@@ -9,4 +9,4 @@ vulture==0.26
 bandit==1.4.0
 pipdeptree==0.10.1
 safety==1.6.1
-xenon
+xenon==0.5.4
