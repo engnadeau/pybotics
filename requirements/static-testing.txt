@@ -1,5 +1,5 @@
 flake8==3.5.0
-flake8-docstrings
+flake8-docstrings==1.1.0
 flake8-bugbear;python_version>="3.5"
 flake8-import-order
 mccabe
