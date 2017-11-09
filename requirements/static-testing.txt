@@ -2,7 +2,7 @@ flake8==3.5.0
 flake8-docstrings==1.1.0
 flake8-bugbear==17.4.0;python_version>="3.5"
 flake8-import-order==0.15
-mccabe
+mccabe==0.6.1
 pep8-naming
 mypy==0.540
 vulture==0.26
