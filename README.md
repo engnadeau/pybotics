@@ -18,36 +18,14 @@ The Python Toolbox for Robotics
 pip install pybotics
 ```
 
-### Quick Start
-```python
-import numpy as np
-import pybotics as pybot
-
-# classic planar robot from textbooks
-robot_model = np.array([
-    [0, 0, 0, 0],
-    [0, 10, 0, 0],
-    [0, 20, 0, 0]
-], dtype=np.float)
-planar_robot = pybot.Robot(robot_model)
-planar_robot.joint_angles = np.deg2rad([30, 60, 0])
-pose = planar_robot.fk() # forward kinematics, returns 4x4 pose transform    
-
-# modern, collaborative, 6-axis robot (UR10 from Universal Robots)
-robot_model = np.loadtxt('ur10-mdh.csv', delimiter=',')
-ur10_robot = pybot.Robot(robot_model)
-ur10_robot.random_joints()
-pose = ur10_robot.fk() # forward kinematics, returns 4x4 pose transform
-```
-
-### Applications
-- [Kinematics](https://github.com/nnadeau/pybotics/blob/master/examples/example_kinematics.ipynb)
-- [Calibration](https://github.com/nnadeau/pybotics/blob/master/examples/example_calibration.ipynb)
+### Applications & Examples
+- [Kinematics](examples/forward_kinematics.ipynb)
+- [Calibration](examples/calibration.ipynb)
 - Trajectory and path planning
 
 ## Development
 - All branches are deployed to [PyPI's Test Site](https://testpypi.python.org/pypi/pybotics/)
-- Only tags on the `master` branch are deployed to [PyPI](https://pypi.python.org/pypi/pybotics)
+- Only tags on the `master` branch are deployed to [PyPI](https://pypi.org/project/pybotics/)
 - Requirements used for CI (e.g., `requirements/static-testing.txt`) are pinned to a specific version to avoid the `master` branch from suddenly failing due to a package update.
 
 ## References
