@@ -105,9 +105,9 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     try:
-        # pypi package shoudl already have version.py
+        # pypi package should already have version.py
         from pybotics import version
-    except ModuleNotFoundError:
+    except ImportError:
         # in CI and on dev, we don't have version.py yet
         update_git_info()
         check_travis_ci()
