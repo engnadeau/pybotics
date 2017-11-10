@@ -48,10 +48,10 @@ script:
 - python setup.py test
 # dist testing
 - python setup.py sdist
-- pip install dist/*
+- pip install -U dist/*
 - rm -r dist/
 - python setup.py bdist_wheel
-- pip install dist/*
+- pip install -U dist/*
 - rm -r dist/
 
 after_success:
