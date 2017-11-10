@@ -49,6 +49,10 @@ script:
 # dist testing
 - python setup.py sdist
 - pip install dist/*
+- rm -r dist/
+- python setup.py bdist_wheel
+- pip install dist/*
+- rm -r dist/
 
 after_success:
 - coveralls
