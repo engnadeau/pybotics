@@ -40,8 +40,11 @@ install:
 - chmod +x ci/run-static-tests.sh
 
 script:
+# log info
 - ./ci/log-system-info.sh
+# static testing
 - ./ci/run-static-tests.sh
+# unit testing
 - python setup.py test
 
 after_success:
