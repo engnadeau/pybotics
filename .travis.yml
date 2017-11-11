@@ -40,9 +40,19 @@ install:
 - chmod +x ci/run-static-tests.sh
 
 script:
+# log info
 - ./ci/log-system-info.sh
+# static testing
 - ./ci/run-static-tests.sh
+# unit testing
 - python setup.py test
+# dist testing
+- python setup.py sdist
+- pip install -U dist/*
+- rm -r dist/
+- python setup.py bdist_wheel
+- pip install -U dist/*
+- rm -r dist/
 
 after_success:
 - coveralls
