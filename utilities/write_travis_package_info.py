@@ -23,7 +23,7 @@ if __name__ == '__main__':
         if travis_commit:
             version = '0.0.0.dev{}'.format(int(travis_commit, 16))
         else:
-            version = '0.0.0.dev'
+            version = '0.0.0.dev0'
 
     version_path = os.path.join(
         os.path.dirname(os.path.dirname(__file__)),
