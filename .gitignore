@@ -367,4 +367,3 @@ ENV/
 VERSION
 .mypy_cache/
 README.rst
-pybotics/version.py
