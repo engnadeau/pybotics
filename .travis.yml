@@ -44,9 +44,9 @@ install:
 
 script:
 # log info
-- ./ci/log-system-info.sh
+- ./utilities/log-system-info.sh
 # static testing
-- ./ci/run-static-tests.sh
+- ./utilities/run-static-tests.sh
 # unit testing
 - python setup.py test
 # dist testing
