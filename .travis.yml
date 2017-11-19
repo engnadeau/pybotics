@@ -29,6 +29,9 @@ addons:
     - python-wheel-common
     - python3-wheel
 
+before_install:
+- python utilities/write_travis_package_info.py
+
 install:
 - pip install -r requirements/coverage.txt
 - pip install -r requirements/examples.txt
@@ -36,14 +39,14 @@ install:
 - pip install -r requirements/requirements.txt
 - pip install -r requirements/static-testing.txt
 - pip install -v .
-- chmod +x ci/log-system-info.sh
-- chmod +x ci/run-static-tests.sh
+- chmod +x utilities/log-system-info.sh
+- chmod +x utilities/run-static-tests.sh
 
 script:
 # log info
-- ./ci/log-system-info.sh
+- ./utilities/log-system-info.sh
 # static testing
-- ./ci/run-static-tests.sh
+- ./utilities/run-static-tests.sh
 # unit testing
 - python setup.py test
 # dist testing

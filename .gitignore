@@ -364,7 +364,5 @@ ENV/
 
 .idea
 *.rej
-VERSION
 .mypy_cache/
 README.rst
-pybotics/version.py

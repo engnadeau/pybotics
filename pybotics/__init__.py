@@ -1,5 +1,4 @@
 """Pybotics modules."""
-from .version import VERSION
 from . import calibration
 from . import constants
 from . import errors
@@ -36,4 +35,5 @@ __all__ = [
     'validation',
 ]
 
-__version__ = VERSION
+with open('VERSION') as f:
+    __version__ = f.read()

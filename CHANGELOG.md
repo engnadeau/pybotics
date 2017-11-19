@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.5.0] - 2017-11-18
+### Fixed
+- [Implicit `GitPython` dependency](https://github.com/nnadeau/pybotics/issues/214)
+
 ## [0.4.1] - 2017-11-10
 ### Fixed
 - Error in `setup.py` when installing released package from PyPI
