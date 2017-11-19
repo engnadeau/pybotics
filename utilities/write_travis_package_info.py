@@ -21,9 +21,10 @@ if __name__ == '__main__':
         version = travis_tag
     else:
         if travis_commit:
-            version = '0.0.0.dev{}'.format(int(travis_commit, 16))
+            version = '{}'.format(int(travis_commit, 16))
         else:
             version = '0.0.0.dev0'
+    logging.info('Version: {}'.format(version))
 
     version_path = os.path.join(
         os.path.dirname(os.path.dirname(__file__)),
