@@ -23,6 +23,12 @@ pip install pybotics
 - [Calibration](examples/calibration.ipynb)
 - Trajectory and path planning
 
+## Featured In
+- [PyCon Canada 2017](https://2017.pycon.ca/schedule/53/)
+  - [Talk Photos](https://500px.com/nicholasnadeau/galleries/pycon-canada-2017)
+  - [Slides](https://github.com/nnadeau/pycon-canada-2017)
+- [Montreal-Python 2017](https://www.youtube.com/watch?v=wgKoGA69YXQ)
+
 ## Development
 - All branches are deployed to [PyPI's Test Site](https://testpypi.python.org/pypi/pybotics/)
 - Only tags on the `master` branch are deployed to [PyPI](https://pypi.org/project/pybotics/)
