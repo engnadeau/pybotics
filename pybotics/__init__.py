@@ -35,5 +35,8 @@ __all__ = [
     'validation',
 ]
 
-with open('VERSION') as f:
-    __version__ = f.read()
+try:
+    with open('VERSION') as f:
+        __version__ = f.read()
+except FileNotFoundError:
+    __version__ = 0.0.0
