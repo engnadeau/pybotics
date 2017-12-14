@@ -2,19 +2,13 @@
 from setuptools import setup, find_packages
 import os
 import logging
+from pybotics import __version__
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     # version
-    path = os.path.join(
-        os.path.dirname(__file__),
-        'VERSION'
-    )
-    logging.info('Version path: {}'.format(path))
-    with open(path) as f:
-        version = f.read()
-    logging.info('Version: {}'.format(version))
+    logging.info('Version: {}'.format(__version__))
 
     # requirements
     path = os.path.join(
@@ -38,7 +32,7 @@ if __name__ == '__main__':
 
     setup(
         name='pybotics',
-        version=version,
+        version=__version__,
         packages=find_packages(
             exclude=[
                 '*tests*',
