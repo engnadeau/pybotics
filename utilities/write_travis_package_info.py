@@ -1,6 +1,5 @@
 import os
 import logging
-from pathlib import Path
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
@@ -24,16 +23,14 @@ if __name__ == '__main__':
         if travis_commit:
             version = '{}'.format(int(travis_commit, 16))
         else:
-            version = '0.0.0'
+            version = '0.0.0.dev0'
     logging.info('Version: {}'.format(version))
 
-    current_path = Path()
-    if 'utilities' in str(current_path):
-        current_path = current_path.parent
-    logging.info('Current path: {}'.format(current_path.resolve()))
+    version_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'VERSION'
+    )
+    logging.info('Version path: {}'.format(version_path))
 
-    version_path = current_path / 'pybotics' / 'version.py'
-    logging.info('Version path: {}'.format(version_path.resolve()))
-
-    with open(str(version_path), 'w') as f:
-        f.write('VERSION = {}'.format(version))
+    with open(version_path, 'w') as f:
+        f.write(version)
