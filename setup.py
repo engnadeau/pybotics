@@ -6,19 +6,16 @@ import logging
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
-    # version
-    path = os.path.join(
-        os.path.dirname(__file__),
-        'VERSION'
-    )
-    logging.info('Version path: {}'.format(path))
-    with open(path) as f:
-        version = f.read()
-    logging.info('Version: {}'.format(version))
-
     # paths
     current_dir = Path(__file__).parent
     logging.info('Current dir: {}'.format(current_dir))
+
+    # version
+    path = current_dir / 'VERSION'
+    logging.info('Version path: {}'.format(path))
+    with open(str(path)) as f:
+        version = f.read()
+    logging.info('Version: {}'.format(version))
 
     # requirements
     path = current_dir / 'requirements' / 'requirements.txt'
