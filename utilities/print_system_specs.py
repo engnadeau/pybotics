@@ -17,7 +17,7 @@ d['packages'].append({
     'version': pybotics_dist.version
 })
 
-for dist in pkg_resources.get_distribution('pybotics').requires():
+for dist in pybotics_dist.requires():
     d['packages'].append({
         'name': dist.key,
         'version': pkg_resources.get_distribution(dist.key).version
