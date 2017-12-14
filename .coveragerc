@@ -1,5 +1,7 @@
 [run]
 branch = True
+omit =
+    pybotics/__init__.py
 
 [report]
 fail_under = 100
