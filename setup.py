@@ -52,7 +52,6 @@ if __name__ == '__main__':
         description='Python Toolbox for Robotics',
         long_description=description,
         install_requires=requirements,
-        setup_requires=['pytest-runner'],
         tests_require=['pytest'],
         classifiers=[
             'Development Status :: 4 - Beta',
