@@ -1,4 +1,5 @@
 """Pybotics modules."""
+from .version import VERSION
 from . import calibration
 from . import constants
 from . import errors
@@ -35,8 +36,4 @@ __all__ = [
     'validation',
 ]
 
-try:
-    with open('VERSION') as f:
-        __version__ = f.read()
-except FileNotFoundError:
-    __version__ = '0.0.0'
+__version__ = VERSION
