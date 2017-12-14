@@ -1,21 +1,26 @@
 #!/usr/bin/env python
-
+import pkg_resources
 import platform
 import sys
-import pybotics
-import numpy
-import scipy
+import json
 
-print('---------------------------------------------------------------------')
-print('System Specs')
-print('---------------------------------------------------------------------')
+d = {
+    'platform': platform.platform(),
+    'machine': platform.machine(),
+    'python': sys.version,
+    'packages': []
+}
 
-print('Platform: {}'.format(platform.platform()))
-print('Machine: {}'.format(platform.machine()))
-print('Python: {}'.format(sys.version))
-try:
-    print('Pybotics: {}'.format(pybotics.__version__))
-except AttributeError as e:
-    print(e)
-print('NumPy: {}'.format(numpy.__version__))
-print('SciPy: {}'.format(scipy.__version__))
+pybotics_dist = pkg_resources.get_distribution('pybotics')
+d['packages'].append({
+    'name': pybotics_dist.key,
+    'version': pybotics_dist.version
+})
+
+for dist in pkg_resources.get_distribution('pybotics').requires():
+    d['packages'].append({
+        'name': dist.key,
+        'version': pkg_resources.get_distribution(dist.key).version
+    })
+
+print(json.dumps(d, sort_keys=True, indent=4))
