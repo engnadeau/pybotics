@@ -1,37 +1,31 @@
 """Setup module."""
+from pathlib import Path
 from setuptools import setup, find_packages
-import os
 import logging
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
+    # paths
+    current_dir = Path(__file__).parent
+    logging.info('Current dir: {}'.format(current_dir))
+
     # version
-    path = os.path.join(
-        os.path.dirname(__file__),
-        'VERSION'
-    )
+    path = current_dir / 'VERSION'
     logging.info('Version path: {}'.format(path))
-    with open(path) as f:
+    with open(str(path)) as f:
         version = f.read()
     logging.info('Version: {}'.format(version))
 
     # requirements
-    path = os.path.join(
-        os.path.dirname(__file__),
-        'requirements',
-        'requirements.txt'
-    )
+    path = current_dir / 'requirements' / 'requirements.txt'
     logging.info('Requirements path: {}'.format(path))
-    with open(path) as f:
+    with open(str(path)) as f:
         requirements = f.read().splitlines()
     logging.info('Requirements: {}'.format(requirements))
 
     # description
-    path = os.path.join(
-        os.path.dirname(__file__),
-        'README.md'
-    )
+    path = current_dir / 'README.md'
     logging.info('Requirements path: {}'.format(path))
     with open(path, encoding='utf-8') as f:
         description = f.read()
