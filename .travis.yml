@@ -35,19 +35,16 @@ before_install:
 
 install:
 # dump version
-- pipenv install --dev --skip-lock
+- pipenv install -r requirements.txt
+- pipenv install -r dev-requirements.txt
 - python utilities/write_version.py
+- pipenv run pip install -e .
 - pipenv run pip list
-# dump dependencies
-- pipenv lock
-- cat Pipfile.lock
-- pipenv lock -r > requirements.txt
 
 script:
 # static testing
 - pipenv run ./utilities/run-static-tests.sh
 # unit testing
-- pipenv run pip install -e .
 - pipenv run pytest tests/
 
 after_success:
