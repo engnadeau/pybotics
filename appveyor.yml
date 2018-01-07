@@ -19,3 +19,9 @@ build: off
 
 test_script:
 - "%PYTHON%\\python.exe -m pipenv run pytest tests"
+
+after_test:
+- "%PYTHON%\\python.exe setup.py bdist_wheel"
+
+artifacts:
+- path: dist\*
