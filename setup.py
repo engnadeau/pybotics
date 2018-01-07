@@ -7,19 +7,19 @@ from pathlib import Path
 def main():
     # paths
     root_path = Path(__file__).parent
-    logging.info('Root path: {}'.format(root_path))
+    logging.info('Root path: {}'.format(root_path.resolve()))
 
     # version
     version_path = root_path / 'VERSION'
-    logging.info('Version path: {}'.format(version_path))
+    logging.info('Version path: {}'.format(version_path.resolve()))
 
     with open(str(version_path)) as f:
         version = f.read()
     logging.info('Version: {}'.format(version))
 
     # requirements
-    requirements_path = root_path / 'requirements.txt'
-    logging.info('Requirements path: {}'.format(requirements_path))
+    requirements_path = root_path / 'requirements' / 'main.txt'
+    logging.info('Requirements path: {}'.format(requirements_path.resolve()))
 
     with open(str(requirements_path)) as f:
         requirements = f.read().splitlines()
