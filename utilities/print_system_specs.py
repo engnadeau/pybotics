@@ -1,21 +1,25 @@
-#!/usr/bin/env python
+from platform import platform, machine
 
-import platform
-import sys
-import pybotics
-import numpy
-import scipy
+import pkg_resources
+import json
 
-print('---------------------------------------------------------------------')
-print('System Specs')
-print('---------------------------------------------------------------------')
 
-print('Platform: {}'.format(platform.platform()))
-print('Machine: {}'.format(platform.machine()))
-print('Python: {}'.format(sys.version))
-try:
-    print('Pybotics: {}'.format(pybotics.__version__))
-except AttributeError as e:
-    print(e)
-print('NumPy: {}'.format(numpy.__version__))
-print('SciPy: {}'.format(scipy.__version__))
+def fetch_dependencies(package_name: str) -> dict:
+    dist = pkg_resources.get_distribution(package_name)
+
+    d = {'package': dist.key, 'version': dist.version}
+
+    dependencies = dist.requires()
+    dep_names = [d.key for d in dependencies]
+
+    d['dependencies'] = list(map(fetch_dependencies, dep_names))
+
+    return d
+
+
+if __name__ == '__main__':
+    d = fetch_dependencies('pybotics')
+    d['platform'] = platform()
+    d['machine'] = machine()
+
+    print(json.dumps(d, indent=4))
