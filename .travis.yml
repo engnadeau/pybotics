@@ -41,6 +41,7 @@ jobs:
       script:
       - pip install -r requirements/main.txt
       - pip install -r requirements/unit-testing.txt
+      - pip install -r requirements/versioning.txt
       - python utilities/write_version.py
       - pip install -e .
       - pytest tests/
@@ -55,7 +56,10 @@ jobs:
       - python utilities/test_ipython_examples.py
     - stage: deployment
       python: 3.6
-      script: pip install -r requirements/deployment.txt
+      script:
+      - pip install -r requirements/deployment.txt
+      - pip install -r requirements/versioning.txt
+      - python utilities/write_version.py
       deploy:
       - provider: pypi
         skip_cleanup: true
