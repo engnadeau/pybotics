@@ -14,6 +14,13 @@ The Python Toolbox for Robotics
 
 ## Usage
 ### Installation
+#### Preferred
+```
+pipenv install pybotics
+```
+- See the [`pipenv` documentation](https://docs.pipenv.org/) for more info
+
+#### Legacy
 ```
 pip install pybotics
 ```
