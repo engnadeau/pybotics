@@ -1,3 +1,0 @@
-pytest==3.3.2
-pytest-runner==3.0
-setuptools==38.4.0
