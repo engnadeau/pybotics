@@ -30,32 +30,21 @@ addons:
     - python3-wheel
 
 before_install:
-- python utilities/write_travis_package_info.py
-
-install:
-- pip install -r requirements/coverage.txt
-- pip install -r requirements/examples.txt
-- pip install -r requirements/packaging.txt
-- pip install -r requirements/requirements.txt
-- pip install -r requirements/static-testing.txt
-- pip install -v .
-- chmod +x utilities/log-system-info.sh
+- pip install pipenv
 - chmod +x utilities/run-static-tests.sh
 
+install:
+# dump version
+- pipenv install --dev --skip-lock
+- python utilities/write_version.py
+- pipenv run pip list
+
 script:
-# log info
-- ./utilities/log-system-info.sh
 # static testing
-- ./utilities/run-static-tests.sh
+- pipenv run ./utilities/run-static-tests.sh
 # unit testing
-- python setup.py test
-# dist testing
-- python setup.py sdist
-- pip install -U dist/*
-- rm -r dist/
-- python setup.py bdist_wheel
-- pip install -U dist/*
-- rm -r dist/
+- pipenv run pip install -e .
+- pipenv run pytest tests/
 
 after_success:
 - coveralls
@@ -95,6 +84,3 @@ deploy:
       branch: master
       repo: nnadeau/pybotics
       python: 3.6
-
-after_script:
-- python $TRAVIS_BUILD_DIR/utilities/print_system_specs.py
