@@ -1,0 +1,10 @@
+[flake8]
+count = True
+verbose = 1
+exclude =
+    docs,
+    examples
+show-source = True
+statistics = True
+max-complexity = 10
+select = B903
