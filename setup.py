@@ -13,7 +13,7 @@ def main():
     version_path = root_path / 'VERSION'
     logging.info('Version path: {}'.format(version_path))
 
-    with open(version_path) as f:
+    with open(str(version_path)) as f:
         version = f.read()
     logging.info('Version: {}'.format(version))
 
@@ -21,7 +21,7 @@ def main():
     requirements_path = root_path / 'requirements.txt'
     logging.info('Requirements path: {}'.format(requirements_path))
 
-    with open(requirements_path) as f:
+    with open(str(requirements_path)) as f:
         requirements = f.read().splitlines()
     for i, req in enumerate(requirements):
         requirements[i] = req.split()[0]
