@@ -45,6 +45,9 @@ script:
 # unit testing
 - pipenv run pip install -e .
 - pipenv run pytest tests/
+# dump dependencies lock
+- pipenv lock
+- cat Pipfile.lock
 
 after_success:
 - coveralls
