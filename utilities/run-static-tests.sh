@@ -14,4 +14,3 @@ xenon --max-absolute B --max-modules A --max-average A pybotics
 pipdeptree -w fail -p pybotics
 bandit -r -v pybotics
 pipenv check pybotics
-pipenv check --unused pybotics
