@@ -6,7 +6,7 @@ import logging
 def main():
     # get version
     version = get_version(root='..', relative_to=__file__)
-    version = str(version).replace('+', '')
+    version = str(version).replace('+g', '')
     logging.info('Version: {}'.format(version))
 
     # get root path
