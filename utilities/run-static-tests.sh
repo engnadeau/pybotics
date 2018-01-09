@@ -14,3 +14,10 @@ xenon --max-absolute B --max-modules A --max-average A pybotics
 pipdeptree -w fail -p pybotics
 bandit -r -v pybotics
 pipenv check pybotics
+safety check --full-report \
+    -r requirements/main.txt \
+    -r requirements/example-testing.txt \
+    -r requirements/unit-testing.txt \
+    -r requirements/deployment.txt \
+    -r requirements/versioning.txt \
+    -r requirements/static-testing.txt

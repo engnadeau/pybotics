@@ -8,6 +8,17 @@ def main():
     version = get_version(root='..', relative_to=__file__)
     logging.info('Version: {}'.format(version))
 
+    # ensure PEP440 compliance
+    version_segments = version.split('.dev')
+    if len(version_segments) > 1:
+        logging.info('Cleaning version for PEP440 compliance')
+        tag_version_segment = version_segments[0]
+        dev_version_segment = version.split('.dev')[1]
+        dev_version_segment = abs(hash(dev_version_segment))
+
+        version = '{}.dev{}'.format(tag_version_segment, dev_version_segment)
+        logging.info('PEP440 version: {}'.format(version))
+
     # get root path
     root_path = Path(__file__).parents[1]
     logging.info('Root path: {}'.format(root_path.resolve()))
