@@ -25,5 +25,6 @@ jobs:
     - run:
         name: test
         command: |
+          . venv/bin/activate
           pip list
           python -m pytest tests/
