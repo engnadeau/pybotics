@@ -11,14 +11,14 @@ jobs:
     - checkout
 
     - run:
-      name: install
-      command: |
-        pip install -r requirements/main.txt
-        pip install -r requirements/unit-testing.txt
-        pip install -r requirements/versioning.txt
-        python utilities/write_version.py
-        pip install -e .
+        name: install
+        command: |
+          pip install -r requirements/main.txt
+          pip install -r requirements/unit-testing.txt
+          pip install -r requirements/versioning.txt
+          python utilities/write_version.py
+          pip install -e .
 
     - run:
-      name: test
-      command: pytest tests/
+        name: test
+        command: pytest tests/
