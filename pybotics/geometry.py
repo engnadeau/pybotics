@@ -20,7 +20,7 @@ def euler_zyx_2_matrix(vector: Sequence[float]) -> np.ndarray:
         raise SequenceError('vector', TRANSFORM_VECTOR_LENGTH)
 
     # get individual variables
-    [x, y, z, a, b, c] = vector
+    x, y, z, a, b, c = vector
 
     # get trig values
     ca = np.cos(a)
