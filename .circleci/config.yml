@@ -24,4 +24,6 @@ jobs:
 
     - run:
         name: test
-        command: python -m pytest tests/
+        command: |
+          pip list
+          python -m pytest tests/
