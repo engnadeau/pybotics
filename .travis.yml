@@ -1,3 +1,4 @@
+# travis VM config
 dist: trusty
 sudo: false
 
@@ -14,6 +15,10 @@ addons:
     - python-wheel-common
     - python3-wheel
 
+notifications:
+  email: false
+  
+# unit tests
 python:
 - 3.4
 - 3.5
@@ -35,20 +40,23 @@ stages:
 - example-test
 - deploy
 
+install:
+- pip install -r requirements/main.txt
+- pip install -r requirements/unit-testing.txt
+- pip install -r requirements/versioning.txt
+- python utilities/write_version.py
+- pip install -e .
+
+script:
+- pytest tests/
+
+after_success:
+- coveralls
+- codecov
+
+# additional jobs
 jobs:
   include:
-  - stage: test
-    install:
-    - pip install -r requirements/main.txt
-    - pip install -r requirements/unit-testing.txt
-    - pip install -r requirements/versioning.txt
-    - python utilities/write_version.py
-    - pip install -e .
-    script:
-    - pytest tests/
-    after_success:
-    - coveralls
-    - codecov
   - stage: static-test
     python: 3.6
     install:
@@ -101,6 +109,3 @@ jobs:
         branch: master
         repo: nnadeau/pybotics
         python: 3.6
-
-notifications:
-  email: false
