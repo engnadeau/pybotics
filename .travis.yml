@@ -38,33 +38,37 @@ stages:
 jobs:
   include:
   - stage: test
-    script:
+    install:
     - pip install -r requirements/main.txt
     - pip install -r requirements/unit-testing.txt
     - pip install -r requirements/versioning.txt
     - python utilities/write_version.py
     - pip install -e .
+    script:
     - pytest tests/
     after_success:
     - coveralls
     - codecov
   - stage: static-test
     python: 3.6
-    script:
+    install:
     - pip install -r requirements/static-testing.txt
+    script:
     - chmod +x utilities/run-static-tests.sh
     - ./utilities/run-static-tests.sh
   - stage: example-test
     python: 3.6
-    script:
+    install:
     - pip install -r requirements/main.txt
     - pip install -r requirements/example-testing.txt
+    script:
     - python utilities/test_ipython_examples.py
   - stage: deploy
     python: 3.6
-    script:
+    install:
     - pip install -r requirements/deployment.txt
     - pip install -r requirements/versioning.txt
+    script:
     - python utilities/write_version.py
     deploy:
     - provider: pypi
