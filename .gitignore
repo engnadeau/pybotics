@@ -366,4 +366,3 @@ ENV/
 *.rej
 .mypy_cache/
 README.rst
-Pipfile.lock
