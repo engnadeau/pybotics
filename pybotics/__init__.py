@@ -34,6 +34,3 @@ __all__ = [
     'Tool',
     'validation',
 ]
-
-with open('VERSION') as f:
-    __version__ = f.read()

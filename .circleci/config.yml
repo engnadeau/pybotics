@@ -1,0 +1,30 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+    - image: circleci/python:3.6.1
+
+    working_directory: ~/repo
+
+    steps:
+    - checkout
+
+    - run:
+        name: install
+        command: |
+          python3 -m venv venv
+          . venv/bin/activate
+          python -V
+          pip install -r requirements/main.txt
+          pip install -r requirements/unit-testing.txt
+          pip install -r requirements/versioning.txt
+          python utilities/write_version.py
+          pip install -e .
+
+    - run:
+        name: test
+        command: |
+          . venv/bin/activate
+          pip list
+          python -m pytest tests/
