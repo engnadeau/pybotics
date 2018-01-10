@@ -1,2 +1,2 @@
-numpy==1.14.0
-typing==3.6.2
+numpy>=1.9.0
+typing>=3.5.0
