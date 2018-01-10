@@ -1,6 +1,4 @@
 """Test geometry."""
-from hypothesis import given
-import hypothesis.strategies as st
 import numpy as np
 from pytest import raises
 
@@ -95,14 +93,3 @@ def test_wrap_2_pi():
     for i, _ in enumerate(expected_angles):
         actual_angle = wrap_2_pi(test_angles[i])
         np.testing.assert_allclose([actual_angle], expected_angles[i])
-
-
-@given(st.floats(allow_nan=False, allow_infinity=False))
-def test_wrap_2_pi_hypothesis(angle):
-    """
-    Test angle wrapping.
-
-    :return:
-    """
-
-    assert -np.pi <= wrap_2_pi(angle) < np.pi
