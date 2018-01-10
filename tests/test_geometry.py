@@ -1,12 +1,15 @@
 """Test geometry."""
-from hypothesis import given
 import hypothesis.strategies as st
 import numpy as np
+from hypothesis import given
 from pytest import raises
 
+from pybotics import geometry
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import SequenceError, Matrix4x4Error
-from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, matrix_2_euler_zyx
+from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, \
+    matrix_2_euler_zyx, translation_matrix, rotation_matrix_x, \
+    rotation_matrix_y, rotation_matrix_z
 
 EULER_ZYX_VECTOR = np.array([100, 200, 300,
                              np.deg2rad(-30), np.deg2rad(50), np.deg2rad(90)])
@@ -69,12 +72,17 @@ def test_matrix_2_euler_zyx():
     np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
 
 
-def test_wrap_2_pi():
+@given(st.floats(allow_nan=False, allow_infinity=False))
+def test_wrap_2_pi(angle):
     """
     Test angle wrapping.
 
     :return:
     """
+    # hypothesis testing
+    assert -np.pi <= wrap_2_pi(angle) < np.pi
+
+    # standard testing
     angles = np.array([
         [0, 0],
         [-np.pi, -np.pi],
@@ -98,11 +106,57 @@ def test_wrap_2_pi():
 
 
 @given(st.floats(allow_nan=False, allow_infinity=False))
-def test_wrap_2_pi_hypothesis(angle):
-    """
-    Test angle wrapping.
+def test_rotation_matrix(angle):
+    # getattr() doesn't show that the function is used
+    # avoid dead code checking errors
+    rotation_matrix_x(angle)
+    rotation_matrix_y(angle)
+    rotation_matrix_z(angle)
 
-    :return:
-    """
+    # iterate through rotation axes
+    for i, axis in enumerate('xyz'):
+        matrix = getattr(geometry, 'rotation_matrix_{}'.format(axis))(angle)
 
-    assert -np.pi <= wrap_2_pi(angle) < np.pi
+        # check orthogonality
+        for row in matrix:
+            # noinspection PyTypeChecker
+            np.testing.assert_allclose(np.linalg.norm(row), 1)
+
+        for column in matrix.T:
+            # noinspection PyTypeChecker
+            np.testing.assert_allclose(np.linalg.norm(column), 1)
+
+        # check no translation
+        # noinspection PyTypeChecker
+        np.testing.assert_allclose(matrix[:-1, -1], 0)
+
+        # check homogeneous matrix
+        # noinspection PyTypeChecker
+        np.testing.assert_allclose(matrix[-1, :-1], 0)
+
+        # check unit vector location
+        # noinspection PyTypeChecker
+        np.testing.assert_allclose(matrix[i, i], 1)
+
+
+@given(st.lists(st.floats(allow_nan=False, allow_infinity=False),
+                min_size=3, max_size=3))
+def test_translation_matrix(xyz):
+    matrix = translation_matrix(xyz)
+
+    # check orthogonality
+    for row in matrix[:-1, :-1]:
+        # noinspection PyTypeChecker
+        np.testing.assert_allclose(np.linalg.norm(row), 1)
+
+    for column in matrix[:, :-1].T:
+        # noinspection PyTypeChecker
+        np.testing.assert_allclose(np.linalg.norm(column), 1)
+
+    # check translation
+    # noinspection PyTypeChecker
+    np.testing.assert_allclose(matrix[:-1, -1], xyz)
+
+    # check homogeneous matrix
+    # noinspection PyTypeChecker
+    np.testing.assert_allclose(matrix[-1, :-1], 0)
