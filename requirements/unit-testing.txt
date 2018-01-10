@@ -1,6 +1,5 @@
 pytest==3.3.2
 pytest-runner==3.0
-pytest-cov
-coveralls
-codecov
-hypothesis
+pytest-cov==2.5.1
+coveralls==1.2.0
+codecov==2.0.13
