@@ -4,7 +4,6 @@ import numpy as np
 from hypothesis import given
 from pytest import raises
 
-from pybotics import geometry
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import SequenceError, Matrix4x4Error
 from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, \
