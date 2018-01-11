@@ -107,15 +107,17 @@ def test_wrap_2_pi(angle):
 
 @given(st.floats(allow_nan=False, allow_infinity=False))
 def test_rotation_matrix(angle):
-    # getattr() doesn't show that the function is used
-    # avoid dead code checking errors
-    rotation_matrix_x(angle)
-    rotation_matrix_y(angle)
-    rotation_matrix_z(angle)
-
     # iterate through rotation axes
     for i, axis in enumerate('xyz'):
-        matrix = getattr(geometry, 'rotation_matrix_{}'.format(axis))(angle)
+        # getattr() could have been used
+        # but it doesn't show that the function is `used`
+        # the if-else structure avoids `dead code` errors
+        if axis is 'x':
+            matrix = rotation_matrix_x(angle)
+        elif axis is 'y':
+            matrix = rotation_matrix_y(angle)
+        elif axis is 'z':
+            matrix = rotation_matrix_z(angle)
 
         # check orthogonality
         for row in matrix:
