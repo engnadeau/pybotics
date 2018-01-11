@@ -94,3 +94,56 @@ def wrap_2_pi(angle: float) -> float:
     # FIXME: remove float() cast when numpy is supported in mypy
     result = float((angle + np.pi) % (2 * np.pi) - np.pi)
     return result
+
+
+def rotation_matrix_x(angle: float) -> np.ndarray:
+    """Generate a basic 4x4 rotation matrix about the X axis."""
+    s = np.sin(angle)
+    c = np.cos(angle)
+
+    matrix = np.array([
+        1, 0, 0, 0,
+        0, c, -s, 0,
+        0, s, c, 0,
+        0, 0, 0, 1
+    ]).reshape((4, 4))
+
+    return matrix
+
+
+def rotation_matrix_y(angle: float) -> np.ndarray:
+    """Generate a basic 4x4 rotation matrix about the Y axis."""
+    s = np.sin(angle)
+    c = np.cos(angle)
+
+    matrix = np.array([
+        c, 0, s, 0,
+        0, 1, 0, 0,
+        -s, 0, c, 0,
+        0, 0, 0, 1
+    ]).reshape((4, 4))
+
+    return matrix
+
+
+def rotation_matrix_z(angle: float) -> np.ndarray:
+    """Generate a basic 4x4 rotation matrix about the Z axis."""
+    s = np.sin(angle)
+    c = np.cos(angle)
+
+    matrix = np.array([
+        c, -s, 0, 0,
+        s, c, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ]).reshape((4, 4))
+
+    return matrix
+
+
+def translation_matrix(xyz: Sequence[float]) -> np.ndarray:
+    """Generate a basic 4x4 translation matrix."""
+    matrix = np.eye(4)
+    matrix[:-1, -1] = xyz
+
+    return matrix
