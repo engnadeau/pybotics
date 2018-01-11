@@ -15,6 +15,7 @@ from .revolute_mdh_link import RevoluteMDHLink
 from .robot import Robot
 from .robot_optimization_mask import RobotOptimizationMask
 from .tool import Tool
+from . import robot_model
 
 __all__ = [
     'calibration',
@@ -22,6 +23,7 @@ __all__ = [
     'errors',
     'Frame',
     'geometry',
+    'robot_model',
     'KinematicChain',
     'KinematicPair',
     'Link',
