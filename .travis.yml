@@ -69,6 +69,7 @@ jobs:
     install:
     - pip install -r requirements/main.txt
     - pip install -r requirements/example-testing.txt
+    - pip install -e .
     script:
     - python utilities/test_ipython_examples.py
   - stage: deploy

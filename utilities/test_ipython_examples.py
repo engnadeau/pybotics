@@ -13,13 +13,10 @@ def main():
     logging.info('Globbed {} examples'.format(len(examples)))
 
     # test
-    for ex in examples:
-        logging.info('Testing: {}'.format(ex.resolve()))
-        subprocess.run(['jupyter', 'nbconvert',
-                        '--to', 'script',
-                        '--execute',
-                        '--stdout',
-                        '{}'.format(str(ex))])
+    for example in examples:
+        logging.info('Testing: {}'.format(example.resolve()))
+        subprocess.check_output(['jupyter', 'nbconvert', '--execute',
+                                 '{}'.format(str(example))])
 
 
 if __name__ == '__main__':
