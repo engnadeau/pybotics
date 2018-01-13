@@ -15,3 +15,7 @@ newPRWelcomeComment: >
 firstPRMergeComment: >
   Congrats on merging your first pull request! 🤖
   ![](https://media.giphy.com/media/UYgK6kSXD1WDu/giphy.gif)
+
+# todo bot: https://probot.github.io/apps/todo/
+todo:
+  keyword: "# TODO"
