@@ -32,7 +32,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pybotics'
-copyright = f'{datetime.now().year}, Nicholas Nadeau'
+copyright = '{}, Nicholas Nadeau'.format(datetime.now().year)
 author = 'Nicholas Nadeau'
 
 # The version info for the project you're documenting, acts as replacement for
