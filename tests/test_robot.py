@@ -187,3 +187,35 @@ def test_repr(serial_robot):
 
     # check str()
     assert str(serial_robot) == s
+
+
+def test_calculate_joint_torques(planar_robot: Robot):
+    """
+    From EXAMPLE 5.7 of
+    Craig, John J. Introduction to robotics: mechanics and control.
+    Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+    :return:
+    """
+
+    # set robot
+    link_lengths = [planar_robot.kinematic_chain.links[1].vector[1],
+                    planar_robot.kinematic_chain.links[2].vector[1]]
+
+    # set test force and angles
+    force = [-100, -200, 0]
+    moment = [0] * 3
+    wrench = force + moment
+    joint_angles = np.deg2rad([30, 60, 0])
+
+    # calculate expected torques
+    expected_torques = [
+        link_lengths[0] * np.sin(joint_angles[1]) * force[0] +
+        (link_lengths[1] + link_lengths[0] * np.cos(joint_angles[1])) *
+        force[1],
+        link_lengths[1] * force[1],
+        0
+    ]
+
+    # test
+    actual_torques = planar_robot.calculate_joint_torques(joint_angles, wrench)
+    np.testing.assert_allclose(actual_torques, expected_torques)

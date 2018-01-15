@@ -180,3 +180,91 @@ class Robot(Sized):
             raise PyboticsError(
                 'position_limits must have shape=(2,{})'.format(len(self)))
         self._position_limits = value
+
+    def jacobian_world(self, position: Optional[Sequence[float]] = None):
+        if position is not None:
+            if not is_1d_sequence(position, self.num_dof):
+                raise SequenceError('position', self.num_dof)
+        else:
+            position = self.position
+
+        jacobian_flange = self.jacobian_flange(position)
+        pose = self.fk(position)
+        rotation = pose[0:3, 0:3]
+        jacobian_transform = np.zeros((6, 6))
+        jacobian_transform[:3, :3] = rotation
+        jacobian_transform[3:, 3:] = rotation
+        jacobian_world = np.dot(jacobian_transform, jacobian_flange)
+
+        return jacobian_world
+
+    def jacobian_flange(self, position: Optional[Sequence[float]] = None):
+        if position is not None:
+            if not is_1d_sequence(position, self.num_dof):
+                raise SequenceError('position', self.num_dof)
+        else:
+            position = self.position
+
+        # init Cartesian jacobian (6-dof in space)
+        jacobian_flange = np.zeros((6, self.num_dof))
+        current_transform = self.tool.matrix.copy()
+
+        for i in reversed(range(self.num_dof)):
+            d = np.array([
+                -current_transform[0, 0] * current_transform[1, 3] +
+                current_transform[1, 0] * current_transform[0, 3],
+                - current_transform[0, 1] * current_transform[1, 3] +
+                current_transform[1, 1] * current_transform[0, 3],
+                - current_transform[0, 2] * current_transform[1, 3] +
+                current_transform[1, 2] * current_transform[0, 3],
+            ])
+            delta = current_transform[2, 0:3]
+            jacobian_flange[:, i] = np.hstack((d, delta))
+            current_link = self.kinematic_chain.links[i]
+            current_link_transform = current_link.transform(position[i])
+            current_transform = np.dot(current_link_transform,
+                                       current_transform)
+
+        return jacobian_flange
+
+    def calculate_joint_torques(self, position, wrench):
+        """
+        Calculate the joint torques due to external force applied to the flange frame.
+        Method from:
+        5.9 STATIC FORCES IN MANIPULATORS
+        Craig, John J. Introduction to robotics: mechanics and control.
+        Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+        :param position:
+        :param force:
+        :return:
+        """
+
+        # split wrench into components
+        force = wrench[:3].copy()
+        moment = wrench[-3:].copy()
+
+        # init output
+        joint_torques = [moment[-1]]
+
+        # loop through links from flange to base
+        # each iteration calculates for link i-1
+        for i, p in reversed(list(enumerate(position))):
+            if i == 0:
+                break
+
+            # get current link transform
+            transform = self.kinematic_chain.links[i].transform(p)
+
+            # calculate force applied to current link
+            rotation = transform[:3, :3]
+            force = np.dot(rotation, force)
+
+            # calculate moment applied to current link
+            position = transform[:3, -1]
+            moment = np.dot(rotation, moment) + np.cross(position, force)
+
+            # append z-component as joint torque
+            joint_torques.append(moment[-1])
+
+        # reverse torques into correct order
+        return list(reversed(joint_torques))
