@@ -1,13 +1,16 @@
 """Test robot."""
 import json
 from itertools import chain
-from typing import Sequence
+from typing import Sequence, Tuple
 
 import numpy as np
+import sys
+from hypothesis import given
+from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats
 from pytest import raises
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
-from pybotics.errors import SequenceError, PyboticsError
 from pybotics.geometry import euler_zyx_2_matrix
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.robot import Robot
@@ -37,10 +40,6 @@ def test_fk(serial_robot):
     serial_robot.position = joints
     actual_pose = serial_robot.fk()
     np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
-
-    # test validation
-    with raises(SequenceError):
-        serial_robot.fk(position=np.ones(len(serial_robot) * 2))
 
 
 def test_optimization(serial_robot):
@@ -135,34 +134,6 @@ def test_optimization(serial_robot):
                                atol=1e-6)
 
 
-def test_position(serial_robot):
-    """
-    Test robot.
-
-    :param serial_robot:
-    :return:
-    """
-    with raises(SequenceError):
-        serial_robot.position = np.ones(len(serial_robot) * 2)
-
-
-def test_position_limits(serial_robot):
-    """
-    Test robot.
-
-    :param serial_robot:
-    :return:
-    """
-    # test normal usage
-    limits = serial_robot.position_limits
-    serial_robot.position_limits = limits * 2
-
-    with raises(PyboticsError):
-        serial_robot.position_limits = np.ones((2, len(serial_robot) * 2))
-    with raises(PyboticsError):
-        serial_robot.position_limits = np.ones((1, len(serial_robot)))
-
-
 def test_init():
     """
     Test robot.
@@ -189,17 +160,14 @@ def test_repr(serial_robot):
     assert str(serial_robot) == s
 
 
-def test_calculate_joint_torques(planar_robot: Robot):
+def test_calculate_joint_torques(planar_robot: Robot,
+                                 planar_robot_link_lengths: Tuple):
     """
     From EXAMPLE 5.7 of
     Craig, John J. Introduction to robotics: mechanics and control.
     Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
     :return:
     """
-
-    # set robot
-    link_lengths = [planar_robot.kinematic_chain.links[1].vector[1],
-                    planar_robot.kinematic_chain.links[2].vector[1]]
 
     # set test force and angles
     force = [-100, -200, 0]
@@ -209,13 +177,63 @@ def test_calculate_joint_torques(planar_robot: Robot):
 
     # calculate expected torques
     expected_torques = [
-        link_lengths[0] * np.sin(joint_angles[1]) * force[0] +
-        (link_lengths[1] + link_lengths[0] * np.cos(joint_angles[1])) *
-        force[1],
-        link_lengths[1] * force[1],
+        planar_robot_link_lengths[0] * np.sin(joint_angles[1]) * force[0] +
+        (planar_robot_link_lengths[1] + planar_robot_link_lengths[0] *
+         np.cos(joint_angles[1])) * force[1],
+        planar_robot_link_lengths[1] * force[1],
         0
     ]
 
     # test
     actual_torques = planar_robot.calculate_joint_torques(joint_angles, wrench)
     np.testing.assert_allclose(actual_torques, expected_torques)
+
+
+@given(position=arrays(shape=(3,), dtype=float,
+                       elements=floats(max_value=1e9,
+                                       min_value=-1e9,
+                                       allow_nan=False,
+                                       allow_infinity=False)))
+def test_jacobian_world(position: np.ndarray, planar_robot: Robot,
+                        planar_robot_link_lengths: Tuple):
+    # example from Craig has last joint set to 0
+    position[-1] = 0
+
+    s0 = np.sin(position[0])
+    c0 = np.cos(position[0])
+
+    s01 = np.sin(position[0] + position[1])
+    c01 = np.cos(position[0] + position[1])
+
+    expected = np.zeros((6, 3))
+    expected[0, 0] = -planar_robot_link_lengths[0] * s0 \
+                     - planar_robot_link_lengths[1] * s01
+    expected[0, 1] = - planar_robot_link_lengths[1] * s01
+    expected[1, 0] = planar_robot_link_lengths[0] * c0 \
+                     + planar_robot_link_lengths[1] * c01
+    expected[1, 1] = planar_robot_link_lengths[1] * c01
+    expected[-1, :] = 1
+
+    actual = planar_robot._jacobian_world(position)
+    np.testing.assert_allclose(actual, expected, atol=1e-3)
+
+
+@given(position=arrays(shape=(3,), dtype=float,
+                       elements=floats(allow_nan=False, allow_infinity=False)))
+def test_jacobian_flange(position: np.ndarray, planar_robot: Robot,
+                         planar_robot_link_lengths: Tuple):
+    # example from Craig has last joint set to 0
+    position[-1] = 0
+
+    s1 = np.sin(position[1])
+    c1 = np.cos(position[1])
+
+    expected = np.zeros((6, 3))
+    expected[0, 0] = planar_robot_link_lengths[0] * s1
+    expected[1, 0] = planar_robot_link_lengths[0] * c1 + \
+                     planar_robot_link_lengths[1]
+    expected[1, 1] = planar_robot_link_lengths[1]
+    expected[-1, :] = 1
+
+    actual = planar_robot._jacobian_flange(position)
+    np.testing.assert_allclose(actual, expected, atol=1e-6)
