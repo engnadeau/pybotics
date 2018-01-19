@@ -11,4 +11,3 @@ class KinematicPair(IntEnum):
     """
 
     REVOLUTE = 0
-    # TODO: add PRISMATIC

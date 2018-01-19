@@ -3,10 +3,6 @@ from typing import Sequence
 
 import numpy as np  # type: ignore
 
-from pybotics.constants import TRANSFORM_VECTOR_LENGTH
-from pybotics.errors import Matrix4x4Error, SequenceError
-from pybotics.validation import is_4x4_ndarray, is_1d_sequence
-
 
 def euler_zyx_2_matrix(vector: Sequence[float]) -> np.ndarray:
     """
@@ -15,10 +11,6 @@ def euler_zyx_2_matrix(vector: Sequence[float]) -> np.ndarray:
     :param vector: transform vector
     :return: 4x4 transform matrix
     """
-    # validate input
-    if not is_1d_sequence(vector, TRANSFORM_VECTOR_LENGTH):
-        raise SequenceError('vector', TRANSFORM_VECTOR_LENGTH)
-
     # get individual variables
     x, y, z, a, b, c = vector
 
@@ -51,9 +43,6 @@ def matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
     :param matrix: 4x4 transform matrix
     :return: transform vector
     """
-    if not is_4x4_ndarray(matrix):
-        raise Matrix4x4Error('matrix')
-
     x = matrix[0, 3]
     y = matrix[1, 3]
     z = matrix[2, 3]

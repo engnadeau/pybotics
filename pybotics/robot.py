@@ -3,13 +3,12 @@ from typing import Optional, Sequence, Sized
 
 import numpy as np  # type: ignore
 
-from pybotics.errors import SequenceError, PyboticsError
 from pybotics.frame import Frame
 from pybotics.kinematic_chain import KinematicChain
+from pybotics.pybotics_error import PyboticsError
 from pybotics.robot_json_encoder import RobotJSONEncoder
 from pybotics.robot_optimization_mask import RobotOptimizationMask
 from pybotics.tool import Tool
-from pybotics.validation import is_1d_ndarray, is_1d_sequence
 
 
 class Robot(Sized):
@@ -84,10 +83,7 @@ class Robot(Sized):
         :return: 4x4 transform matrix of the FK pose
         """
         # validate
-        if position is not None:
-            if not is_1d_sequence(position, self.num_dof):
-                raise SequenceError('position', self.num_dof)
-        else:
+        if position is None:
             position = self.position
 
         # gather transforms
@@ -96,7 +92,7 @@ class Robot(Sized):
         transforms.append(self.tool.matrix)
 
         # matrix multiply through transforms
-        pose = np.eye(4)
+        pose = np.eye(4, dtype=float)
         for t in transforms:
             pose = np.dot(pose, t)
 
@@ -160,10 +156,7 @@ class Robot(Sized):
     @position.setter
     def position(self, value: np.ndarray) -> None:
         # TODO: check if position is in limits
-        if is_1d_ndarray(value, self.num_dof):
-            self._position = value
-        else:
-            raise SequenceError('value', self.num_dof)
+        self._position = value
 
     @property
     def position_limits(self) -> np.ndarray:
@@ -181,28 +174,36 @@ class Robot(Sized):
                 'position_limits must have shape=(2,{})'.format(len(self)))
         self._position_limits = value
 
-    def jacobian_world(self, position: Optional[Sequence[float]] = None):
-        if position is not None:
-            if not is_1d_sequence(position, self.num_dof):
-                raise SequenceError('position', self.num_dof)
-        else:
+    def jacobian(self, reference: str = 'world') -> np.ndarray:
+        """
+        Get the robot Jacobian matrix.
+
+        The Jacobian is amulti-dimensional form of the derivative.
+
+        Craig, John J. Introduction to robotics: mechanics and control.
+        Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+
+        :param reference: 'world' | 'tool'
+
+        """
+        pass
+
+    def _jacobian_world(self, position: Optional[Sequence[float]] = None):
+        if position is None:
             position = self.position
 
-        jacobian_flange = self.jacobian_flange(position)
+        jacobian_flange = self._jacobian_flange(position)
         pose = self.fk(position)
-        rotation = pose[0:3, 0:3]
-        jacobian_transform = np.zeros((6, 6))
+        rotation = pose[:3, :3]
+        jacobian_transform = np.zeros((6, 6), dtype=float)
         jacobian_transform[:3, :3] = rotation
         jacobian_transform[3:, 3:] = rotation
         jacobian_world = np.dot(jacobian_transform, jacobian_flange)
 
         return jacobian_world
 
-    def jacobian_flange(self, position: Optional[Sequence[float]] = None):
-        if position is not None:
-            if not is_1d_sequence(position, self.num_dof):
-                raise SequenceError('position', self.num_dof)
-        else:
+    def _jacobian_flange(self, position: Optional[Sequence[float]] = None):
+        if position is None:
             position = self.position
 
         # init Cartesian jacobian (6-dof in space)
@@ -219,7 +220,9 @@ class Robot(Sized):
                 current_transform[1, 2] * current_transform[0, 3],
             ])
             delta = current_transform[2, 0:3]
+
             jacobian_flange[:, i] = np.hstack((d, delta))
+
             current_link = self.kinematic_chain.links[i]
             current_link_transform = current_link.transform(position[i])
             current_transform = np.dot(current_link_transform,

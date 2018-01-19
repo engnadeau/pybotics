@@ -5,11 +5,8 @@ from typing import Union, Sequence
 import numpy as np  # type: ignore
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, POSITION_VECTOR_LENGTH
-from pybotics.errors import OrientationConventionError, Matrix4x4Error, \
-    SequenceError
 from pybotics.geometry import matrix_2_euler_zyx, euler_zyx_2_matrix
 from pybotics.orientation_convention import OrientationConvention
-from pybotics.validation import is_4x4_ndarray, is_1d_sequence
 
 
 class Frame:
@@ -55,10 +52,7 @@ class Frame:
 
     @matrix.setter
     def matrix(self, value: np.ndarray) -> None:
-        if not is_4x4_ndarray(value):
-            raise Matrix4x4Error('value')
-        else:
-            self._matrix = value
+        self._matrix = value
 
     @property
     def optimization_mask(self) -> Sequence[bool]:
@@ -99,10 +93,7 @@ class Frame:
 
     @position.setter
     def position(self, value: Sequence[float]) -> None:
-        if is_1d_sequence(value, POSITION_VECTOR_LENGTH):
-            self.matrix[:-1, -1] = value
-        else:
-            raise SequenceError('value', POSITION_VECTOR_LENGTH)
+        self.matrix[:-1, -1] = value
 
     def vector(self,
                convention: OrientationConvention =
@@ -116,4 +107,4 @@ class Frame:
         if convention is OrientationConvention.EULER_ZYX:
             return matrix_2_euler_zyx(self.matrix)
         else:
-            raise OrientationConventionError()
+            raise NotImplementedError(convention)

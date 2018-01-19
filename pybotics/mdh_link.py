@@ -77,4 +77,4 @@ class MDHLink(Link):
             self.a,
             self.theta,
             self.d
-        ])
+        ], dtype=float)

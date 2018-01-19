@@ -3,7 +3,6 @@ from typing import Sequence
 import numpy as np  # type: ignore
 
 from pybotics.constants import POSITION_VECTOR_LENGTH
-from pybotics.errors import SequenceError, ShapeMismatchError
 from pybotics.robot import Robot
 
 

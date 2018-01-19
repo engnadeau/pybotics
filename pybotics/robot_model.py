@@ -2,12 +2,14 @@ from typing import Optional
 
 import numpy as np  # type: ignore
 
-from pybotics import Robot, KinematicChain, Tool, Frame
+from pybotics.frame import Frame
+from pybotics.kinematic_chain import KinematicChain
+from pybotics.robot import Robot
+from pybotics.tool import Tool
 
-
-# TODO: add joint limits
 
 class KukaLbrIiwa7(Robot):
+    # TODO: add joint limits
     def __init__(self, tool: Optional[Tool] = None,
                  world_frame: Optional[Frame] = None) -> None:
         kinematic_chain = KinematicChain.from_array(

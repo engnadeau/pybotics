@@ -4,14 +4,11 @@ from typing import Any, Sequence, Union, Sized, Optional
 
 import numpy as np  # type: ignore
 
-from pybotics.errors import LinkConventionError, LinkSequenceError, \
-    SequenceError, KinematicPairError
 from pybotics.kinematic_pair import KinematicPair
 from pybotics.link import Link
 from pybotics.link_convention import LinkConvention
+from pybotics.pybotics_error import PyboticsError
 from pybotics.revolute_mdh_link import RevoluteMDHLink
-from pybotics.validation import is_same_link_conventions, \
-    is_1d_sequence
 
 
 class KinematicChain(Sized):
@@ -80,25 +77,16 @@ class KinematicChain(Sized):
             # on number of parameters per link
             array = array.reshape((-1, link_convention.value))
 
-            # validate
+            # turn single KinematicPair into sequence
             if isinstance(kinematic_pairs, KinematicPair):
-                # turn single KinematicPair into sequence
                 kinematic_pairs = [kinematic_pairs] * len(array)
-            else:
-                if not is_1d_sequence(kinematic_pairs, len(array)):
-                    raise SequenceError('kinematic_pairs', len(array))
-                if not all([isinstance(kp, KinematicPair) for kp in
-                            kinematic_pairs]):
-                    raise KinematicPairError()
 
             # create link sequences based on convention;
             links = []
-            # TODO: add `if link_convention is LinkConvention.MDH:` check
             for row, _ in zip(array, kinematic_pairs):
-                # TODO: add `if kp is KinematicPair.REVOLUTE:` check
                 links.append(RevoluteMDHLink(*row))
         else:
-            raise LinkConventionError()
+            raise NotImplementedError(link_convention)
 
         return links
 
@@ -139,8 +127,6 @@ class KinematicChain(Sized):
 
     @links.setter
     def links(self, value: Sequence[Link]) -> None:
-        if not is_same_link_conventions(value):
-            raise LinkSequenceError()
         self._links = value
 
     @property
@@ -199,10 +185,7 @@ class KinematicChain(Sized):
         :return: sequence of transforms
         """
         # validate
-        if position is not None:
-            if not is_1d_sequence(position, self.num_dof):
-                raise SequenceError('position', self.num_dof)
-        else:
+        if position is None:
             position = np.zeros(len(self))
 
         # FIXME: remove type ignore for mypy bugs:
