@@ -1,10 +1,12 @@
 """Robot module."""
+import logging
 from typing import Optional, Sequence, Sized
 
 import numpy as np  # type: ignore
 
 from pybotics.constants import ROTATION_VECTOR_LENGTH
 from pybotics.frame import Frame
+from pybotics.geometry import matrix_2_euler_zyx, wrap_2_pi
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.pybotics_error import PyboticsError
 from pybotics.robot_json_encoder import RobotJSONEncoder
@@ -99,8 +101,41 @@ class Robot(Sized):
 
         return pose
 
-    def ik(self, q):
-        pass
+    def ik(self, pose: np.ndarray, q: Optional[Sequence[float]] = None,
+           alpha: float = 0.1, atol=1e-6, max_iter=1e3) -> Optional[np.ndarray]:
+        # set seed joints
+        q = self.position if q is None else np.array(q)
+
+        # convert pose to vector
+        desired_vector = matrix_2_euler_zyx(pose)
+
+        # solve IK
+        is_running = True
+        num_iterations = 0
+        while is_running:
+            num_iterations += 1
+
+            # get jacobian and pseudo inverse
+            j = self.jacobian_world(q)
+            j_pinv = np.linalg.pinv(j)
+
+            # get current vector
+            current_pose = self.fk(q)
+            current_vector = matrix_2_euler_zyx(current_pose)
+            vector_diff = desired_vector - current_vector
+
+            if np.allclose(vector_diff, 0, atol=atol):
+                is_running = False
+            elif num_iterations >= max_iter:
+                logging.warning('Maximum number of iterations reached')
+                is_running = False
+            else:
+                # update joints
+                dq = np.dot(j_pinv, vector_diff)
+                q += alpha * dq
+                q = np.array([wrap_2_pi(x) for x in q])
+
+        return q
 
     @property
     def num_dof(self) -> int:
