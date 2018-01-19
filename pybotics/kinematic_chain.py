@@ -174,18 +174,18 @@ class KinematicChain(Sized):
         optimization_vector = np.array(list(filtered_iterator))
         return optimization_vector
 
-    def transforms(self, position: Optional[Sequence[float]] = None) -> \
+    def transforms(self, q: Optional[Sequence[float]] = None) -> \
             Sequence[np.ndarray]:
         """
         Generate a sequence of spatial transforms.
 
         The sequence represents the given position of the kinematic chain.
-        :param position: given position of kinematic chain
+        :param q: given position of kinematic chain
         :return: sequence of transforms
         """
         # validate
-        if position is None:
-            position = np.zeros(len(self))
+        if q is None:
+            q = np.zeros(len(self))
 
         # FIXME: remove type ignore for mypy bugs:
         # error: Argument 2 to "zip" has incompatible type
@@ -193,7 +193,7 @@ class KinematicChain(Sized):
         # error: Call to untyped function "transform"
         # of "Link" in typed context
         transforms = [link.transform(p) for link, p in
-                      zip(self.links, position)]  # type: ignore
+                      zip(self.links, q)]  # type: ignore
         return transforms
 
     @property

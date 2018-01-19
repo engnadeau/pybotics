@@ -11,11 +11,11 @@ class Link:
     """Links: connected joints allowing relative motion of neighboring link."""
 
     @abstractmethod
-    def displace(self, position: float) -> np.ndarray:
+    def displace(self, q: float) -> np.ndarray:
         """
         Generate a vector of the new link state given a displacement.
 
-        :param position: given displacement
+        :param q: given displacement
         :return vector of new displacement state
         """
         pass
@@ -41,11 +41,11 @@ class Link:
         pass
 
     @abstractmethod
-    def transform(self, position: float = 0) -> np.ndarray:
+    def transform(self, q: float = 0) -> np.ndarray:
         """
         Generate a 4x4 transform matrix given a displacement.
 
-        :param position: given displacement
+        :param q: given displacement
         :return vector of new displacement state
         """
         pass

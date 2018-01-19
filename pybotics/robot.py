@@ -75,21 +75,21 @@ class Robot(Sized):
         self.kinematic_chain.apply_optimization_vector(split_vector[1])
         self.tool.apply_optimization_vector(split_vector[2])
 
-    def fk(self, position: Optional[Sequence[float]] = None) -> np.ndarray:
+    def fk(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
         """
         Compute the forward kinematics of a given position.
 
         Uses the current position if None is given.
-        :param position:
+        :param q:
         :return: 4x4 transform matrix of the FK pose
         """
         # validate
-        if position is None:
-            position = self.position
+        if q is None:
+            q = self.position
 
         # gather transforms
         transforms = [self.world_frame.matrix]
-        transforms.extend(self.kinematic_chain.transforms(position))
+        transforms.extend(self.kinematic_chain.transforms(q))
         transforms.append(self.tool.matrix)
 
         # matrix multiply through transforms
@@ -98,6 +98,9 @@ class Robot(Sized):
             pose = np.dot(pose, t)
 
         return pose
+
+    def ik(self, q):
+        pass
 
     @property
     def num_dof(self) -> int:
@@ -175,27 +178,12 @@ class Robot(Sized):
                 'position_limits must have shape=(2,{})'.format(len(self)))
         self._position_limits = value
 
-    def jacobian(self, reference: str = 'world') -> np.ndarray:
-        """
-        Get the robot Jacobian matrix.
+    def jacobian_world(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
+        if q is None:
+            q = self.position
 
-        The Jacobian is amulti-dimensional form of the derivative.
-
-        Craig, John J. Introduction to robotics: mechanics and control.
-        Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
-
-        :param reference: 'world' | 'tool'
-
-        """
-        pass
-
-    def _jacobian_world(self, position: Optional[
-        Sequence[float]] = None) -> np.ndarray:
-        if position is None:
-            position = self.position
-
-        jacobian_flange = self._jacobian_flange(position)
-        pose = self.fk(position)
+        jacobian_flange = self.jacobian_flange(q)
+        pose = self.fk(q)
 
         rotation = pose[:3, :3]
 
@@ -212,9 +200,9 @@ class Robot(Sized):
 
         return jacobian_world
 
-    def _jacobian_flange(self, position: Optional[
-        Sequence[float]] = None) -> np.ndarray:
-        position = self.position if position is None else position
+    def jacobian_flange(self,
+                        q: Optional[Sequence[float]] = None) -> np.ndarray:
+        q = self.position if q is None else q
 
         # init Cartesian jacobian (6-dof in space)
         jacobian_flange = np.zeros((6, self.num_dof))
@@ -234,14 +222,14 @@ class Robot(Sized):
             jacobian_flange[:, i] = np.hstack((d, delta))
 
             current_link = self.kinematic_chain.links[i]
-            p = position[i]  # type: ignore
+            p = q[i]  # type: ignore
             current_link_transform = current_link.transform(p)
             current_transform = np.dot(current_link_transform,
                                        current_transform)
 
         return jacobian_flange
 
-    def calculate_joint_torques(self, position: Sequence[float],
+    def calculate_joint_torques(self, q: Sequence[float],
                                 wrench: Sequence[float]) -> np.ndarray:
         """
         Calculate the joint torques
@@ -251,7 +239,7 @@ class Robot(Sized):
         Craig, John J. Introduction to robotics: mechanics and control.
         Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
         :param wrench:
-        :param position:
+        :param q:
         :return:
         """
 
@@ -264,7 +252,7 @@ class Robot(Sized):
 
         # loop through links from flange to base
         # each iteration calculates for link i-1
-        for i, p in reversed(list(enumerate(position))):
+        for i, p in reversed(list(enumerate(q))):
             if i == 0:
                 break
 
@@ -276,8 +264,8 @@ class Robot(Sized):
             force = np.dot(rotation, force)
 
             # calculate moment applied to current link
-            position = transform[:3, -1]
-            moment = np.dot(rotation, moment) + np.cross(position, force)
+            q = transform[:3, -1]
+            moment = np.dot(rotation, moment) + np.cross(q, force)
 
             # append z-component as joint torque
             joint_torques.append(moment[-1])

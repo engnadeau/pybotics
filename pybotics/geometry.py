@@ -139,7 +139,7 @@ def translation_matrix(xyz: Sequence[float]) -> np.ndarray:
     if len(xyz) != POSITION_VECTOR_LENGTH:
         raise PyboticsError(
             'len(xyz) must be {}'.format(POSITION_VECTOR_LENGTH))
-    
+
     matrix = np.eye(4)
     matrix[:-1, -1] = xyz
 

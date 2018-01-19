@@ -31,7 +31,7 @@ def test_fk(serial_robot):
     ).reshape(TRANSFORM_MATRIX_SHAPE)
 
     # test with position argument
-    actual_pose = serial_robot.fk(position=joints)
+    actual_pose = serial_robot.fk(q=joints)
     np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
 
     # test with internal position attribute
@@ -187,21 +187,20 @@ def test_calculate_joint_torques(planar_robot: Robot,
     np.testing.assert_allclose(actual_torques, expected_torques)
 
 
-@given(position=arrays(shape=(3,), dtype=float,
-                       elements=floats(max_value=1e9,
-                                       min_value=-1e9,
-                                       allow_nan=False,
-                                       allow_infinity=False)))
-def test_jacobian_world(position: np.ndarray, planar_robot: Robot,
+@given(q=arrays(shape=(3,), dtype=float, elements=floats(max_value=1e9,
+                                                         min_value=-1e9,
+                                                         allow_nan=False,
+                                                         allow_infinity=False)))
+def test_jacobian_world(q: np.ndarray, planar_robot: Robot,
                         planar_robot_link_lengths: Tuple):
     # example from Craig has last joint set to 0
-    position[-1] = 0
+    q[-1] = 0
 
-    s0 = np.sin(position[0])
-    c0 = np.cos(position[0])
+    s0 = np.sin(q[0])
+    c0 = np.cos(q[0])
 
-    s01 = np.sin(position[0] + position[1])
-    c01 = np.cos(position[0] + position[1])
+    s01 = np.sin(q[0] + q[1])
+    c01 = np.cos(q[0] + q[1])
 
     expected = np.zeros((6, 3))
     expected[0, 0] = -planar_robot_link_lengths[0] * s0 \
@@ -212,19 +211,19 @@ def test_jacobian_world(position: np.ndarray, planar_robot: Robot,
     expected[1, 1] = planar_robot_link_lengths[1] * c01
     expected[-1, :] = 1
 
-    actual = planar_robot._jacobian_world(position)
+    actual = planar_robot.jacobian_world(q)
     np.testing.assert_allclose(actual, expected, atol=1e-3)
 
 
-@given(position=arrays(shape=(3,), dtype=float,
-                       elements=floats(allow_nan=False, allow_infinity=False)))
-def test_jacobian_flange(position: np.ndarray, planar_robot: Robot,
+@given(q=arrays(shape=(3,), dtype=float,
+                elements=floats(allow_nan=False, allow_infinity=False)))
+def test_jacobian_flange(q: np.ndarray, planar_robot: Robot,
                          planar_robot_link_lengths: Tuple):
     # example from Craig has last joint set to 0
-    position[-1] = 0
+    q[-1] = 0
 
-    s1 = np.sin(position[1])
-    c1 = np.cos(position[1])
+    s1 = np.sin(q[1])
+    c1 = np.cos(q[1])
 
     expected = np.zeros((6, 3))
     expected[0, 0] = planar_robot_link_lengths[0] * s1
@@ -233,5 +232,5 @@ def test_jacobian_flange(position: np.ndarray, planar_robot: Robot,
     expected[1, 1] = planar_robot_link_lengths[1]
     expected[-1, :] = 1
 
-    actual = planar_robot._jacobian_flange(position)
+    actual = planar_robot.jacobian_flange(q)
     np.testing.assert_allclose(actual, expected, atol=1e-6)

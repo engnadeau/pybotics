@@ -23,15 +23,15 @@ class RevoluteMDHLink(MDHLink):
         """
         super().__init__(alpha, a, theta, d)
 
-    def displace(self, position: float = 0) -> np.ndarray:
+    def displace(self, q: float = 0) -> np.ndarray:
         """
         Generate a vector of the new link state given a displacement.
 
-        :param position: given displacement
+        :param q: given displacement
         :return vector of new displacement state
         """
         vector = self.vector
-        vector[2] += position
+        vector[2] += q
         return vector
 
     @property

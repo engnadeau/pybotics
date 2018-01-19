@@ -37,14 +37,14 @@ class MDHLink(Link):
         """
         return LinkConvention.MDH
 
-    def transform(self, position: float = 0) -> np.ndarray:
+    def transform(self, q: float = 0) -> np.ndarray:
         """
         Generate a 4x4 transform matrix with a displacement.
 
-        :param position: given displacement
+        :param q: given displacement
         :return vector of new displacement state
         """
-        vector = self.displace(position)
+        vector = self.displace(q)
 
         alpha = vector[0]
         a = vector[1]
