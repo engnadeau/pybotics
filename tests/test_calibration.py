@@ -4,7 +4,6 @@ from pytest import raises
 
 from pybotics.calibration import compute_absolute_errors
 from pybotics.constants import POSITION_VECTOR_LENGTH
-from pybotics.errors import ShapeMismatchError, SequenceError
 
 
 def test_compute_absolute_errors(serial_robot):
@@ -41,25 +40,3 @@ def test_compute_absolute_errors(serial_robot):
                                np.linalg.norm(distance_offset) * np.ones(
                                    num_measurements),
                                atol=1e-6)
-
-    # shape mismatch
-    with raises(ShapeMismatchError):
-        compute_absolute_errors(
-            serial_robot,
-            np.ones((num_measurements, serial_robot.num_dof)),
-            np.ones((num_measurements - 1, POSITION_VECTOR_LENGTH))
-        )
-
-    # sequence errors
-    with raises(SequenceError):
-        compute_absolute_errors(
-            serial_robot,
-            np.ones((num_measurements, serial_robot.num_dof + 1)),
-            np.ones((num_measurements, POSITION_VECTOR_LENGTH))
-        )
-    with raises(SequenceError):
-        compute_absolute_errors(
-            serial_robot,
-            np.ones((num_measurements, serial_robot.num_dof)),
-            np.ones((num_measurements, POSITION_VECTOR_LENGTH + 1))
-        )

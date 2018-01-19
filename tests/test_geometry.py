@@ -2,10 +2,10 @@
 import hypothesis.strategies as st
 import numpy as np
 from hypothesis import given
+from hypothesis.extra.numpy import arrays
 from pytest import raises
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
-from pybotics.errors import SequenceError, Matrix4x4Error
 from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, \
     matrix_2_euler_zyx, translation_matrix, rotation_matrix_x, \
     rotation_matrix_y, rotation_matrix_z
@@ -29,9 +29,6 @@ def test_euler_zyx_2_matrix():
     actual = euler_zyx_2_matrix(EULER_ZYX_VECTOR)
     np.testing.assert_allclose(actual=actual, desired=TRANSFORM, atol=1e-6)
 
-    with raises(SequenceError):
-        euler_zyx_2_matrix(np.ones(TRANSFORM_VECTOR_LENGTH * 2))
-
 
 def test_matrix_2_euler_zyx():
     """
@@ -43,10 +40,6 @@ def test_matrix_2_euler_zyx():
     actual = matrix_2_euler_zyx(TRANSFORM)
     np.testing.assert_allclose(actual=actual, desired=EULER_ZYX_VECTOR,
                                atol=1e-6)
-
-    # test validation
-    with raises(Matrix4x4Error):
-        matrix_2_euler_zyx(np.ones(TRANSFORM_VECTOR_LENGTH))
 
     # test matrix decomposition corner cases when y=90deg
     corner_case_matrix = np.array(
@@ -140,8 +133,7 @@ def test_rotation_matrix(angle):
         np.testing.assert_allclose(matrix[i, i], 1)
 
 
-@given(st.lists(st.floats(allow_nan=False, allow_infinity=False),
-                min_size=3, max_size=3))
+@given(arrays(shape=(3,), dtype=float))
 def test_translation_matrix(xyz):
     matrix = translation_matrix(xyz)
 

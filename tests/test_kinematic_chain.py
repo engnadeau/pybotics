@@ -2,11 +2,9 @@
 import numpy as np
 from pytest import raises
 
-from pybotics import KinematicPair
 from pybotics.constants import TRANSFORM_MATRIX_SHAPE
-from pybotics.errors import LinkConventionError, KinematicPairError, \
-    SequenceError, LinkSequenceError
 from pybotics.kinematic_chain import KinematicChain
+from pybotics.kinematic_pair import KinematicPair
 from pybotics.link import Link
 from pybotics.revolute_mdh_link import RevoluteMDHLink
 
@@ -67,16 +65,6 @@ def test_array_2_links():
     KinematicChain.array_2_links(np.ones((3, 4)),
                                  kinematic_pairs=3 * [KinematicPair.REVOLUTE])
 
-    with raises(LinkConventionError):
-        # noinspection PyTypeChecker
-        KinematicChain.array_2_links(np.ones(4), None)
-    with raises(KinematicPairError):
-        # noinspection PyTypeChecker
-        KinematicChain.array_2_links(np.ones(4), kinematic_pairs=[123])
-    with raises(SequenceError):
-        KinematicChain.array_2_links(np.ones(TRANSFORM_MATRIX_SHAPE),
-                                     kinematic_pairs=[KinematicPair.REVOLUTE])
-
 
 def test_links():
     """
@@ -84,12 +72,7 @@ def test_links():
 
     :return:
     """
-    with raises(LinkSequenceError):
-        links = [
-            RevoluteMDHLink(1, 2, 3, 4),
-            Link()
-        ]
-        KinematicChain(links)
+    pass
 
 
 def test_num_dof(planar_kc):
@@ -117,10 +100,6 @@ def test_transforms(planar_kc):
 
     # test normal case
     planar_kc.transforms(np.ones(len(planar_kc)))
-
-    # test validation
-    with raises(SequenceError):
-        planar_kc.transforms(np.ones(len(planar_kc) * 2))
 
 
 def test_from_array():

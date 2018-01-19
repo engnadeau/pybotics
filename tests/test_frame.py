@@ -3,8 +3,6 @@ import numpy as np
 from pytest import raises
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
-from pybotics.errors import Matrix4x4Error, SequenceError, \
-    OrientationConventionError
 
 
 def test_optimization(world_frame):
@@ -49,10 +47,6 @@ def test_matrix(world_frame):
     world_frame.matrix = new_matrix
     np.testing.assert_allclose(world_frame.matrix, new_matrix)
 
-    bad_matrix = np.ones((4, 1))
-    with raises(Matrix4x4Error):
-        world_frame.matrix = bad_matrix
-
 
 def test_position(world_frame):
     """
@@ -64,18 +58,3 @@ def test_position(world_frame):
     new_position = np.ones(3)
     world_frame.position = new_position
     np.testing.assert_allclose(world_frame.position, new_position)
-
-    bad_position = np.ones(4)
-    with raises(SequenceError):
-        world_frame.position = bad_position
-
-
-def test_vector(world_frame):
-    """
-    Test frame.
-
-    :param world_frame:
-    :return:
-    """
-    with raises(OrientationConventionError):
-        world_frame.vector(123)
