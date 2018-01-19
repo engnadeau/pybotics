@@ -234,3 +234,14 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot,
 
     actual = planar_robot.jacobian_flange(q)
     np.testing.assert_allclose(actual, expected, atol=1e-6)
+
+
+@given(q=arrays(shape=(3,), dtype=float,
+                elements=floats(allow_nan=False, allow_infinity=False)))
+def test_ik(q: np.ndarray, planar_robot: Robot):
+    pose = planar_robot.fk(q)
+
+    q_actual = planar_robot.ik(pose, max_iter=1e9)
+    pose_actual = planar_robot.fk(q_actual)
+
+    np.testing.assert_allclose(pose_actual, pose, atol=1e-6)
