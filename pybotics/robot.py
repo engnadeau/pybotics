@@ -188,7 +188,8 @@ class Robot(Sized):
         """
         pass
 
-    def _jacobian_world(self, position: Optional[Sequence[float]] = None):
+    def _jacobian_world(self, position: Optional[
+        Sequence[float]] = None) -> np.ndarray:
         if position is None:
             position = self.position
 
@@ -202,9 +203,9 @@ class Robot(Sized):
 
         return jacobian_world
 
-    def _jacobian_flange(self, position: Optional[Sequence[float]] = None):
-        if position is None:
-            position = self.position
+    def _jacobian_flange(self, position: Optional[
+        Sequence[float]] = None) -> np.ndarray:
+        position = self.position if position is None else position
 
         # init Cartesian jacobian (6-dof in space)
         jacobian_flange = np.zeros((6, self.num_dof))
@@ -224,27 +225,30 @@ class Robot(Sized):
             jacobian_flange[:, i] = np.hstack((d, delta))
 
             current_link = self.kinematic_chain.links[i]
-            current_link_transform = current_link.transform(position[i])
+            p = position[i]  # type: ignore
+            current_link_transform = current_link.transform(p)
             current_transform = np.dot(current_link_transform,
                                        current_transform)
 
         return jacobian_flange
 
-    def calculate_joint_torques(self, position, wrench):
+    def calculate_joint_torques(self, position: Sequence[float],
+                                wrench: Sequence[float]) -> np.ndarray:
         """
         Calculate the joint torques due to external force applied to the flange frame.
         Method from:
         5.9 STATIC FORCES IN MANIPULATORS
         Craig, John J. Introduction to robotics: mechanics and control.
         Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
+        :param wrench:
         :param position:
         :param force:
         :return:
         """
 
         # split wrench into components
-        force = wrench[:3].copy()
-        moment = wrench[-3:].copy()
+        force = wrench[:3]
+        moment = wrench[-3:]
 
         # init output
         joint_torques = [moment[-1]]
@@ -270,4 +274,4 @@ class Robot(Sized):
             joint_torques.append(moment[-1])
 
         # reverse torques into correct order
-        return list(reversed(joint_torques))
+        return np.ndarray(list(reversed(joint_torques)), dtype=float)
