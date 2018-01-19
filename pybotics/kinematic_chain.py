@@ -7,7 +7,6 @@ import numpy as np  # type: ignore
 from pybotics.kinematic_pair import KinematicPair
 from pybotics.link import Link
 from pybotics.link_convention import LinkConvention
-from pybotics.pybotics_error import PyboticsError
 from pybotics.revolute_mdh_link import RevoluteMDHLink
 
 

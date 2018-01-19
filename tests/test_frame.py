@@ -1,6 +1,5 @@
 """Test frame."""
 import numpy as np
-from pytest import raises
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 

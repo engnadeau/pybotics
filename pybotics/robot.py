@@ -3,6 +3,7 @@ from typing import Optional, Sequence, Sized
 
 import numpy as np  # type: ignore
 
+from pybotics.constants import ROTATION_VECTOR_LENGTH
 from pybotics.frame import Frame
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.pybotics_error import PyboticsError
@@ -195,10 +196,18 @@ class Robot(Sized):
 
         jacobian_flange = self._jacobian_flange(position)
         pose = self.fk(position)
+
         rotation = pose[:3, :3]
-        jacobian_transform = np.zeros((6, 6), dtype=float)
-        jacobian_transform[:3, :3] = rotation
-        jacobian_transform[3:, 3:] = rotation
+
+        jacobian_transform = np.zeros(
+            (ROTATION_VECTOR_LENGTH * 2, ROTATION_VECTOR_LENGTH * 2),
+            dtype=float
+        )
+
+        jacobian_transform[:ROTATION_VECTOR_LENGTH, :ROTATION_VECTOR_LENGTH] = \
+            rotation
+        jacobian_transform[ROTATION_VECTOR_LENGTH:, ROTATION_VECTOR_LENGTH:] = \
+            rotation
         jacobian_world = np.dot(jacobian_transform, jacobian_flange)
 
         return jacobian_world
@@ -235,14 +244,14 @@ class Robot(Sized):
     def calculate_joint_torques(self, position: Sequence[float],
                                 wrench: Sequence[float]) -> np.ndarray:
         """
-        Calculate the joint torques due to external force applied to the flange frame.
+        Calculate the joint torques
+        due to external force applied to the flange frame.
         Method from:
         5.9 STATIC FORCES IN MANIPULATORS
         Craig, John J. Introduction to robotics: mechanics and control.
         Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
         :param wrench:
         :param position:
-        :param force:
         :return:
         """
 

@@ -1,12 +1,8 @@
 """Kinematic chain test."""
 import numpy as np
-from pytest import raises
 
-from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.kinematic_pair import KinematicPair
-from pybotics.link import Link
-from pybotics.revolute_mdh_link import RevoluteMDHLink
 
 
 def test_len(planar_kc):

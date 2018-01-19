@@ -1,8 +1,5 @@
 """Test tool."""
 import numpy as np
-from pytest import raises
-
-from pybotics.constants import POSITION_VECTOR_LENGTH
 
 
 def test_cg(tool):

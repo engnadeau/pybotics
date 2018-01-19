@@ -3,6 +3,9 @@ from typing import Sequence
 
 import numpy as np  # type: ignore
 
+from pybotics.constants import POSITION_VECTOR_LENGTH
+from pybotics.pybotics_error import PyboticsError
+
 
 def euler_zyx_2_matrix(vector: Sequence[float]) -> np.ndarray:
     """
@@ -132,6 +135,11 @@ def rotation_matrix_z(angle: float) -> np.ndarray:
 
 def translation_matrix(xyz: Sequence[float]) -> np.ndarray:
     """Generate a basic 4x4 translation matrix."""
+    # validate
+    if len(xyz) != POSITION_VECTOR_LENGTH:
+        raise PyboticsError(
+            'len(xyz) must be {}'.format(POSITION_VECTOR_LENGTH))
+    
     matrix = np.eye(4)
     matrix[:-1, -1] = xyz
 

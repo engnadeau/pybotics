@@ -3,9 +3,8 @@ import hypothesis.strategies as st
 import numpy as np
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
-from pytest import raises
 
-from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
+from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, \
     matrix_2_euler_zyx, translation_matrix, rotation_matrix_x, \
     rotation_matrix_y, rotation_matrix_z

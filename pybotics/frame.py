@@ -4,7 +4,7 @@ from typing import Union, Sequence
 
 import numpy as np  # type: ignore
 
-from pybotics.constants import TRANSFORM_VECTOR_LENGTH, POSITION_VECTOR_LENGTH
+from pybotics.constants import TRANSFORM_VECTOR_LENGTH
 from pybotics.geometry import matrix_2_euler_zyx, euler_zyx_2_matrix
 from pybotics.orientation_convention import OrientationConvention
 

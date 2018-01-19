@@ -1,9 +1,7 @@
 """Calibration test."""
 import numpy as np
-from pytest import raises
 
 from pybotics.calibration import compute_absolute_errors
-from pybotics.constants import POSITION_VECTOR_LENGTH
 
 
 def test_compute_absolute_errors(serial_robot):
