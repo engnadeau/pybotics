@@ -1,4 +1,5 @@
 """Pytest config."""
+from typing import Tuple
 
 import numpy as np
 from pytest import fixture
@@ -8,6 +9,11 @@ from pybotics.kinematic_chain import KinematicChain
 from pybotics.robot import Robot
 from pybotics.robot_model import UR10
 from pybotics.tool import Tool
+
+
+@fixture(name='planar_robot_link_lengths')
+def planar_robot_link_lengths_fixture() -> Tuple[float, float]:
+    return 10, 20
 
 
 @fixture(name='serial_robot')
@@ -31,7 +37,7 @@ def planar_robot_fixture(planar_kc):
 
 
 @fixture(name='planar_kc')
-def planar_kc_fixture():
+def planar_kc_fixture(planar_robot_link_lengths):
     """
     Generate planar kinematic chain.
 
@@ -39,8 +45,8 @@ def planar_kc_fixture():
     """
     mdh = np.array([
         [0, 0, 0, 0],
-        [0, 10, 0, 0],
-        [0, 20, 0, 0]
+        [0, planar_robot_link_lengths[0], 0, 0],
+        [0, planar_robot_link_lengths[1], 0, 0]
     ])
     kc = KinematicChain.from_array(mdh)
     return kc
