@@ -1,5 +1,6 @@
 """Robot module."""
 from typing import Optional, Sequence, Sized
+import json
 
 import numpy as np  # type: ignore
 
@@ -180,3 +181,6 @@ class Robot(Sized):
             raise PyboticsError(
                 'position_limits must have shape=(2,{})'.format(len(self)))
         self._position_limits = value
+
+    def to_json(self) -> str:
+        return json.dumps(self, cls=RobotJSONEncoder, indent=4, sort_keys=True)
