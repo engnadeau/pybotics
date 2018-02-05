@@ -187,3 +187,8 @@ def test_repr(serial_robot):
 
     # check str()
     assert str(serial_robot) == s
+
+
+def test_to_json(serial_robot: Robot):
+    js = serial_robot.to_json()
+    json.loads(js)
