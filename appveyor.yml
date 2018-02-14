@@ -14,6 +14,7 @@ install:
 - "%PYTHON%\\python.exe utilities\\write_version.py"
 - "%PYTHON%\\python.exe -m pip install -e ."
 
+# disable automatic builds
 build: off
 
 test_script:
