@@ -8,7 +8,6 @@ environment:
   - PYTHON: "C:\\Python36-x64"
 
 install:
-- "%PYTHON%\\python.exe -m pip install wheel"
 - "%PYTHON%\\python.exe -m pip install -r requirements\\main.txt"
 - "%PYTHON%\\python.exe -m pip install -r requirements\\unit-testing.txt"
 - "%PYTHON%\\python.exe -m pip install -r requirements\\versioning.txt"
@@ -20,8 +19,3 @@ build: off
 test_script:
 - "%PYTHON%\\python.exe -m pytest tests"
 
-after_test:
-- "%PYTHON%\\python.exe setup.py bdist_wheel"
-
-artifacts:
-- path: dist\*
