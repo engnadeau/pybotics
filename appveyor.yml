@@ -8,6 +8,7 @@ environment:
   - PYTHON: "C:\\Python36-x64"
 
 install:
+- "%PYTHON%\\python.exe -m pip install -r requirements\\appveyor.txt"
 - "%PYTHON%\\python.exe -m pip install -r requirements\\main.txt"
 - "%PYTHON%\\python.exe -m pip install -r requirements\\unit-testing.txt"
 - "%PYTHON%\\python.exe -m pip install -r requirements\\versioning.txt"
