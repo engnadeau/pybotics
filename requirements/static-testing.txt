@@ -7,7 +7,7 @@ mccabe==0.6.1
 mypy==0.560
 pep8-naming==0.5.0
 pipdeptree==0.10.1
-pipenv==9.0.3
+pipenv==9.1.0
 safety==1.7.0
 vulture==0.26
 xenon==0.5.4
