@@ -1,6 +1,6 @@
 pytest==3.4.1
 pytest-runner==4.0
-hypothesis==3.45.2
+hypothesis==3.45.4
 pytest-cov==2.5.1
 coveralls==1.2.0
 codecov==2.0.15
