@@ -1,7 +1,7 @@
+import json
 from platform import platform, machine
 
 import pkg_resources
-import json
 
 
 def fetch_dependencies(package_name: str) -> dict:

@@ -55,5 +55,5 @@ def test_position(world_frame):
     :return:
     """
     new_position = np.ones(3)
-    world_frame.position = new_position
-    np.testing.assert_allclose(world_frame.position, new_position)
+    world_frame.joints = new_position
+    np.testing.assert_allclose(world_frame.joints, new_position)

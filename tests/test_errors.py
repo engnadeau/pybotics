@@ -1,10 +1,10 @@
 """Test errors."""
 from pytest import raises
 
-from pybotics.pybotics_error import PyboticsError
+from pybotics.errors import PyboticsError
 
 
-def test_pybotics_error():
+def test_errors():
     """
     Test error.
 

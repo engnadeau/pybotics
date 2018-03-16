@@ -1,7 +1,8 @@
 """Setup module."""
-from setuptools import setup, find_packages
 import logging
 from pathlib import Path
+
+from setuptools import setup, find_packages
 
 
 def main():
@@ -9,16 +10,8 @@ def main():
     root_path = Path(__file__).parent
     logging.info('Root path: {}'.format(root_path.resolve()))
 
-    # version
-    version_path = root_path / 'VERSION'
-    logging.info('Version path: {}'.format(version_path.resolve()))
-
-    with open(str(version_path)) as f:
-        version = f.read()
-    logging.info('Version: {}'.format(version))
-
     # requirements
-    requirements_path = root_path / 'requirements' / 'main.txt'
+    requirements_path = root_path / 'requirements.txt'
     logging.info('Requirements path: {}'.format(requirements_path.resolve()))
 
     with open(str(requirements_path)) as f:
@@ -33,7 +26,6 @@ def main():
 
     # run setup
     setup(name='pybotics',
-          version=version,
           packages=find_packages(exclude=['*tests*', 'utilities', 'examples']),
           url='https://github.com/nnadeau/pybotics',
           license='MIT',
@@ -41,6 +33,8 @@ def main():
           author_email='nicholas.nadeau@gmail.com',
           description='Python Toolbox for Robotics',
           long_description=description,
+          use_scm_version=True,
+          setup_requires=['setuptools_scm'],
           install_requires=requirements,
           tests_require=['pytest'],
           classifiers=[

@@ -2,6 +2,7 @@ from typing import Optional
 
 import numpy as np  # type: ignore
 
+import pybotics.conventions as conv
 from pybotics.frame import Frame
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.robot import Robot
@@ -21,7 +22,7 @@ class KukaLbrIiwa7(Robot):
                 -np.pi / 2, 0, 0, 400,
                 -np.pi / 2, 0, 0, 0,
                 np.pi / 2, 0, 0, 126
-            ]).reshape((-1, 4)))
+            ]).reshape((-1, conv.Link.MDH.value)))
         super().__init__(kinematic_chain, tool, world_frame)
 
 
@@ -36,7 +37,7 @@ class MecademicMeca500(Robot):
                 -np.pi / 2, 38, 0, 120,
                 np.pi / 2, 0, 0, 0,
                 -np.pi / 2, 0, np.pi, 72
-            ]).reshape((-1, 4)))
+            ]).reshape((-1, conv.Link.MDH.value)))
         super().__init__(kinematic_chain, tool, world_frame)
 
 
@@ -51,7 +52,7 @@ class Puma560(Robot):
                 0, 571.6, 0, 163.9,
                 -np.pi / 2, 0, 0, 115.7,
                 np.pi / 2, 0, np.pi, 92.2
-            ]).reshape((-1, 4)))
+            ]).reshape((-1, conv.Link.MDH.value)))
         super().__init__(kinematic_chain, tool, world_frame)
 
 
@@ -66,5 +67,5 @@ class UR10(Robot):
                 0, 571.6, 0, 163.9,
                 -np.pi / 2, 0, 0, 115.7,
                 np.pi / 2, 0, np.pi, 92.2
-            ]).reshape((-1, 4)))
+            ]).reshape((-1, conv.Link.MDH.value)))
         super().__init__(kinematic_chain, tool, world_frame)

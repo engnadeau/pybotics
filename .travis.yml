@@ -41,10 +41,6 @@ stages:
 - deploy
 
 install:
-- pip install -r requirements/main.txt
-- pip install -r requirements/unit-testing.txt
-- pip install -r requirements/versioning.txt
-- python utilities/write_version.py
 - pip install -e .
 
 script:
@@ -60,25 +56,23 @@ jobs:
   - stage: static-test
     python: 3.6
     install:
-    - pip install -r requirements/static-testing.txt
+    - pip install -r dev-requirements.txt
     script:
     - chmod +x utilities/run-static-tests.sh
     - ./utilities/run-static-tests.sh
   - stage: example-test
     python: 3.6
     install:
-    - pip install -r requirements/main.txt
-    - pip install -r requirements/example-testing.txt
+    - pip install -r dev-requirements.txt
     - pip install -e .
     script:
     - python utilities/test_ipython_examples.py
   - stage: deploy
     python: 3.6
     install:
-    - pip install -r requirements/deployment.txt
-    - pip install -r requirements/versioning.txt
+    - pip install -r dev-requirements.txt
     script:
-    - python utilities/write_version.py
+    - echo Hello!
     deploy:
     - provider: pypi
       skip_cleanup: true

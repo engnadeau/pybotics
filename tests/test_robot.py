@@ -1,18 +1,16 @@
 """Test robot."""
 import json
-from itertools import chain
-from typing import Sequence, Tuple
+from typing import Tuple
 
+import hypothesis
 import numpy as np
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 
-from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
-from pybotics.geometry import euler_zyx_2_matrix
+from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.robot import Robot
-from pybotics.robot_optimization_mask import RobotOptimizationMask
 
 
 def test_fk(serial_robot):
@@ -35,101 +33,9 @@ def test_fk(serial_robot):
     np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
 
     # test with internal position attribute
-    serial_robot.position = joints
+    serial_robot.joints = joints
     actual_pose = serial_robot.fk()
     np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
-
-
-def test_optimization(serial_robot):
-    """
-    Test robot.
-
-    :param serial_robot:
-    :return:
-    """
-    masked_index = 1
-    serial_robot.world_frame.matrix = euler_zyx_2_matrix([1, 2, 3,
-                                                          np.deg2rad(10),
-                                                          np.deg2rad(20),
-                                                          np.deg2rad(30)])
-    serial_robot.tool.matrix = euler_zyx_2_matrix([1, 2, 3,
-                                                   np.deg2rad(10),
-                                                   np.deg2rad(20),
-                                                   np.deg2rad(30)])
-
-    # test mask
-    mask = RobotOptimizationMask(world_frame=True,
-                                 kinematic_chain=True,
-                                 tool=True)
-    serial_robot.optimization_mask = mask
-
-    assert isinstance(serial_robot.optimization_mask.world_frame, Sequence)
-    assert all(serial_robot.optimization_mask.world_frame)
-    assert len(serial_robot.
-               optimization_mask.
-               world_frame) == TRANSFORM_VECTOR_LENGTH
-
-    assert isinstance(serial_robot.optimization_mask.kinematic_chain, Sequence)
-    assert all(serial_robot.optimization_mask.kinematic_chain)
-    assert len(serial_robot.
-               optimization_mask.
-               kinematic_chain) == serial_robot.kinematic_chain.num_parameters
-
-    assert isinstance(serial_robot.optimization_mask.tool, Sequence)
-    assert all(serial_robot.optimization_mask.tool)
-    assert len(serial_robot.
-               optimization_mask.
-               tool) == TRANSFORM_VECTOR_LENGTH
-
-    # test optimization vector
-    # apply mask with single False
-    # check to make sure everything is properly set
-    frame_mask = [True] * TRANSFORM_VECTOR_LENGTH
-    frame_mask[masked_index] = False
-
-    kc_mask = [True] * serial_robot.kinematic_chain.num_parameters
-    kc_mask[masked_index] = False
-
-    mask = RobotOptimizationMask(world_frame=frame_mask,
-                                 kinematic_chain=kc_mask,
-                                 tool=frame_mask)
-    serial_robot.optimization_mask = mask
-
-    # these masked elements should not change after the optimization applied
-    masked_world_element = serial_robot.world_frame.vector()[masked_index]
-    masked_kc_element = serial_robot.kinematic_chain.vector[masked_index]
-    masked_tool_element = serial_robot.tool.vector()[masked_index]
-
-    new_optimization_vector = serial_robot.optimization_vector * 2
-    serial_robot.apply_optimization_vector(new_optimization_vector)
-
-    np.testing. \
-        assert_almost_equal(serial_robot.world_frame.vector()[masked_index],
-                            masked_world_element)
-    np.testing. \
-        assert_almost_equal(serial_robot.
-                            kinematic_chain.vector[masked_index],
-                            masked_kc_element)
-    np.testing. \
-        assert_almost_equal(serial_robot.tool.vector()[masked_index],
-                            masked_tool_element)
-
-    leftover_world_vector = [e for i, e in
-                             enumerate(serial_robot.world_frame.vector()) if
-                             i != masked_index]
-    leftover_kc_vector = [e for i, e in
-                          enumerate(serial_robot.kinematic_chain.vector) if
-                          i != masked_index]
-    leftover_tool_vector = [e for i, e in
-                            enumerate(serial_robot.tool.vector()) if
-                            i != masked_index]
-
-    leftover_vector = list(chain(leftover_world_vector,
-                                 leftover_kc_vector,
-                                 leftover_tool_vector))
-    np.testing.assert_allclose(leftover_vector,
-                               new_optimization_vector,
-                               atol=1e-6)
 
 
 def test_init():
@@ -238,10 +144,36 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot,
 
 @given(q=arrays(shape=(3,), dtype=float,
                 elements=floats(allow_nan=False, allow_infinity=False)))
-def test_ik(q: np.ndarray, planar_robot: Robot):
+def test_ik_jacobian(q: np.ndarray, planar_robot: Robot):
     pose = planar_robot.fk(q)
 
-    q_actual = planar_robot.ik(pose, max_iter=1e9)
-    pose_actual = planar_robot.fk(q_actual)
+    q_actual = planar_robot.ik_jacobian(pose, max_iter=1e9)
+    actual_pose = planar_robot.fk(q_actual)
 
-    np.testing.assert_allclose(pose_actual, pose, atol=1e-6)
+    # test the matrix with lower accuracy
+    # rotation components are hard to achieve when x0 isn't good
+    np.testing.assert_allclose(actual_pose, pose, atol=1e-1)
+
+    # test the position with high accuracy
+    desired_position = pose[:-1, -1]
+    actual_position = actual_pose[:-1, -1]
+    np.testing.assert_allclose(actual_position, desired_position)
+
+
+@given(q=arrays(shape=(6,), dtype=float,
+                elements=floats(allow_nan=False, allow_infinity=False)))
+@hypothesis.settings(use_coverage=False)
+def test_ik(q: np.ndarray, serial_robot: Robot):
+    pose = serial_robot.fk(q)
+
+    q_actual = serial_robot.ik(pose)
+    actual_pose = serial_robot.fk(q_actual)
+
+    # test the matrix with lower accuracy
+    # rotation components are hard to achieve when x0 isn't good
+    np.testing.assert_allclose(actual_pose, pose, atol=1)
+
+    # test the position with high accuracy
+    desired_position = pose[:-1, -1]
+    actual_position = actual_pose[:-1, -1]
+    np.testing.assert_allclose(actual_position, desired_position, atol=1e-2)

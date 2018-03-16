@@ -1,7 +1,7 @@
 """Calibration test."""
 import numpy as np
 
-from pybotics.calibration import compute_absolute_errors
+from pybotics.optimization import compute_absolute_errors
 
 
 def test_compute_absolute_errors(serial_robot):
@@ -24,7 +24,7 @@ def test_compute_absolute_errors(serial_robot):
 
     # bad fk
     distance_offset = 10
-    serial_robot.world_frame.position = [distance_offset, 0, 0]
+    serial_robot.world_frame.joints = [distance_offset, 0, 0]
     errors = compute_absolute_errors(serial_robot, joints, desired_positions)
     np.testing.assert_allclose(errors,
                                distance_offset * np.ones(num_measurements),
@@ -32,7 +32,7 @@ def test_compute_absolute_errors(serial_robot):
 
     # bad fk
     distance_offset = [10, 10, 10]
-    serial_robot.world_frame.position = distance_offset
+    serial_robot.world_frame.joints = distance_offset
     errors = compute_absolute_errors(serial_robot, joints, desired_positions)
     np.testing.assert_allclose(errors,
                                np.linalg.norm(distance_offset) * np.ones(

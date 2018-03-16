@@ -1,4 +1,4 @@
-from pybotics.robot_model import KukaLbrIiwa7, UR10, MecademicMeca500, Puma560
+from pybotics.robot_models import KukaLbrIiwa7, UR10, MecademicMeca500, Puma560
 
 
 def test_models():

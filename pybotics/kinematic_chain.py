@@ -4,10 +4,8 @@ from typing import Any, Sequence, Union, Sized, Optional
 
 import numpy as np  # type: ignore
 
-from pybotics.kinematic_pair import KinematicPair
-from pybotics.link import Link
-from pybotics.link_convention import LinkConvention
-from pybotics.revolute_mdh_link import RevoluteMDHLink
+import pybotics.conventions as conv
+import pybotics.link as lk
 
 
 class KinematicChain(Sized):
@@ -17,7 +15,7 @@ class KinematicChain(Sized):
     Connected by joints to provide constrained motion.
     """
 
-    def __init__(self, links: Sequence[Link]) -> None:
+    def __init__(self, links: Sequence[lk.Link]) -> None:
         """
         Construct a kinematic chain.
 
@@ -36,32 +34,15 @@ class KinematicChain(Sized):
         """
         return len(self.links)
 
-    def apply_optimization_vector(self, vector: np.ndarray) -> None:
-        """
-        Update the current instance with new optimization parameters.
-
-        :param vector: new parameters to apply
-        """
-        # we are going to iterate through the given vector;
-        # an iterator allows us to next()
-        # (aka `pop`) the values only when desired;
-        # we only update the current vector where the mask is True
-        vector_iterator = iter(vector)
-        updated_vector = [v if not m else next(vector_iterator)
-                          for v, m in zip(self.vector,
-                                          self.optimization_mask)]
-        updated_links = self.array_2_links(np.array(updated_vector),
-                                           self.convention)
-        self.links = updated_links
-
     @staticmethod
     def array_2_links(
             array: np.ndarray,
-            link_convention: LinkConvention = LinkConvention.MDH,
+            link_convention: conv.Link = conv.Link.MDH,
             kinematic_pairs:
-            Union[KinematicPair,
-                  Sequence[KinematicPair]] = KinematicPair.REVOLUTE
-    ) -> Sequence[Link]:
+            Union[conv.KinematicPair,
+                  Sequence[
+                      conv.KinematicPair]] = conv.KinematicPair.REVOLUTE
+    ) -> Sequence[lk.Link]:
         """
         Generate a sequence of links from a given array of link parameters.
 
@@ -71,26 +52,26 @@ class KinematicChain(Sized):
         :return: sequence of links
         """
         # validate
-        if link_convention in LinkConvention:
+        if link_convention in conv.Link:
             # vectors are reshaped to a 2D array based
             # on number of parameters per link
             array = array.reshape((-1, link_convention.value))
 
             # turn single KinematicPair into sequence
-            if isinstance(kinematic_pairs, KinematicPair):
+            if isinstance(kinematic_pairs, conv.KinematicPair):
                 kinematic_pairs = [kinematic_pairs] * len(array)
 
             # create link sequences based on convention;
             links = []
             for row, _ in zip(array, kinematic_pairs):
-                links.append(RevoluteMDHLink(*row))
+                links.append(lk.RevoluteMDHLink(*row))
         else:
             raise NotImplementedError(link_convention)
 
         return links
 
     @property
-    def convention(self) -> LinkConvention:
+    def convention(self) -> conv.Link:
         """
         Get LinkConvention.
 
@@ -101,10 +82,11 @@ class KinematicChain(Sized):
     @classmethod
     def from_array(
             cls, array: np.ndarray,
-            link_convention: LinkConvention = LinkConvention.MDH,
+            link_convention: conv.Link = conv.Link.MDH,
             kinematic_pairs: Union[
-                KinematicPair,
-                Sequence[KinematicPair]] = KinematicPair.REVOLUTE) -> Any:
+                conv.KinematicPair,
+                Sequence[
+                    conv.KinematicPair]] = conv.KinematicPair.REVOLUTE) -> Any:
         """
         Generate a kinematic chain from a given array of link parameters.
 
@@ -116,7 +98,7 @@ class KinematicChain(Sized):
         return cls(cls.array_2_links(array, link_convention, kinematic_pairs))
 
     @property
-    def links(self) -> Sequence[Link]:
+    def links(self) -> Sequence[lk.Link]:
         """
         Get links of the kinematic chain.
 
@@ -125,7 +107,7 @@ class KinematicChain(Sized):
         return self._links
 
     @links.setter
-    def links(self, value: Sequence[Link]) -> None:
+    def links(self, value: Sequence[lk.Link]) -> None:
         self._links = value
 
     @property

@@ -1,13 +1,20 @@
 """Pybotics modules."""
-from importlib import import_module
-from pathlib import Path
+import logging
 
-from typing import List
+from pkg_resources import get_distribution, DistributionNotFound
 
-# glob modules
-path = Path(__file__).parent
-modules = list(path.glob('*.py'))  # type: List[Path]
+# setup version info
+try:
+    __version__ = get_distribution(__name__).version
+except DistributionNotFound as e:
+    # package is not installed
+    pass
 
-# import
-for mod in modules:
-    import_module('.{}'.format(mod.stem), package=path.name)
+# import modules
+from .frame import Frame
+from .kinematic_chain import KinematicChain
+from .robot import Robot
+from .tool import Tool
+
+# set logging
+logging.getLogger(__name__).addHandler(logging.NullHandler())

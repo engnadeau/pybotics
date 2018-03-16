@@ -1,7 +1,7 @@
 """Test robot JSON encoder."""
 from pytest import raises
 
-from pybotics.robot_json_encoder import RobotJSONEncoder
+from pybotics.robot import RobotJSONEncoder
 
 
 def test_default():

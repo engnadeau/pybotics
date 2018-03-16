@@ -4,63 +4,12 @@ import numpy as np
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 
-from pybotics.constants import TRANSFORM_MATRIX_SHAPE
-from pybotics.geometry import wrap_2_pi, euler_zyx_2_matrix, \
-    matrix_2_euler_zyx, translation_matrix, rotation_matrix_x, \
-    rotation_matrix_y, rotation_matrix_z
-
-EULER_ZYX_VECTOR = np.array([100, 200, 300,
-                             np.deg2rad(-30), np.deg2rad(50), np.deg2rad(90)])
-TRANSFORM = np.array([
-    [0, -0.642788, 0.766044, 100],
-    [0.866025, 0.383022, 0.321394, 200],
-    [-0.5, 0.663414, 0.556670, 300],
-    [0, 0, 0, 1]
-])
-
-
-def test_euler_zyx_2_matrix():
-    """
-    Test conversion.
-
-    :return:
-    """
-    actual = euler_zyx_2_matrix(EULER_ZYX_VECTOR)
-    np.testing.assert_allclose(actual=actual, desired=TRANSFORM, atol=1e-6)
-
-
-def test_matrix_2_euler_zyx():
-    """
-    Test conversion.
-
-    :return:
-    """
-    # test normal function
-    actual = matrix_2_euler_zyx(TRANSFORM)
-    np.testing.assert_allclose(actual=actual, desired=EULER_ZYX_VECTOR,
-                               atol=1e-6)
-
-    # test matrix decomposition corner cases when y=90deg
-    corner_case_matrix = np.array(
-        [0, 0, 1, 0,
-         0, 1, 0, 0,
-         -1, 0, 0, 0,
-         0, 0, 0, 1]
-    ).reshape(TRANSFORM_MATRIX_SHAPE)
-    desired = [0, 0, 0, 0, np.deg2rad(90), 0]
-    actual = matrix_2_euler_zyx(corner_case_matrix)
-    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
-
-    # test matrix decomposition corner cases when y=-90deg
-    corner_case_matrix = np.array(
-        [0, 0, -1, 0,
-         0, 1, 0, 0,
-         1, 0, 0, 0,
-         0, 0, 0, 1]
-    ).reshape(TRANSFORM_MATRIX_SHAPE)
-    desired = [0, 0, 0, 0, np.deg2rad(-90), 0]
-    actual = matrix_2_euler_zyx(corner_case_matrix)
-    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
+import pybotics.geometry
+from pybotics.constants import POSITION_VECTOR_LENGTH, \
+    TRANSFORM_VECTOR_LENGTH
+from pybotics.conventions import Orientation
+from pybotics.geometry import matrix_2_vector, vector_2_matrix, \
+    _matrix_2_euler_zyx, rotation_matrix_y
 
 
 @given(st.floats(allow_nan=False, allow_infinity=False))
@@ -71,7 +20,7 @@ def test_wrap_2_pi(angle):
     :return:
     """
     # hypothesis testing
-    assert -np.pi <= wrap_2_pi(angle) < np.pi
+    assert -np.pi <= pybotics.geometry.wrap_2_pi(angle) < np.pi
 
     # standard testing
     angles = np.array([
@@ -85,14 +34,15 @@ def test_wrap_2_pi(angle):
     test_angles = angles[:, 0]
     expected_angles = angles[:, 1]
 
-    actual_angles = np.array(list(map(wrap_2_pi, test_angles)))
+    actual_angles = np.array(
+        list(map(pybotics.geometry.wrap_2_pi, test_angles)))
     assert len(test_angles) == len(expected_angles)
     assert len(actual_angles) == len(expected_angles)
     np.testing.assert_allclose(actual_angles, expected_angles)
 
     # test single elements
     for i, _ in enumerate(expected_angles):
-        actual_angle = wrap_2_pi(test_angles[i])
+        actual_angle = pybotics.geometry.wrap_2_pi(test_angles[i])
         np.testing.assert_allclose([actual_angle], expected_angles[i])
 
 
@@ -104,11 +54,11 @@ def test_rotation_matrix(angle):
         # but it doesn't show that the function is `used`
         # the if-else structure avoids `dead code` errors
         if axis is 'x':
-            matrix = rotation_matrix_x(angle)
+            matrix = pybotics.geometry.rotation_matrix_x(angle)
         elif axis is 'y':
-            matrix = rotation_matrix_y(angle)
+            matrix = pybotics.geometry.rotation_matrix_y(angle)
         elif axis is 'z':
-            matrix = rotation_matrix_z(angle)
+            matrix = pybotics.geometry.rotation_matrix_z(angle)
 
         # check orthogonality
         for row in matrix:
@@ -132,9 +82,9 @@ def test_rotation_matrix(angle):
         np.testing.assert_allclose(matrix[i, i], 1)
 
 
-@given(arrays(shape=(3,), dtype=float))
+@given(arrays(shape=(POSITION_VECTOR_LENGTH,), dtype=float))
 def test_translation_matrix(xyz):
-    matrix = translation_matrix(xyz)
+    matrix = pybotics.geometry.translation_matrix(xyz)
 
     # check orthogonality
     for row in matrix[:-1, :-1]:
@@ -152,3 +102,74 @@ def test_translation_matrix(xyz):
     # check homogeneous matrix
     # noinspection PyTypeChecker
     np.testing.assert_allclose(matrix[-1, :-1], 0)
+
+
+def test_vector_2_matrix(vector_transform: tuple):
+    for c in [Orientation.EULER_ZYX, 'zyx']:
+        actual = pybotics.geometry.vector_2_matrix(vector_transform[0],
+                                                   convention=c)
+        np.testing.assert_allclose(actual=actual,
+                                   desired=vector_transform[1],
+                                   atol=1e-6)
+
+
+def test_rotation_matrix_x(x_rotation_matrix):
+    actual = pybotics.geometry.rotation_matrix_x(x_rotation_matrix[0])
+    np.testing.assert_allclose(actual=actual, desired=x_rotation_matrix[1],
+                               atol=1e-6)
+
+
+def test_rotation_matrix_y(y_rotation_matrix):
+    actual = pybotics.geometry.rotation_matrix_y(y_rotation_matrix[0])
+    np.testing.assert_allclose(actual=actual, desired=y_rotation_matrix[1],
+                               atol=1e-6)
+
+
+def test_rotation_matrix_z(z_rotation_matrix):
+    actual = pybotics.geometry.rotation_matrix_z(z_rotation_matrix[0])
+    np.testing.assert_allclose(actual=actual, desired=z_rotation_matrix[1],
+                               atol=1e-6)
+
+
+@given(arrays(shape=(TRANSFORM_VECTOR_LENGTH,), dtype=float))
+def test_matrix_2_vector(vector):
+    # hypothesis can't generate homogenous matrices,
+    # so start with vector and convert
+    matrix = vector_2_matrix(vector)
+
+    for convention in Orientation:
+        try:
+            actual_vector = matrix_2_vector(matrix, convention)
+        except NotImplementedError:
+            # TODO: implement other conversions
+            # don't fail for NotImplementedError
+            continue
+        actual_matrix = vector_2_matrix(actual_vector, convention)
+        np.testing.assert_allclose(actual=actual_matrix, desired=matrix,
+                                   atol=1e-6)
+
+
+def test_matrix_2_euler_zyx(vector_transform):
+    """
+    Test conversion.
+
+    :return:
+    """
+    # test normal function
+    actual = _matrix_2_euler_zyx(vector_transform[1])
+    np.testing.assert_allclose(actual=actual, desired=vector_transform[0],
+                               atol=1e-6)
+
+    # test matrix decomposition corner cases when y=90deg
+    angle = np.deg2rad(90)
+    matrix = rotation_matrix_y(angle)
+    desired = [0, 0, 0, 0, angle, 0]
+    actual = _matrix_2_euler_zyx(matrix)
+    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
+
+    # test matrix decomposition corner cases when y=-90deg
+    angle = np.deg2rad(-90)
+    matrix = rotation_matrix_y(angle)
+    desired = [0, 0, 0, 0, angle, 0]
+    actual = _matrix_2_euler_zyx(matrix)
+    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)

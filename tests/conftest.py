@@ -4,20 +4,21 @@ from typing import Tuple
 import numpy as np
 from pytest import fixture
 
+from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 from pybotics.frame import Frame
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.robot import Robot
-from pybotics.robot_model import UR10
+from pybotics.robot_models import UR10
 from pybotics.tool import Tool
 
 
-@fixture(name='planar_robot_link_lengths')
-def planar_robot_link_lengths_fixture() -> Tuple[float, float]:
+@fixture()
+def planar_robot_link_lengths() -> Tuple[float, float]:
     return 10, 20
 
 
-@fixture(name='serial_robot')
-def serial_robot_fixture():
+@fixture()
+def serial_robot():
     """
     Generate serial robot.
 
@@ -26,8 +27,8 @@ def serial_robot_fixture():
     return UR10()
 
 
-@fixture(name='planar_robot')
-def planar_robot_fixture(planar_kc):
+@fixture()
+def planar_robot(planar_kc):
     """
     Generate planar robot.
 
@@ -36,8 +37,8 @@ def planar_robot_fixture(planar_kc):
     return Robot(planar_kc)
 
 
-@fixture(name='planar_kc')
-def planar_kc_fixture(planar_robot_link_lengths):
+@fixture()
+def planar_kc(planar_robot_link_lengths):
     """
     Generate planar kinematic chain.
 
@@ -52,8 +53,8 @@ def planar_kc_fixture(planar_robot_link_lengths):
     return kc
 
 
-@fixture(name='tool')
-def tool_fixture():
+@fixture()
+def tool():
     """
     Generate tool.
 
@@ -66,8 +67,8 @@ def tool_fixture():
     return tool
 
 
-@fixture(name='world_frame')
-def world_frame_fixture():
+@fixture()
+def world_frame():
     """
     Generate tool.
 
@@ -76,3 +77,55 @@ def world_frame_fixture():
     frame = Frame()
     frame.position = [10, 20, 30]
     return frame
+
+
+@fixture()
+def vector_transform():
+    euler_zyx_vector = np.array([100, 200, 300,
+                                 np.deg2rad(10),
+                                 np.deg2rad(20),
+                                 np.deg2rad(30)])
+    transform = np.array([
+        0.925417, 0.018028, 0.378522, 100,
+        0.163176, 0.882564, -0.440970, 200,
+        -0.342020, 0.469846, 0.813798, 300,
+        0.000000, 0.000000, 0.000000, 1.000000
+    ]).reshape(TRANSFORM_MATRIX_SHAPE)
+
+    return euler_zyx_vector, transform
+
+
+@fixture()
+def x_rotation_matrix():
+    angle = np.deg2rad(10)
+    transform = np.array([
+        1.0000000, 0.0000000, 0.0000000, 0,
+        0.0000000, 0.9848077, -0.1736482, 0,
+        0.0000000, 0.1736482, 0.9848077, 0,
+        0, 0, 0, 1
+    ]).reshape(TRANSFORM_MATRIX_SHAPE)
+    return angle, transform
+
+
+@fixture()
+def y_rotation_matrix():
+    angle = np.deg2rad(10)
+    transform = np.array([
+        0.9848077, 0.0000000, 0.1736482, 0,
+        0.0000000, 1.0000000, 0.0000000, 0,
+        -0.1736482, 0.0000000, 0.9848077, 0,
+        0, 0, 0, 1
+    ]).reshape(TRANSFORM_MATRIX_SHAPE)
+    return angle, transform
+
+
+@fixture()
+def z_rotation_matrix():
+    angle = np.deg2rad(10)
+    transform = np.array([
+        0.9848077, -0.1736482, 0.0000000, 0,
+        0.1736482, 0.9848077, 0.0000000, 0,
+        0.0000000, 0.0000000, 1.0000000, 0,
+        0, 0, 0, 1
+    ]).reshape(TRANSFORM_MATRIX_SHAPE)
+    return angle, transform

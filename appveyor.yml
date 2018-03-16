@@ -9,7 +9,7 @@ environment:
 
 install:
 - "%PYTHON%\\python.exe -m pip install wheel"
-- "%PYTHON%\\python.exe -m pip install -r requirements\\main.txt"
+- "%PYTHON%\\python.exe -m pip install -r requirements\\requirements.txt"
 - "%PYTHON%\\python.exe -m pip install -r requirements\\unit-testing.txt"
 - "%PYTHON%\\python.exe -m pip install -r requirements\\versioning.txt"
 - "%PYTHON%\\python.exe utilities\\write_version.py"

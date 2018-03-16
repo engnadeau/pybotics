@@ -1,8 +1,8 @@
 """Kinematic chain test."""
 import numpy as np
 
+from pybotics.conventions import KinematicPair
 from pybotics.kinematic_chain import KinematicChain
-from pybotics.kinematic_pair import KinematicPair
 
 
 def test_len(planar_kc):

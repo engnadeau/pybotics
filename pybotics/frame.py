@@ -5,8 +5,8 @@ from typing import Union, Sequence
 import numpy as np  # type: ignore
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH
-from pybotics.geometry import matrix_2_euler_zyx, euler_zyx_2_matrix
-from pybotics.orientation_convention import OrientationConvention
+from pybotics.conventions import Orientation
+from pybotics.geometry import _matrix_2_euler_zyx
 
 
 class Frame:
@@ -20,26 +20,7 @@ class Frame:
         """
         self._matrix = None
         self._optimization_mask = [False] * TRANSFORM_VECTOR_LENGTH
-
         self.matrix = np.eye(4) if matrix is None else matrix
-
-    def apply_optimization_vector(self, vector: np.ndarray) -> None:
-        # we are going to iterate through the given vector;
-        # an iterator allows us to next()
-        # (aka `pop`) the values only when desired;
-        # we only update the current vector where the mask is True
-        """
-        Update the current instance with new optimization parameters.
-
-        :param vector: new parameters to apply
-        """
-        vector_iterator = iter(vector)
-        updated_vector = [v if not m else next(vector_iterator)
-                          for v, m in zip(self.vector(),
-                                          self.optimization_mask)]
-
-        updated_matrix = euler_zyx_2_matrix(np.array(updated_vector))
-        self.matrix = updated_matrix
 
     @property
     def matrix(self) -> np.ndarray:
@@ -96,15 +77,15 @@ class Frame:
         self.matrix[:-1, -1] = value
 
     def vector(self,
-               convention: OrientationConvention =
-               OrientationConvention.EULER_ZYX) -> np.ndarray:
+               convention: Orientation =
+               Orientation.EULER_ZYX) -> np.ndarray:
         """
         Return the vector representation of the frame.
 
         :param convention: selectable vector convention
         :return: vectorized matrix
         """
-        if convention is OrientationConvention.EULER_ZYX:
-            return matrix_2_euler_zyx(self.matrix)
+        if convention is Orientation.EULER_ZYX:
+            return _matrix_2_euler_zyx(self.matrix)
         else:
             raise NotImplementedError(convention)

@@ -1,16 +1,16 @@
 """Robot module."""
 import logging
-from typing import Optional, Sequence, Sized
+from json import JSONEncoder
+from typing import Optional, Sequence, Sized, Any
 
 import numpy as np  # type: ignore
+import scipy.optimize
 
 from pybotics.constants import ROTATION_VECTOR_LENGTH
+from pybotics.errors import PyboticsError
 from pybotics.frame import Frame
-from pybotics.geometry import matrix_2_euler_zyx, wrap_2_pi
+from pybotics.geometry import _matrix_2_euler_zyx, wrap_2_pi
 from pybotics.kinematic_chain import KinematicChain
-from pybotics.pybotics_error import PyboticsError
-from pybotics.robot_json_encoder import RobotJSONEncoder
-from pybotics.robot_optimization_mask import RobotOptimizationMask
 from pybotics.tool import Tool
 
 
@@ -27,10 +27,11 @@ class Robot(Sized):
         :param tool: attached tool
         :param world_frame: transform of robot base with respect to the world
         """
-        self._position = np.zeros(kinematic_chain.num_dof)
-        self._position_limits = np.repeat((-np.inf, np.inf),
-                                          kinematic_chain.num_dof
-                                          ).reshape((2, -1))
+        self._home_position = np.zeros(kinematic_chain.num_dof)
+        self._joints = np.zeros(kinematic_chain.num_dof)
+        self._joint_limits = np.repeat((-np.pi, np.pi),
+                                       kinematic_chain.num_dof
+                                       ).reshape((2, -1))
 
         self.world_frame = Frame() if world_frame is None else world_frame
         self.kinematic_chain = kinematic_chain
@@ -87,7 +88,7 @@ class Robot(Sized):
         """
         # validate
         if q is None:
-            q = self.position
+            q = self.joints
 
         # gather transforms
         transforms = [self.world_frame.matrix]
@@ -101,17 +102,28 @@ class Robot(Sized):
 
         return pose
 
-    def ik(self, pose: np.ndarray, q: Optional[Sequence[float]] = None,
-           alpha: float = 0.1, atol=1e-6, max_iter=1e3) -> Optional[np.ndarray]:
+    def ik_jacobian(self, pose: np.ndarray, q: Optional[Sequence[float]] = None,
+                    alpha: float = 0.1, atol=1e-6, max_iter=1e3) -> Optional[
+        np.ndarray]:
+
         # set seed joints
-        q = self.position if q is None else np.array(q)
+        q = self.joints if q is None else np.array(q)
+        j = self.jacobian_world(q)
+        det = np.linalg.det(j)
+        cond = np.linalg.cond(j)
+        if np.allclose(det, 0) or cond > 100:
+            logging.getLogger(__name__).warning(
+                'Initial joints are near singularity; '
+                'IK solver may not converge')
 
         # convert pose to vector
-        desired_vector = matrix_2_euler_zyx(pose)
+        desired_vector = _matrix_2_euler_zyx(pose)
 
         # solve IK
         is_running = True
         num_iterations = 0
+        last_error_norm = np.inf
+        last_q = q
         while is_running:
             num_iterations += 1
 
@@ -119,23 +131,55 @@ class Robot(Sized):
             j = self.jacobian_world(q)
             j_pinv = np.linalg.pinv(j)
 
-            # get current vector
+            # get current error
             current_pose = self.fk(q)
-            current_vector = matrix_2_euler_zyx(current_pose)
-            vector_diff = desired_vector - current_vector
+            current_vector = _matrix_2_euler_zyx(current_pose)
+            error = desired_vector - current_vector
+            error_norm = np.linalg.norm(error)
 
-            if np.allclose(vector_diff, 0, atol=atol):
+            # adjust alpha if needed
+            if error_norm < last_error_norm:
+                last_error_norm = error_norm
+                alpha *= 2
+            else:
+                logging.debug('Error has diverged; '
+                              'restoring last iteration; '
+                              'reducing alpha')
+                alpha /= 2
+                q = last_q.copy()
+
+            if np.allclose(error, 0, atol=atol):
                 is_running = False
             elif num_iterations >= max_iter:
-                logging.warning('Maximum number of iterations reached')
+                logging.getLogger(__name__).warning(
+                    'Maximum number of iterations reached')
                 is_running = False
             else:
                 # update joints
-                dq = np.dot(j_pinv, vector_diff)
+                dq = np.dot(j_pinv, error)
+                last_q = q.copy()
                 q += alpha * dq
                 q = np.array([wrap_2_pi(x) for x in q])
 
         return q
+
+    def ik(self,
+           pose: np.ndarray,
+           q: Optional[Sequence[float]] = None,
+           ) -> Optional[np.ndarray]:
+
+        x0 = self.joints if q is None else q
+        result = scipy.optimize.least_squares(
+            fun=_ik_cost_function,
+            x0=x0,
+            bounds=self.joint_limits,
+            args=(pose, self),
+        )  # type: scipy.optimize.OptimizeResult
+
+        if result.success:
+            return result.x
+        else:
+            return None
 
     @property
     def num_dof(self) -> int:
@@ -147,75 +191,52 @@ class Robot(Sized):
         return self.kinematic_chain.num_dof
 
     @property
-    def optimization_mask(self) -> RobotOptimizationMask:
-        """
-        Return the mask used to select the optimization parameters.
-
-        :return: mask
-        """
-        mask = RobotOptimizationMask(
-            world_frame=self.world_frame.optimization_mask,
-            kinematic_chain=self.kinematic_chain.optimization_mask,
-            tool=self.tool.optimization_mask)
-        return mask
-
-    @optimization_mask.setter
-    def optimization_mask(self, value: RobotOptimizationMask) -> None:
-        # FIXME: remove `# type: ignore`
-        # FIXME: remove kc; it's there to shorten line length for flake8
-        # https://github.com/python/mypy/issues/4167
-        self.world_frame.optimization_mask = value.world_frame  # type: ignore
-        kc = value.kinematic_chain
-        self.kinematic_chain.optimization_mask = kc  # type: ignore
-        self.tool.optimization_mask = value.tool  # type: ignore
-
-    @property
-    def optimization_vector(self) -> np.ndarray:
-        """
-        Return the values of parameters being optimized.
-
-        :return: optimization parameter values
-        """
-        world = self.world_frame.optimization_vector
-        kinematic_chain = self.kinematic_chain.optimization_vector
-        tool = self.tool.optimization_vector
-
-        vector = np.hstack((world, kinematic_chain, tool))
-        return vector
-
-    @property
-    def position(self) -> np.ndarray:
+    def joints(self) -> np.ndarray:
         """
         Get the robot configuration (e.g., joint positions for serial robot).
 
         :return: robot position
         """
-        return self._position
+        return self._joints
 
-    @position.setter
-    def position(self, value: np.ndarray) -> None:
+    @joints.setter
+    def joints(self, value: np.ndarray) -> None:
         # TODO: check if position is in limits
-        self._position = value
+        self._joints = value
 
     @property
-    def position_limits(self) -> np.ndarray:
+    def home_position(self) -> np.ndarray:
+        """
+        Get the robot configuration (e.g., joint positions for serial robot).
+
+        :return: robot position
+        """
+        return self._home_position
+
+    @home_position.setter
+    def home_position(self, value: np.ndarray) -> None:
+        # TODO: check if position is in limits
+        self._home_position = value
+
+    @property
+    def joint_limits(self) -> np.ndarray:
         """
         Limits of the robot position (e.g., joint limits).
 
         :return: limits with shape (2,num_dof) where first row is upper limits
         """
-        return self._position_limits
+        return self._joint_limits
 
-    @position_limits.setter
-    def position_limits(self, value: np.ndarray) -> None:
+    @joint_limits.setter
+    def joint_limits(self, value: np.ndarray) -> None:
         if value.shape[0] != 2 or value.shape[1] != len(self):
             raise PyboticsError(
                 'position_limits must have shape=(2,{})'.format(len(self)))
-        self._position_limits = value
+        self._joint_limits = value
 
     def jacobian_world(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
         if q is None:
-            q = self.position
+            q = self.joints
 
         jacobian_flange = self.jacobian_flange(q)
         pose = self.fk(q)
@@ -237,7 +258,7 @@ class Robot(Sized):
 
     def jacobian_flange(self,
                         q: Optional[Sequence[float]] = None) -> np.ndarray:
-        q = self.position if q is None else q
+        q = self.joints if q is None else q
 
         # init Cartesian jacobian (6-dof in space)
         jacobian_flange = np.zeros((6, self.num_dof))
@@ -307,3 +328,76 @@ class Robot(Sized):
 
         # reverse torques into correct order
         return np.ndarray(list(reversed(joint_torques)), dtype=float)
+
+
+class RobotJSONEncoder(JSONEncoder):
+    """Robot JSON Encoder class."""
+
+    def default(self, o: Any) -> Any:
+        """
+        Return serializable robot objects.
+
+        :param o:
+        :return:
+        """
+        # process custom instances
+        if isinstance(o, np.ndarray):
+            return o.tolist()
+
+        if isinstance(o, np.int64):
+            return str(o)
+
+        try:
+            o = o.__dict__
+        except AttributeError:
+            pass
+        else:
+            return o
+
+        # let the base class default method raise the TypeError
+        # https://docs.python.org/3/library/json.html
+        return JSONEncoder.default(self, o)
+
+
+def _ik_cost_function(q: np.ndarray,
+                      pose: np.ndarray,
+                      robot: Robot,
+                      ) -> np.ndarray:
+    actual_pose = robot.fk(q)
+    actual_vector = _matrix_2_euler_zyx(actual_pose)
+
+    desired_vector = _matrix_2_euler_zyx(pose
+                                         )
+    diff = np.abs(actual_vector - desired_vector)
+    # diff = np.abs(actual_pose - pose)
+
+    return diff.ravel()
+
+
+def compute_absolute_errors(qs: np.ndarray,
+                            positions: np.ndarray,
+                            robot: Robot
+                            ) -> np.ndarray:
+    """
+    Compute the absolute errors of a given set of positions.
+
+    :param robot: robot model
+    :param qs: sequence of link positions (e.g., joints)
+    :param positions: sequence of actual XYZ positions
+    :return:
+    """
+    # ensure array of arrays
+    if qs.ndim == 1:
+        qs = np.expand_dims(qs, axis=0)
+    if positions.ndim == 1:
+        positions = np.expand_dims(positions, axis=0)
+
+    # compute fk positions
+    actual_poses = np.array(list(map(robot.fk, qs)))
+    actual_positions = actual_poses[:, :-1, -1]
+
+    # compute error
+    position_errors = positions - actual_positions
+    distance_errors = np.linalg.norm(position_errors, axis=1)
+
+    return distance_errors
