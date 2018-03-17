@@ -1,2 +1,2 @@
-setuptools==38.6.0
+setuptools==38.7.0
 
