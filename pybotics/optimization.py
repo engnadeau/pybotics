@@ -1,97 +1,73 @@
-"""Calibration module."""
-from typing import Sequence, NamedTuple, Union
+"""Optimization module."""
+from typing import Sequence, NamedTuple, Union, Iterable
 
 import numpy as np  # type: ignore
 
-from pybotics.robot import Robot
+from pybotics import Robot
+from pybotics.constants import TRANSFORM_VECTOR_LENGTH
+from pybotics.errors import PyboticsError
 
 
+class Optimizer:
+    def __init__(self,
+                 robot: Robot,
+                 robot_mask: Union[bool, Sequence[bool]] = True,
+                 tool_mask: Union[bool, Sequence[bool]] = True,
+                 world_mask: Union[bool, Sequence[bool]] = True
+                 ):
+        self.world_mask = self._validate_transform_mask(
+            world_mask, 'world_mask', TRANSFORM_VECTOR_LENGTH)
+        self.tool_mask = self._validate_transform_mask(
+            tool_mask, 'tool_mask', TRANSFORM_VECTOR_LENGTH)
+
+        self.robot = robot
+        self.robot_mask = self._validate_transform_mask(
+            robot_mask, 'robot_mask', robot.num_parameters)
+
+    def _validate_transform_mask(
+            self,
+            mask: Union[bool, Sequence[bool]],
+            name: str,
+            required_length: int) -> Sequence[bool]:
+
+        # validate input
+        if isinstance(mask, bool):
+            return [mask] * TRANSFORM_VECTOR_LENGTH
+        elif len(mask) != TRANSFORM_VECTOR_LENGTH:
+            raise PyboticsError(
+                '{} must be of length {}'.format(
+                    name, required_length))
+        else:
+            return mask
+
+    def update_robot(self):
+        pass
 
 
-
-def apply_optimization_vector(self, vector: np.ndarray) -> None:
+def compute_absolute_errors(qs: np.ndarray,
+                            positions: np.ndarray,
+                            robot: Robot
+                            ) -> np.ndarray:
     """
-    Update the current instance with new optimization parameters.
+    Compute the absolute errors of a given set of positions.
 
-    :param vector: new parameters to apply
+    :param robot: robot model
+    :param qs: sequence of link positions (e.g., joints)
+    :param positions: sequence of actual XYZ positions
+    :return:
     """
-    # we are going to iterate through the given vector;
-    # an iterator allows us to next()
-    # (aka `pop`) the values only when desired;
-    # we only update the current vector where the mask is True
-    vector_iterator = iter(vector)
-    updated_vector = [v if not m else next(vector_iterator)
-                      for v, m in zip(self.vector,
-                                      self.optimization_mask)]
-    updated_links = self.array_2_links(np.array(updated_vector),
-                                       self.convention)
-    self.links = updated_links
+    # ensure array of arrays
+    if qs.ndim == 1:
+        qs = np.expand_dims(qs, axis=0)
+    if positions.ndim == 1:
+        positions = np.expand_dims(positions, axis=0)
 
+    # compute fk positions
+    actual_poses = np.array(list(map(robot.fk, qs)))
+    actual_positions = actual_poses[:, :-1, -1]
 
-OptimizationMask = NamedTuple(
-    'RobotOptimizationMask',
-    [
-        ('world_frame', Union[bool, Sequence[bool]]),
-        ('kinematic_chain', Union[bool, Sequence[bool]]),
-        ('tool', Union[bool, Sequence[bool]])
-    ]
-)
+    # compute error
+    position_errors = positions - actual_positions
+    distance_errors = np.linalg.norm(position_errors, axis=1)
 
-
-@property
-def optimization_mask(self) -> OptimizationMask:
-    """
-    Return the mask used to select the optimization parameters.
-
-    :return: mask
-    """
-    mask = OptimizationMask(
-        world_frame=self.world_frame.optimization_mask,
-        kinematic_chain=self.kinematic_chain.optimization_mask,
-        tool=self.tool.optimization_mask)
-    return mask
-
-
-@optimization_mask.setter
-def optimization_mask(self, value: OptimizationMask) -> None:
-    # FIXME: remove `# type: ignore`
-    # FIXME: remove kc; it's there to shorten line length for flake8
-    # https://github.com/python/mypy/issues/4167
-    self.world_frame.optimization_mask = value.world_frame  # type: ignore
-    kc = value.kinematic_chain
-    self.kinematic_chain.optimization_mask = kc  # type: ignore
-    self.tool.optimization_mask = value.tool  # type: ignore
-
-
-@property
-def optimization_vector(self) -> np.ndarray:
-    """
-    Return the values of parameters being optimized.
-
-    :return: optimization parameter values
-    """
-    world = self.world_frame.optimization_vector
-    kinematic_chain = self.kinematic_chain.optimization_vector
-    tool = self.tool.optimization_vector
-
-    vector = np.hstack((world, kinematic_chain, tool))
-    return vector
-
-
-def apply_optimization_vector(self, vector: np.ndarray) -> None:
-    # we are going to iterate through the given vector;
-    # an iterator allows us to next()
-    # (aka `pop`) the values only when desired;
-    # we only update the current vector where the mask is True
-    """
-    Update the current instance with new optimization parameters.
-
-    :param vector: new parameters to apply
-    """
-    vector_iterator = iter(vector)
-    updated_vector = [v if not m else next(vector_iterator)
-                      for v, m in zip(self.vector(),
-                                      self.optimization_mask)]
-
-    updated_matrix = euler_zyx_2_matrix(np.array(updated_vector))
-    self.matrix = updated_matrix
+    return distance_errors

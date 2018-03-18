@@ -11,7 +11,6 @@ except DistributionNotFound as e:
     pass
 
 # import modules
-from .frame import Frame
 from .kinematic_chain import KinematicChain
 from .robot import Robot
 from .tool import Tool

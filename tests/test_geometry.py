@@ -1,15 +1,18 @@
 """Test geometry."""
+from collections import Counter
+from pathlib import Path
+from typing import Sequence
+
 import hypothesis.strategies as st
 import numpy as np
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 
 import pybotics.geometry
-from pybotics.constants import POSITION_VECTOR_LENGTH, \
+from pybotics.constants import POSITION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE, \
     TRANSFORM_VECTOR_LENGTH
-from pybotics.conventions import Orientation
-from pybotics.geometry import matrix_2_vector, vector_2_matrix, \
-    _matrix_2_euler_zyx, rotation_matrix_y
+from pybotics.geometry import OrientationConvention, _matrix_2_euler_zyx, \
+    matrix_2_vector, rotation_matrix_y, vector_2_matrix
 
 
 @given(st.floats(allow_nan=False, allow_infinity=False))
@@ -46,43 +49,62 @@ def test_wrap_2_pi(angle):
         np.testing.assert_allclose([actual_angle], expected_angles[i])
 
 
-@given(st.floats(allow_nan=False, allow_infinity=False))
-def test_rotation_matrix(angle):
+@given(angle=st.floats(allow_nan=False, allow_infinity=False))
+def test_rotation_matrix_xyz(angle, resources_path: Path):
+    # define functions to test
+    rotation_functions = {
+        'x': pybotics.geometry.rotation_matrix_x,
+        'y': pybotics.geometry.rotation_matrix_y,
+        'z': pybotics.geometry.rotation_matrix_z,
+    }
+
     # iterate through rotation axes
     for i, axis in enumerate('xyz'):
-        # getattr() could have been used
-        # but it doesn't show that the function is `used`
-        # the if-else structure avoids `dead code` errors
-        if axis is 'x':
-            matrix = pybotics.geometry.rotation_matrix_x(angle)
-        elif axis is 'y':
-            matrix = pybotics.geometry.rotation_matrix_y(angle)
-        elif axis is 'z':
-            matrix = pybotics.geometry.rotation_matrix_z(angle)
+        # get resource file
+        path = resources_path / 'rot{}-transforms.csv'.format(axis)
+        data = np.loadtxt(str(path.resolve()), delimiter=',')
+        if data.ndim == 1:
+            data = np.expand_dims(data, axis=0)
+
+        # test resource transforms
+        for d in data:
+            actual_matrix = rotation_functions[axis](d[0])
+            np.testing.assert_allclose(
+                actual=actual_matrix,
+                desired=d[1:].reshape(TRANSFORM_MATRIX_SHAPE),
+                atol=1e-6)
+
+        # test hypothesis transforms
+        actual_matrix = rotation_functions[axis](angle)
 
         # check orthogonality
-        for row in matrix:
+        for row in actual_matrix:
             # noinspection PyTypeChecker
             np.testing.assert_allclose(np.linalg.norm(row), 1)
 
-        for column in matrix.T:
+        for column in actual_matrix.T:
             # noinspection PyTypeChecker
             np.testing.assert_allclose(np.linalg.norm(column), 1)
 
         # check no translation
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(matrix[:-1, -1], 0)
+        np.testing.assert_allclose(actual_matrix[:-1, -1], 0)
 
         # check homogeneous matrix
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(matrix[-1, :-1], 0)
+        np.testing.assert_allclose(actual_matrix[-1, :-1], 0)
 
         # check unit vector location
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(matrix[i, i], 1)
+        np.testing.assert_allclose(actual_matrix[i, i], 1)
 
 
-@given(arrays(shape=(POSITION_VECTOR_LENGTH,), dtype=float))
+@given(arrays(
+    shape=(POSITION_VECTOR_LENGTH,),
+    dtype=float,
+    elements=st.floats(allow_nan=False,
+                       allow_infinity=False)
+))
 def test_translation_matrix(xyz):
     matrix = pybotics.geometry.translation_matrix(xyz)
 
@@ -104,72 +126,45 @@ def test_translation_matrix(xyz):
     np.testing.assert_allclose(matrix[-1, :-1], 0)
 
 
-def test_vector_2_matrix(vector_transform: tuple):
-    for c in [Orientation.EULER_ZYX, 'zyx']:
-        actual = pybotics.geometry.vector_2_matrix(vector_transform[0],
-                                                   convention=c)
-        np.testing.assert_allclose(actual=actual,
-                                   desired=vector_transform[1],
-                                   atol=1e-6)
+def test_vector_2_matrix(vector_transforms: Sequence[dict]):
+    for d in vector_transforms:
+        actual = pybotics.geometry.vector_2_matrix(d['vector'],
+                                                   convention=d['order'])
+        np.testing.assert_allclose(
+            actual=actual,
+            desired=d['transform'].reshape(TRANSFORM_MATRIX_SHAPE),
+            atol=1e-6)
 
 
-def test_rotation_matrix_x(x_rotation_matrix):
-    actual = pybotics.geometry.rotation_matrix_x(x_rotation_matrix[0])
-    np.testing.assert_allclose(actual=actual, desired=x_rotation_matrix[1],
-                               atol=1e-6)
+def test_matrix_2_vector(vector_transforms: Sequence[dict]):
+    for d in vector_transforms:
+        for c in [e for e in OrientationConvention.__members__.values() \
+                  if d['order'] == e.value]:
+            try:
+                actual_vector = matrix_2_vector(
+                    d['transform'].reshape(TRANSFORM_MATRIX_SHAPE), c)
+            except NotImplementedError:
+                # TODO: implement other conversions
+                # don't fail for NotImplementedError
+                continue
+            np.testing.assert_allclose(actual=actual_vector,
+                                       desired=d['vector'],
+                                       atol=1e-6)
 
 
-def test_rotation_matrix_y(y_rotation_matrix):
-    actual = pybotics.geometry.rotation_matrix_y(y_rotation_matrix[0])
-    np.testing.assert_allclose(actual=actual, desired=y_rotation_matrix[1],
-                               atol=1e-6)
+def test_orientation():
+    # ensure order and name match
+    for e in list(OrientationConvention.__members__.values()):
+        name_order = e.name.split('_')[-1].lower()
+        assert name_order == e.value
 
+    # ensure that there are only two of each value (euler and fixed)
+    values = [e.value for e in OrientationConvention.__members__.values()]
+    counts = Counter(values).values()
+    assert all([v == 2 for v in counts])
 
-def test_rotation_matrix_z(z_rotation_matrix):
-    actual = pybotics.geometry.rotation_matrix_z(z_rotation_matrix[0])
-    np.testing.assert_allclose(actual=actual, desired=z_rotation_matrix[1],
-                               atol=1e-6)
-
-
-@given(arrays(shape=(TRANSFORM_VECTOR_LENGTH,), dtype=float))
-def test_matrix_2_vector(vector):
-    # hypothesis can't generate homogenous matrices,
-    # so start with vector and convert
-    matrix = vector_2_matrix(vector)
-
-    for convention in Orientation:
-        try:
-            actual_vector = matrix_2_vector(matrix, convention)
-        except NotImplementedError:
-            # TODO: implement other conversions
-            # don't fail for NotImplementedError
-            continue
-        actual_matrix = vector_2_matrix(actual_vector, convention)
-        np.testing.assert_allclose(actual=actual_matrix, desired=matrix,
-                                   atol=1e-6)
-
-
-def test_matrix_2_euler_zyx(vector_transform):
-    """
-    Test conversion.
-
-    :return:
-    """
-    # test normal function
-    actual = _matrix_2_euler_zyx(vector_transform[1])
-    np.testing.assert_allclose(actual=actual, desired=vector_transform[0],
-                               atol=1e-6)
-
-    # test matrix decomposition corner cases when y=90deg
-    angle = np.deg2rad(90)
-    matrix = rotation_matrix_y(angle)
-    desired = [0, 0, 0, 0, angle, 0]
-    actual = _matrix_2_euler_zyx(matrix)
-    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
-
-    # test matrix decomposition corner cases when y=-90deg
-    angle = np.deg2rad(-90)
-    matrix = rotation_matrix_y(angle)
-    desired = [0, 0, 0, 0, angle, 0]
-    actual = _matrix_2_euler_zyx(matrix)
-    np.testing.assert_allclose(actual=actual, desired=desired, atol=1e-6)
+    # ensure only x,y,z are used
+    good_letters = set('xyz')
+    values = set([e.value for e in OrientationConvention.__members__.values()])
+    leftover_values = [x for x in values if set(x).difference(good_letters)]
+    assert not leftover_values

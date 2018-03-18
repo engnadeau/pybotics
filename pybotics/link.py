@@ -1,13 +1,15 @@
 """Link module."""
 from abc import abstractmethod
+from collections import Sized
 
 import numpy as np  # type: ignore
 
-import pybotics.conventions as conv
 
-
-class Link:
+class Link(Sized):
     """Links: connected joints allowing relative motion of neighboring link."""
+
+    def __len__(self):
+        return self.size
 
     @abstractmethod
     def displace(self, q: float) -> np.ndarray:
@@ -16,26 +18,6 @@ class Link:
 
         :param q: given displacement
         :return vector of new displacement state
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def convention(self) -> conv.Link:
-        """
-        Get the LinkConvention.
-
-        :return: link convention
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def kinematic_pair(self) -> conv.KinematicPair:
-        """
-        Get the KinematicPair.
-
-        :return: kinematic pair
         """
         pass
 
@@ -59,13 +41,25 @@ class Link:
         """
         pass
 
+    @property
+    @abstractmethod
+    def size(self) -> int:
+        pass
 
+
+# noinspection PyAbstractClass
 class MDHLink(Link):
     """
     Link class that uses Modified DH parameters.
 
     https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
     """
+
+    _size = 4
+
+    @property
+    def size(self) -> int:
+        return self._size
 
     def __init__(self, alpha: float, a: float, theta: float, d: float) -> None:
         """
@@ -80,15 +74,6 @@ class MDHLink(Link):
         self.a = a
         self.theta = theta
         self.d = d
-
-    @property
-    def convention(self) -> conv.Link:
-        """
-        Get the LinkConvention.
-
-        :return: link convention used
-        """
-        return conv.Link.MDH
 
     def transform(self, q: float = 0) -> np.ndarray:
         """
@@ -140,16 +125,24 @@ class RevoluteMDHLink(MDHLink):
     https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
     """
 
-    def __init__(self, alpha: float, a: float, theta: float, d: float) -> None:
+    def displace(self, q: float = 0) -> np.ndarray:
         """
-        Construct a revolute MDH link instance.
+        Generate a vector of the new link state given a displacement.
 
-        :param alpha:
-        :param a:
-        :param theta:
-        :param d:
+        :param q: given displacement
+        :return vector of new displacement state
         """
-        super().__init__(alpha, a, theta, d)
+        v = self.vector.copy()
+        v[2] += q
+        return v
+
+
+class PrismaticMDHLink(MDHLink):
+    """
+    Link class that uses Modified DH parameters for a revolute joint.
+
+    https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
+    """
 
     def displace(self, q: float = 0) -> np.ndarray:
         """
@@ -158,15 +151,6 @@ class RevoluteMDHLink(MDHLink):
         :param q: given displacement
         :return vector of new displacement state
         """
-        vector = self.vector
-        vector[2] += q
-        return vector
-
-    @property
-    def kinematic_pair(self) -> conv.KinematicPair:
-        """
-        Kinematic pair used.
-
-        :return: kinematic pair
-        """
-        return conv.KinematicPair.REVOLUTE
+        v = self.vector.copy()
+        v[3] += q
+        return v

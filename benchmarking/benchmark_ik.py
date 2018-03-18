@@ -9,7 +9,7 @@ if __name__ == '__main__':
     np.set_printoptions(suppress=True)
 
     robot = UR10()
-    q = np.ones(robot.num_dof)
+    q = np.ones(robot.ndof)
     q_seed = 0.9 * q
     logging.info('Desired joints: {}'.format(q))
 

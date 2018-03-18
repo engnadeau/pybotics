@@ -1,16 +1,47 @@
 """Geometry functions and utilities."""
+from enum import Enum
 from typing import Sequence, Union
 
 import numpy as np  # type: ignore
 
 from pybotics.constants import POSITION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
-from pybotics.conventions import Orientation
 from pybotics.errors import PyboticsError
+
+
+class OrientationConvention(Enum):
+    """Orientation of a body with respect to a fixed coordinate system."""
+
+    EULER_XYX = 'xyx'
+    EULER_XYZ = 'xyz'
+    EULER_XZX = 'xzx'
+    EULER_XZY = 'xzy'
+    EULER_YXY = 'yxy'
+    EULER_YXZ = 'yxz'
+    EULER_YZX = 'yzx'
+    EULER_YZY = 'yzy'
+    EULER_ZXY = 'zxy'
+    EULER_ZXZ = 'zxz'
+    EULER_ZYX = 'zyx'
+    EULER_ZYZ = 'zyz'
+
+    FIXED_XYX = 'xyx'
+    FIXED_XYZ = 'zyx'
+    FIXED_XZX = 'xzx'
+    FIXED_XZY = 'yzx'
+    FIXED_YXY = 'yxy'
+    FIXED_YXZ = 'zxy'
+    FIXED_YZX = 'xzy'
+    FIXED_YZY = 'yzy'
+    FIXED_ZXY = 'yxz'
+    FIXED_ZXZ = 'zxz'
+    FIXED_ZYX = 'xyz'
+    FIXED_ZYZ = 'zyz'
 
 
 def vector_2_matrix(
         vector: Sequence[float],
-        convention: Union[Orientation, str] = Orientation.EULER_ZYX
+        convention: Union[
+            OrientationConvention, str] = OrientationConvention.EULER_ZYX
 ) -> np.ndarray:
     """
         Calculate the pose from the position and euler angles.
@@ -24,9 +55,10 @@ def vector_2_matrix(
     rotation_component = vector[-3:]
 
     # validate and extract orientation info
-    if isinstance(convention, Orientation):
+    if isinstance(convention, OrientationConvention):
         convention = convention.value
-    elif convention is str and convention not in [e.value for e in Orientation]:
+    elif convention is str and convention not in [e.value for e in
+                                                  OrientationConvention]:
         raise PyboticsError(
             'Bad convention: see pybotics.conventions.Orientation '
             'for proper conventions.')
@@ -46,7 +78,8 @@ def vector_2_matrix(
 
 def matrix_2_vector(
         matrix: np.ndarray,
-        convention: Orientation = Orientation.EULER_ZYX) -> np.ndarray:
+        convention: OrientationConvention = OrientationConvention.EULER_ZYX
+) -> np.ndarray:
     # call function
     try:
         return \

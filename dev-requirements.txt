@@ -14,15 +14,15 @@ pandas==0.22.0
 pep8-naming==0.5.0
 pipdeptree==0.10.1
 pipenv==9.0.3
+pytest==3.3.2
 pytest-cov==2.5.1
 pytest-randomly==1.2.3
 pytest-runner==3.0
-pytest==3.3.2
 safety==1.6.1
 scikit-learn==0.19.1
 scipy==1.0.0
 setuptools==38.4.0
 setuptools_scm==1.15.7
-setuptools_scm==1.15.7
+twine==1.11.0
 vulture==0.26
 xenon==0.5.4
