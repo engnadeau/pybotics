@@ -57,11 +57,10 @@ def vector_2_matrix(
     # validate and extract orientation info
     if isinstance(convention, OrientationConvention):
         convention = convention.value
-    elif convention is str and convention not in [e.value for e in
-                                                  OrientationConvention]:
-        raise PyboticsError(
-            'Bad convention: see pybotics.conventions.Orientation '
-            'for proper conventions.')
+    try:
+        OrientationConvention(convention)
+    except ValueError as e:
+        raise PyboticsError(str(e))
 
     # iterate through rotation order
     # build rotation matrix
