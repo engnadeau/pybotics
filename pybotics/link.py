@@ -19,7 +19,7 @@ class Link(Sized):
         :param q: given displacement
         :return vector of new displacement state
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def transform(self, q: float = 0) -> np.ndarray:
@@ -29,7 +29,7 @@ class Link(Sized):
         :param q: given displacement
         :return vector of new displacement state
         """
-        pass
+        raise NotImplementedError
 
     @property
     @abstractmethod
@@ -39,12 +39,12 @@ class Link(Sized):
 
         :return: vectorized kinematic chain
         """
-        pass
+        raise NotImplementedError
 
     @property
     @abstractmethod
     def size(self) -> int:
-        pass
+        raise NotImplementedError
 
 
 # noinspection PyAbstractClass
