@@ -77,8 +77,7 @@ class Robot(Sized):
         :return: 4x4 transform matrix of the FK pose
         """
         # validate
-        if q is None:
-            q = self.joints
+        q = self.joints if q is None else q
 
         # gather transforms
         # noinspection PyListCreation
@@ -177,26 +176,21 @@ class Robot(Sized):
 
     def jacobian_world(self,
                        q: Optional[Sequence[float]] = None) -> np.ndarray:
-        if q is None:
-            q = self.joints
-
-        jacobian_flange = self.jacobian_flange(q)
+        q = self.joints if q is None else q
+        j_fl = self.jacobian_flange(q)
         pose = self.fk(q)
-
         rotation = pose[:3, :3]
-
-        jacobian_transform = np.zeros(
+        j_tr = np.zeros(
             (ROTATION_VECTOR_LENGTH * 2, ROTATION_VECTOR_LENGTH * 2),
             dtype=float
         )
-
-        jacobian_transform[:ROTATION_VECTOR_LENGTH, :ROTATION_VECTOR_LENGTH] = \
+        j_tr[:ROTATION_VECTOR_LENGTH, :ROTATION_VECTOR_LENGTH] = \
             rotation
-        jacobian_transform[ROTATION_VECTOR_LENGTH:, ROTATION_VECTOR_LENGTH:] = \
+        j_tr[ROTATION_VECTOR_LENGTH:, ROTATION_VECTOR_LENGTH:] = \
             rotation
-        jacobian_world = np.dot(jacobian_transform, jacobian_flange)
+        j_w = np.dot(j_tr, j_fl)
 
-        return jacobian_world
+        return j_w
 
     def jacobian_flange(self,
                         q: Optional[Sequence[float]] = None) -> np.ndarray:
