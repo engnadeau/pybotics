@@ -275,7 +275,7 @@ class Robot(Sized):
 class RobotJSONEncoder(JSONEncoder):
     """Robot JSON Encoder class."""
 
-    def default(self, o: Any) -> Any:
+    def default(self, o: Any) -> Any:  # pragma: no cover
         """
         Return serializable robot objects.
 
