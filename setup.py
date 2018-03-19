@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 def main():
     # run setup
     setup(name='pybotics',
-          packages=find_packages(exclude=['*tests*', 'utilities', 'examples']),
+          packages=find_packages(include=['pybotics']),
           url='https://github.com/nnadeau/pybotics',
           license='MIT',
           author='Nicholas Nadeau',
