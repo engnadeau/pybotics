@@ -18,7 +18,7 @@ class KinematicChain(Sized):
     @property
     @abstractmethod
     def links(self) -> Sequence[Link]:
-        pass
+        raise NotImplementedError
 
     @property
     def ndof(self) -> int:
@@ -37,7 +37,7 @@ class KinematicChain(Sized):
 
         :return: number of degrees of freedom
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def transforms(self, q: Optional[Sequence[float]] = None) -> \
@@ -49,7 +49,7 @@ class KinematicChain(Sized):
         :param q: given position of kinematic chain
         :return: sequence of transforms
         """
-        pass
+        raise NotImplementedError
 
     @property
     @abstractmethod
@@ -59,7 +59,7 @@ class KinematicChain(Sized):
 
         :return: vectorized kinematic chain
         """
-        pass
+        raise NotImplementedError
 
 
 class MDHKinematicChain(KinematicChain):
