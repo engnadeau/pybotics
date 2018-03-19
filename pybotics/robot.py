@@ -221,8 +221,10 @@ class Robot(Sized):
 
         return jacobian_flange
 
-    def calculate_joint_torques(self, q: Sequence[float],
-                                wrench: Sequence[float]) -> np.ndarray:
+    def compute_joint_torques(self,
+                              wrench: Sequence[float],
+                              q: Optional[Sequence[float]] = None,
+                              ) -> np.ndarray:
         """
         Calculate the joint torques
         due to external force applied to the flange frame.
