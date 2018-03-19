@@ -50,7 +50,6 @@ def get_readme():
     logging.info('README path: {}'.format(readme_path.resolve()))
     with open(str(readme_path)) as f:
         readme = f.read()
-    logging.info('README: {}'.format(readme))
 
 
 def get_requirements():
@@ -61,7 +60,6 @@ def get_requirements():
         requirements = f.read().splitlines()
     for i, req in enumerate(requirements):
         requirements[i] = req.split()[0]
-    logging.info('Requirements: {}'.format(requirements))
     return requirements_path
 
 
