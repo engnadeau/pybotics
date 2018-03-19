@@ -1,1 +1,1 @@
-setuptools_scm==1.16.0
+setuptools_scm==1.16.1
