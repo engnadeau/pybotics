@@ -83,7 +83,7 @@ def matrix_2_vector(
     try:
         return \
             globals()['_matrix_2_{}'.format(convention.name.lower())](matrix)
-    except KeyError:
+    except KeyError:  # pragma: no cover
         raise NotImplementedError
 
 
