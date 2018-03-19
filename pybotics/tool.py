@@ -5,7 +5,7 @@ import numpy as np  # type: ignore
 
 from pybotics.constants import TRANSFORM_MATRIX_SHAPE, POSITION_VECTOR_LENGTH
 from pybotics.errors import PyboticsError
-from pybotics.geometry import _matrix_2_euler_zyx
+from pybotics.geometry import matrix_2_vector
 from pybotics.validation import is_4x4_matrix, is_vector
 
 
@@ -87,4 +87,4 @@ class Tool:
 
         :return: vectorized frame
         """
-        return _matrix_2_euler_zyx(self.matrix)
+        return matrix_2_vector(self.matrix)
