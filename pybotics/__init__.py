@@ -6,7 +6,7 @@ from pkg_resources import get_distribution, DistributionNotFound
 # setup version info
 try:
     __version__ = get_distribution(__name__).version
-except DistributionNotFound as e:
+except DistributionNotFound:  # pragma: no cover
     # package is not installed
     pass
 
