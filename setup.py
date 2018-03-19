@@ -51,6 +51,8 @@ def get_readme():
     with open(str(readme_path)) as f:
         readme = f.read()
 
+    return readme
+
 
 def get_requirements():
     # requirements
@@ -60,7 +62,7 @@ def get_requirements():
         requirements = f.read().splitlines()
     for i, req in enumerate(requirements):
         requirements[i] = req.split()[0]
-    return requirements_path
+    return requirements
 
 
 if __name__ == '__main__':
