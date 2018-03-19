@@ -68,22 +68,6 @@ class Robot(Sized):
         """
         return self.__repr__()
 
-    def apply_optimization_vector(self, vector: np.ndarray) -> None:
-        """
-        Update the current instance with new optimization parameters.
-
-        :param vector: new parameters to apply
-        """
-        split_vector = np.split(
-            vector,
-            np.cumsum(
-                [len(self.world_frame.optimization_vector),
-                 len(self.kinematic_chain.optimization_vector)]
-            ))
-        self.world_frame.apply_optimization_vector(split_vector[0])
-        self.kinematic_chain.apply_optimization_vector(split_vector[1])
-        self.tool.apply_optimization_vector(split_vector[2])
-
     def fk(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
         """
         Compute the forward kinematics of a given position.
