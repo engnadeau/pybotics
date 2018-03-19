@@ -9,7 +9,7 @@ hypothesis==3.44.16
 jupyter==1.0.0
 matplotlib==2.1.1
 mccabe==0.6.1
-mypy==0.560
+mypy==0.570
 pandas==0.22.0
 pep8-naming==0.5.0
 pipdeptree==0.10.1
@@ -22,8 +22,8 @@ pytest-xdist==1.22.2
 safety==1.6.1
 scikit-learn==0.19.1
 scipy==1.0.0
-setuptools==38.4.0
-setuptools_scm==1.15.7
-twine==1.11.0
+setuptools==39.0.1
+setuptools_scm==1.16.1
+twine==1.11.0rc1
 vulture==0.26
 xenon==0.5.4
