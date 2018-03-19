@@ -62,9 +62,7 @@ class Tool:
     @matrix.setter
     def matrix(self, value: np.ndarray) -> None:
         if not is_4x4_matrix(value):
-            raise PyboticsError(
-                '4x4 transform matrix is required.'
-            )
+            raise PyboticsError('4x4 transform matrix is required.')
         self._matrix = value
 
     @property
