@@ -236,6 +236,7 @@ class Robot(Sized):
         :param q:
         :return:
         """
+        q = self.joints if q is None else q
 
         # split wrench into components
         force = wrench[:3]
@@ -246,7 +247,7 @@ class Robot(Sized):
 
         # loop through links from flange to base
         # each iteration calculates for link i-1
-        for i, p in reversed(list(enumerate(q))):
+        for i, p in reversed(list(enumerate(q))):  # pragma: no cover
             if i == 0:
                 break
 
