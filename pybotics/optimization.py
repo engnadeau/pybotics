@@ -44,8 +44,8 @@ class Optimizer:
         pass
 
 
-def compute_absolute_errors(qs: np.ndarray,
-                            positions: np.ndarray,
+def compute_absolute_errors(qs: Sequence[Sequence[float]],
+                            positions: Sequence[Sequence[float]],
                             robot: Robot
                             ) -> np.ndarray:
     """
@@ -57,6 +57,9 @@ def compute_absolute_errors(qs: np.ndarray,
     :return:
     """
     # ensure array of arrays
+    qs = np.array(qs)
+    positions = np.array(positions)
+
     if qs.ndim == 1:
         qs = np.expand_dims(qs, axis=0)
     if positions.ndim == 1:
