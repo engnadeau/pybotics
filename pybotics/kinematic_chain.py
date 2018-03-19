@@ -96,7 +96,8 @@ class MDHKinematicChain(KinematicChain):
 
     @property
     def num_parameters(self) -> int:
-        return len(self) * MDHLink.size
+        # noinspection PyProtectedMember
+        return len(self) * MDHLink._size
 
     def transforms(self, q: Optional[Sequence[float]] = None) -> \
             Sequence[np.ndarray]:
