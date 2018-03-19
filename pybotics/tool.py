@@ -81,7 +81,7 @@ class Tool:
         self.matrix[:-1, -1] = value
 
     @property
-    def _optimization_vector(self) -> np.ndarray:
+    def vector(self) -> np.ndarray:
         """
         Return the vector representation of the frame as EULER ZYX.
 
