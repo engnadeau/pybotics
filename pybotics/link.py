@@ -61,7 +61,12 @@ class MDHLink(Link):
     def size(self) -> int:
         return self._size
 
-    def __init__(self, alpha: float, a: float, theta: float, d: float) -> None:
+    def __init__(self,
+                 alpha: float = 0,
+                 a: float = 0,
+                 theta: float = 0,
+                 d: float = 0
+                 ) -> None:
         """
         Construct a MDH link.
 
