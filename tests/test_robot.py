@@ -8,8 +8,10 @@ import numpy as np
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
+from pytest import raises
 
 from pybotics.constants import TRANSFORM_MATRIX_SHAPE, TRANSFORM_VECTOR_LENGTH
+from pybotics.errors import PyboticsError
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.predefined_models import UR10
 from pybotics.robot import Robot
@@ -50,7 +52,34 @@ def test_repr():
     repr(UR10())
 
 
-def test_calculate_joint_torques(planar_robot: Robot):
+def test_len():
+    len(UR10())
+
+
+def test_str():
+    str(UR10())
+
+
+def test_num_parameters():
+    robot = UR10()
+    assert len(robot) == robot.num_parameters
+
+
+def test_home_position():
+    robot = UR10()
+    x = np.ones(len(robot))
+    robot.home_position = x
+    np.testing.assert_allclose(robot.home_position, x)
+
+
+def test_joint_limits():
+    robot = UR10()
+    robot.joint_limits = robot.joint_limits.copy()
+    with raises(PyboticsError):
+        robot.joint_limits = np.zeros(1)
+
+
+def test_compute_joint_torques(planar_robot: Robot):
     """
     From EXAMPLE 5.7 of
     Craig, John J. Introduction to robotics: mechanics and control.
@@ -80,7 +109,8 @@ def test_calculate_joint_torques(planar_robot: Robot):
     ]
 
     # test
-    actual_torques = planar_robot.calculate_joint_torques(joint_angles, wrench)
+    actual_torques = planar_robot.compute_joint_torques(q=joint_angles,
+                                                        wrench=wrench)
     np.testing.assert_allclose(actual_torques, expected_torques)
 
 

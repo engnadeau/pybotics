@@ -7,10 +7,12 @@ import hypothesis.strategies as st
 import numpy as np
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
+from pytest import raises
 
 import pybotics.geometry
 from pybotics.constants import POSITION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE, \
     TRANSFORM_VECTOR_LENGTH
+from pybotics.errors import PyboticsError
 from pybotics.geometry import OrientationConvention, _matrix_2_euler_zyx, \
     matrix_2_vector, rotation_matrix_y, vector_2_matrix
 
@@ -125,15 +127,27 @@ def test_translation_matrix(xyz):
     # noinspection PyTypeChecker
     np.testing.assert_allclose(matrix[-1, :-1], 0)
 
+    # test exception
+    with raises(PyboticsError):
+        pybotics.geometry.translation_matrix(np.zeros(10))
+
 
 def test_vector_2_matrix(vector_transforms: Sequence[dict]):
+    # test regular usage
     for d in vector_transforms:
-        actual = pybotics.geometry.vector_2_matrix(d['vector'],
-                                                   convention=d['order'])
-        np.testing.assert_allclose(
-            actual=actual,
-            desired=d['transform'].reshape(TRANSFORM_MATRIX_SHAPE),
-            atol=1e-6)
+        for c in [d['order'], OrientationConvention(d['order'])]:
+            actual = pybotics.geometry.vector_2_matrix(d['vector'],
+                                                       convention=c)
+            np.testing.assert_allclose(
+                actual=actual,
+                desired=d['transform'].reshape(TRANSFORM_MATRIX_SHAPE),
+                atol=1e-6)
+
+        # test exception
+        with raises(PyboticsError):
+            pybotics.geometry.vector_2_matrix(d['vector'], convention='foobar')
+
+
 
 
 def test_matrix_2_vector(vector_transforms: Sequence[dict]):
