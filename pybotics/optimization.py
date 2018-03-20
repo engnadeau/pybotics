@@ -1,5 +1,5 @@
 """Optimization module."""
-from typing import Sequence, NamedTuple, Union, Iterable
+from typing import Sequence, Union
 
 import numpy as np  # type: ignore
 

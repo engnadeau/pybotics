@@ -1,15 +1,12 @@
 """Robot module."""
-import logging
 from json import JSONEncoder
 from typing import Optional, Sequence, Sized, Any
 
 import numpy as np  # type: ignore
 import scipy.optimize
 
-from pybotics.constants import ROTATION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE, \
-    TRANSFORM_VECTOR_LENGTH
+from pybotics.constants import ROTATION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
-from pybotics.geometry import _matrix_2_euler_zyx, wrap_2_pi
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.tool import Tool
 
