@@ -1,5 +1,6 @@
-from pytest import raises
 import numpy as np
+from pytest import raises
+
 from pybotics import Tool
 from pybotics.errors import PyboticsError
 from pybotics.geometry import matrix_2_vector

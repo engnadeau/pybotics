@@ -1,8 +1,8 @@
 """Geometry functions and utilities."""
-from enum import Enum
 from typing import Sequence, Union
 
 import numpy as np  # type: ignore
+from enum import Enum
 
 from pybotics.constants import POSITION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError

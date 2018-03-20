@@ -1,8 +1,9 @@
 """Link module."""
-from abc import abstractmethod
-from collections import Sized
+from typing import Sequence
 
 import numpy as np  # type: ignore
+from abc import abstractmethod
+from collections import Sized
 
 
 class Link(Sized):
@@ -121,6 +122,14 @@ class MDHLink(Link):
             self.theta,
             self.d
         ], dtype=float)
+
+    # noinspection PyMethodOverriding
+    @vector.setter
+    def vector(self, value: Sequence[float]) -> None:
+        self.alpha = value[0]
+        self.a = value[1]
+        self.theta = value[2]
+        self.d = value[3]
 
 
 class RevoluteMDHLink(MDHLink):

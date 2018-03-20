@@ -1,20 +1,18 @@
 """Test geometry."""
-from collections import Counter
 from pathlib import Path
 from typing import Sequence
 
 import hypothesis.strategies as st
 import numpy as np
-from hypothesis import given
+from collections import Counter
+from hypothesis import given, settings
 from hypothesis.extra.numpy import arrays
 from pytest import raises
 
 import pybotics.geometry
-from pybotics.constants import POSITION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE, \
-    TRANSFORM_VECTOR_LENGTH
+from pybotics.constants import POSITION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
-from pybotics.geometry import OrientationConvention, _matrix_2_euler_zyx, \
-    matrix_2_vector, rotation_matrix_y, vector_2_matrix
+from pybotics.geometry import OrientationConvention, matrix_2_vector
 
 
 @given(st.floats(allow_nan=False, allow_infinity=False))
@@ -52,6 +50,7 @@ def test_wrap_2_pi(angle):
 
 
 @given(angle=st.floats(allow_nan=False, allow_infinity=False))
+@settings(deadline=300)
 def test_rotation_matrix_xyz(angle, resources_path: Path):
     # define functions to test
     rotation_functions = {
@@ -146,8 +145,6 @@ def test_vector_2_matrix(vector_transforms: Sequence[dict]):
         # test exception
         with raises(PyboticsError):
             pybotics.geometry.vector_2_matrix(d['vector'], convention='foobar')
-
-
 
 
 def test_matrix_2_vector(vector_transforms: Sequence[dict]):

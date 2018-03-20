@@ -1,5 +1,6 @@
-from pybotics import predefined_models
 import inspect
+
+from pybotics import predefined_models
 
 
 def test_models():

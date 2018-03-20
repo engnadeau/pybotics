@@ -1,9 +1,9 @@
 """Kinematic chain module."""
 import logging
-from abc import abstractmethod
 from typing import Optional, Sequence, Sized, Union
 
 import numpy as np  # type: ignore
+from abc import abstractmethod
 
 from pybotics.errors import PyboticsError
 from pybotics.link import Link, MDHLink, RevoluteMDHLink
@@ -64,7 +64,7 @@ class KinematicChain(Sized):
 
 class MDHKinematicChain(KinematicChain):
     @property
-    def links(self) -> Sequence[Link]:
+    def links(self) -> Sequence[MDHLink]:
         return self._links
 
     def __init__(self,
@@ -109,3 +109,12 @@ class MDHKinematicChain(KinematicChain):
     @property
     def vector(self) -> np.ndarray:
         return np.array([l.vector for l in self._links]).ravel()
+
+    # noinspection PyMethodOverriding
+    @vector.setter
+    def vector(self, value: Sequence[float]) -> None:
+        # noinspection PyProtectedMember
+        value = np.array(value).reshape((-1, MDHLink._size))
+
+        for i, v in enumerate(value):
+            self.links[i].vector = v

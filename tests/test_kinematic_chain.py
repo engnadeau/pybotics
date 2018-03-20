@@ -1,5 +1,6 @@
-from pytest import raises
 import numpy as np
+from pytest import raises
+
 from pybotics.errors import PyboticsError
 from pybotics.kinematic_chain import MDHKinematicChain
 from pybotics.link import RevoluteMDHLink, MDHLink

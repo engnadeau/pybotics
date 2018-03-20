@@ -116,16 +116,7 @@ class Robot(Sized):
 
         :return: number of degrees of freedom
         """
-        return self.kinematic_chain.ndof
-
-    @property
-    def num_parameters(self) -> int:
-        """
-        Get the number of degrees of freedom.
-
-        :return: number of degrees of freedom
-        """
-        return self.kinematic_chain.ndof
+        return len(self)
 
     @property
     def joints(self) -> np.ndarray:

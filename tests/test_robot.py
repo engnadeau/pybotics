@@ -1,7 +1,5 @@
 """Test robot."""
-import json
 from pathlib import Path
-from typing import Tuple
 
 import hypothesis
 import numpy as np
@@ -10,9 +8,8 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import raises
 
-from pybotics.constants import TRANSFORM_MATRIX_SHAPE, TRANSFORM_VECTOR_LENGTH
+from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
-from pybotics.kinematic_chain import KinematicChain
 from pybotics.predefined_models import UR10
 from pybotics.robot import Robot
 
@@ -38,14 +35,16 @@ def test_fk(resources_path: Path):
         joints = np.deg2rad(d[:robot.ndof])
         desired_pose = d[robot.ndof:].reshape(TRANSFORM_MATRIX_SHAPE)
 
+        atol = 1e-4
+
         # test with position argument
         actual_pose = robot.fk(q=joints)
-        np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
+        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
 
         # test with internal position attribute
         robot.joints = joints
         actual_pose = robot.fk()
-        np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
+        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
 
 
 def test_repr():
@@ -58,11 +57,6 @@ def test_len():
 
 def test_str():
     str(UR10())
-
-
-def test_num_parameters():
-    robot = UR10()
-    assert len(robot) == robot.num_parameters
 
 
 def test_home_position():
@@ -179,12 +173,12 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
 
 
 @given(
-    q=arrays(shape=(6,), dtype=float,
+    q=arrays(shape=(UR10.kinematic_chain.ndof,), dtype=float,
              elements=floats(allow_nan=False,
                              allow_infinity=False,
                              max_value=np.pi,
                              min_value=-np.pi)),
-    q_offset=arrays(shape=(6,), dtype=float,
+    q_offset=arrays(shape=(UR10.kinematic_chain.ndof,), dtype=float,
                     elements=floats(allow_nan=False,
                                     allow_infinity=False,
                                     max_value=np.deg2rad(1),
