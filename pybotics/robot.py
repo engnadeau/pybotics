@@ -109,7 +109,7 @@ class Robot(Sized):
             args=(pose, self),
         )  # type: scipy.optimize.OptimizeResult
 
-        if result.success:
+        if result.success:  # pragma: no cover
             actual_pose = self.fk(result.x)
             if np.allclose(actual_pose, pose, atol=1e-3):
                 return result.x
