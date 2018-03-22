@@ -17,7 +17,9 @@ class Robot(Sized):
     def __init__(self,
                  kinematic_chain: KinematicChain,
                  tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None
+                 world_frame: Optional[np.ndarray] = None,
+                 random_state: Optional[
+                     Union[int, np.random.RandomState]] = None
                  ) -> None:
         """
         Construct a robot instance.
@@ -31,6 +33,9 @@ class Robot(Sized):
         self._joint_limits = np.repeat((-np.pi, np.pi),
                                        len(kinematic_chain)
                                        ).reshape((2, -1))
+        if not isinstance(random_state, np.random.RandomState):
+            random_state = np.random.RandomState(random_state)
+        self.random_state = random_state
 
         self.kinematic_chain = kinematic_chain
         self.world_frame = np.eye(TRANSFORM_MATRIX_SHAPE[0]) \
@@ -218,7 +223,7 @@ class Robot(Sized):
     def compute_joint_torques(self,
                               wrench: Sequence[float],
                               q: Optional[Sequence[float]] = None,
-                              ) -> Sequence[float]:
+                              ) -> np.ndarray:
         """
         Calculate the joint torques due to external flange force.
 
@@ -265,26 +270,20 @@ class Robot(Sized):
 
     def clamp_joints(self,
                      q: Sequence[float]
-                     ) -> Union[Sequence[float], np.ndarray]:
+                     ) -> Optional[np.ndarray]:
         """Limit joints to joint limits."""
         return np.clip(q, self.joint_limits[0], self.joint_limits[1])
 
     def random_joints(self,
                       in_place: bool = False,
-                      random_state: Optional[
-                          Union[int, np.random.RandomState]] = None
-                      ) -> Optional[Sequence[float]]:
+                      ) -> Optional[np.ndarray]:
         """Generate random joints within limits."""
-        # init random
-        if not isinstance(random_state, np.random.RandomState):
-            random_state = np.random.RandomState(random_state)
-
-        q = random_state.uniform(low=self.joint_limits[0],
-                                 high=self.joint_limits[1])
+        q = self.random_state.uniform(low=self.joint_limits[0],
+                                      high=self.joint_limits[1])
 
         if in_place:
             self.joints = q
-            return
+            return None
         else:
             return q
 
@@ -305,6 +304,9 @@ class RobotJSONEncoder(JSONEncoder):
 
         if isinstance(o, np.generic):
             return str(o)
+
+        if isinstance(o, np.random.RandomState):
+            return
 
         try:
             o = o.__dict__

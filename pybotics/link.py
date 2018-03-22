@@ -1,8 +1,7 @@
 """Link module."""
-import json
 from abc import abstractmethod
 from collections import Sized
-from typing import Sequence, Union, Dict
+from typing import Dict, Sequence, Union
 
 import numpy as np  # type: ignore
 

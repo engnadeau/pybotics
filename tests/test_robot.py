@@ -35,7 +35,7 @@ def test_fk(resources_path: Path):
         joints = np.deg2rad(d[:robot.ndof])
         desired_pose = d[robot.ndof:].reshape(TRANSFORM_MATRIX_SHAPE)
 
-        atol = 1e-4
+        atol = 1e-3
 
         # test with position argument
         actual_pose = robot.fk(q=joints)
@@ -224,4 +224,3 @@ def test_random_joints():
     robot = UR10()
     robot.random_joints()
     robot.random_joints(in_place=True)
-    robot.random_joints(random_state=np.random.RandomState(123))

@@ -17,4 +17,4 @@ def test_displace():
 
 def test_to_dict():
     """Test dict function."""
-    np.testing.assert_allclose(RevoluteMDHLink().to_dict().values(), 0)
+    np.testing.assert_allclose(list(RevoluteMDHLink().to_dict().values()), 0)

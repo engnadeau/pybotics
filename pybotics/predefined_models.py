@@ -1,9 +1,9 @@
 """Predefined robot models."""
-from typing import Optional
+from typing import Any
 
 import numpy as np  # type: ignore
 
-from pybotics import Robot, Tool
+from pybotics import Robot
 from pybotics.kinematic_chain import MDHKinematicChain
 
 
@@ -23,12 +23,9 @@ class KukaLBRiiwa7(Robot):
         ])
     )
 
-    def __init__(self,
-                 tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None
-                 ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Init robot."""
-        super().__init__(self.kinematic_chain, tool, world_frame)
+        super().__init__(self.kinematic_chain, **kwargs)
 
 
 class MecademicMeca500(Robot):
@@ -46,12 +43,9 @@ class MecademicMeca500(Robot):
         ])
     )
 
-    def __init__(self,
-                 tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None
-                 ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Init robot."""
-        super().__init__(self.kinematic_chain, tool, world_frame)
+        super().__init__(self.kinematic_chain, **kwargs)
 
 
 class PUMA560(Robot):
@@ -69,12 +63,9 @@ class PUMA560(Robot):
         ])
     )
 
-    def __init__(self,
-                 tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None
-                 ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Init robot."""
-        super().__init__(self.kinematic_chain, tool, world_frame)
+        super().__init__(self.kinematic_chain, **kwargs)
 
 
 class UR10(Robot):
@@ -92,9 +83,6 @@ class UR10(Robot):
         ])
     )
 
-    def __init__(self,
-                 tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None
-                 ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Init robot."""
-        super().__init__(self.kinematic_chain, tool, world_frame)
+        super().__init__(self.kinematic_chain, **kwargs)
