@@ -1,6 +1,6 @@
 from typing import Sequence
 
-import numpy as np
+import numpy as np  # type: ignore
 
 from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 

@@ -3,7 +3,7 @@ from json import JSONEncoder
 from typing import Optional, Sequence, Sized, Any
 
 import numpy as np  # type: ignore
-import scipy.optimize
+import scipy.optimize  # type: ignore
 
 from pybotics.constants import ROTATION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
@@ -224,7 +224,8 @@ class Robot(Sized):
         :param q:
         :return:
         """
-        q = self.joints if q is None else q
+        if q is None:
+            q = self.joints
 
         # split wrench into components
         force = wrench[:3]

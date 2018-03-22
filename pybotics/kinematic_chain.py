@@ -80,16 +80,18 @@ class MDHKinematicChain(KinematicChain):
                 # noinspection PyProtectedMember
                 links = links.reshape((-1, MDHLink._size))
             except ValueError as e:
-                logging.getLogger(__name__).error(e)
+                logging.getLogger(__name__).error(str(e))
                 raise PyboticsError(
                     'MDH links have {} parameters per link.'.format(
                         MDHLink.size))
 
             # build links
             # assume revolute joints
-            self._links = [RevoluteMDHLink(*x) for x in links]
+            self._links = [
+                RevoluteMDHLink(*x) for x in links
+            ]  # type: Sequence[MDHLink]
         else:
-            self._links = links
+            self._links = links  # type: Sequence[MDHLink]
 
     def __len__(self) -> int:
         return len(self._links)

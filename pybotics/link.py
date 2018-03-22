@@ -9,7 +9,7 @@ from collections import Sized
 class Link(Sized):
     """Links: connected joints allowing relative motion of neighboring link."""
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.size
 
     @abstractmethod

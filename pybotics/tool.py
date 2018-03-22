@@ -1,5 +1,5 @@
 """Tool module."""
-from typing import Sequence
+from typing import Sequence, Optional
 
 import numpy as np  # type: ignore
 
@@ -13,9 +13,9 @@ class Tool:
     """Tool class."""
 
     def __init__(self,
-                 matrix: np.ndarray = None,
+                 matrix: Optional[np.ndarray] = None,
                  mass: float = 0,
-                 cg: Sequence[float] = None
+                 cg: Optional[Sequence[float]] = None
                  ) -> None:
         """
         Construct tool instance.
