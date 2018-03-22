@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # type checking
-mypy --strict pybotics
+mypy --strict pybotics/ tests/
 
 # linters
 flake8
