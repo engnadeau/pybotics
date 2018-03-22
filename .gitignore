@@ -367,3 +367,4 @@ ENV/
 .mypy_cache/
 README.rst
 doxygen/
+examples/*.html

@@ -13,3 +13,8 @@ def test_displace():
     """Test."""
     link = PrismaticMDHLink()
     np.testing.assert_allclose(link.displace(), link.vector)
+
+
+def test_to_dict():
+    """Test dict function."""
+    np.testing.assert_allclose(RevoluteMDHLink().to_dict().values(), 0)

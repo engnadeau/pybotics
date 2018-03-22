@@ -218,7 +218,7 @@ class Robot(Sized):
     def compute_joint_torques(self,
                               wrench: Sequence[float],
                               q: Optional[Sequence[float]] = None,
-                              ) -> Union[Sequence[float], np.ndarray]:
+                              ) -> Sequence[float]:
         """
         Calculate the joint torques due to external flange force.
 
@@ -268,6 +268,25 @@ class Robot(Sized):
                      ) -> Union[Sequence[float], np.ndarray]:
         """Limit joints to joint limits."""
         return np.clip(q, self.joint_limits[0], self.joint_limits[1])
+
+    def random_joints(self,
+                      in_place: bool = False,
+                      random_state: Optional[
+                          Union[int, np.random.RandomState]] = None
+                      ) -> Optional[Sequence[float]]:
+        """Generate random joints within limits."""
+        # init random
+        if not isinstance(random_state, np.random.RandomState):
+            random_state = np.random.RandomState(random_state)
+
+        q = random_state.uniform(low=self.joint_limits[0],
+                                 high=self.joint_limits[1])
+
+        if in_place:
+            self.joints = q
+            return
+        else:
+            return q
 
 
 class RobotJSONEncoder(JSONEncoder):

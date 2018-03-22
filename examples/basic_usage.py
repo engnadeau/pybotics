@@ -15,5 +15,6 @@ if __name__ == '__main__':
     world_frame = vector_2_matrix([100, 200, 300, 0, 0, 0])
     robot.world_frame = world_frame
 
-    # print robot's debug info
-    print(robot)
+    # print debug info
+    print('Robot: {}'.format(robot))
+    print('Kinematic Chain: {}'.format(robot.kinematic_chain.to_dict()))

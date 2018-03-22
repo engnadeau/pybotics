@@ -217,3 +217,11 @@ def test_ik(q: np.ndarray, q_offset: np.ndarray):
     desired_position = pose[:-1, -1]
     actual_position = actual_pose[:-1, -1]
     np.testing.assert_allclose(actual_position, desired_position, atol=1e-1)
+
+
+def test_random_joints():
+    """Test."""
+    robot = UR10()
+    robot.random_joints()
+    robot.random_joints(in_place=True)
+    robot.random_joints(random_state=np.random.RandomState(123))

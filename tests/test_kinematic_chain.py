@@ -29,3 +29,10 @@ def test_vector():
     link = RevoluteMDHLink()
     kc = MDHKinematicChain([link])
     np.testing.assert_allclose(kc.vector, link.vector)
+
+
+def test_to_dict():
+    """Test."""
+    link = RevoluteMDHLink()
+    kc = MDHKinematicChain([link])
+    kc.to_dict()

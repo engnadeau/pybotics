@@ -1,7 +1,7 @@
 """Kinematic chain module."""
 import logging
 from abc import abstractmethod
-from typing import Optional, Sequence, Sized, Union
+from typing import Optional, Sequence, Sized, Union, Dict
 
 import numpy as np  # type: ignore
 
@@ -16,6 +16,32 @@ class KinematicChain(Sized):
     Provides constrained (or desired) motion that is the
     mathematical model for a mechanical system.
     """
+
+    @property
+    def matrix(self) -> np.ndarray:
+        """
+        Convert chain to matrix of link parameters.
+
+        Rows = links
+        Columns = parameters
+        """
+        raise NotImplementedError
+
+    @matrix.setter
+    def matrix(self, value: np.ndarray) -> None:
+        """
+        Set to matrix of link parameters.
+
+        Rows = links
+        Columns = parameters
+        """
+        raise NotImplementedError
+
+    def to_dict(self) -> Dict[str, Dict[str, float]]:
+        """Convert chain to dict."""
+        return {
+            'link_{}'.format(i): e.to_dict() for i, e in enumerate(self.links)
+        }
 
     @property
     @abstractmethod
@@ -74,6 +100,27 @@ class MDHKinematicChain(KinematicChain):
     """Kinematic Chain of MDH links."""
 
     @property
+    def matrix(self) -> np.ndarray:
+        """
+        Convert chain to matrix of link parameters.
+
+        Rows = links
+        Columns = parameters
+        """
+        return np.array([l.vector for l in self._links])
+
+    @matrix.setter
+    def matrix(self, value: np.ndarray) -> None:
+        """
+        Set to matrix of link parameters.
+
+        Rows = links
+        Columns = parameters
+        """
+        for i, v in enumerate(value):
+            self.links[i].vector = v
+
+    @property
     def links(self) -> Sequence[MDHLink]:
         """Get links."""
         return self._links
@@ -127,7 +174,7 @@ class MDHKinematicChain(KinematicChain):
     @property
     def vector(self) -> np.ndarray:
         """Get parameters of all links."""
-        return np.array([l.vector for l in self._links]).ravel()
+        return self.matrix.ravel()
 
     # noinspection PyMethodOverriding
     @vector.setter
@@ -135,6 +182,4 @@ class MDHKinematicChain(KinematicChain):
         """Set parameters of all links."""
         # noinspection PyProtectedMember
         value = np.array(value).reshape((-1, MDHLink._size))
-
-        for i, v in enumerate(value):
-            self.links[i].vector = v
+        self.matrix = value

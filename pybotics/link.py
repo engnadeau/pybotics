@@ -1,13 +1,18 @@
 """Link module."""
+import json
 from abc import abstractmethod
 from collections import Sized
-from typing import Sequence, Union
+from typing import Sequence, Union, Dict
 
 import numpy as np  # type: ignore
 
 
 class Link(Sized):
     """Links: connected joints allowing relative motion of neighboring link."""
+
+    def to_dict(self) -> Dict[str, float]:
+        """Convert parameters to dict."""
+        raise NotImplementedError
 
     def __len__(self) -> int:
         """Get number of parameters."""
@@ -59,6 +64,15 @@ class MDHLink(Link):
     """
 
     _size = 4
+
+    def to_dict(self) -> Dict[str, float]:
+        """Convert parameters to dict."""
+        return {
+            'alpha': self.alpha,
+            'a': self.a,
+            'theta': self.theta,
+            'd': self.d
+        }
 
     @property
     def size(self) -> int:
