@@ -49,13 +49,18 @@ after_success:
 # additional jobs
 jobs:
   include:
-  - stage: static-test
+  - stage: specific-tests
     python: 3.6
     install:
+    - pip install -r requirements.txt
     - pip install -r dev-requirements.txt
+    - python setup.py install
     script:
+    # static tests
     - chmod +x utilities/run-static-tests.sh
     - ./utilities/run-static-tests.sh
+    # example tests
+    - python utilities/test_jupyter_examples.py
 
   - stage: basic-usage-test
     python: 3.6
@@ -64,15 +69,6 @@ jobs:
     - python setup.py install
     script:
     - python examples/basic_usage.py
-
-  - stage: example-test
-    python: 3.6
-    install:
-    - pip install -r requirements.txt
-    - pip install -r dev-requirements.txt
-    - python setup.py install
-    script:
-    - python utilities/test_jupyter_examples.py
 
   - stage: deploy
     python: 3.6
