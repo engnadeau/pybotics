@@ -72,7 +72,7 @@ jobs:
     - pip install -r dev-requirements.txt
     - python setup.py install
     script:
-    - python utilities/test_ipython_examples.py
+    - python utilities/test_jupyter_examples.py
 
   - stage: deploy
     python: 3.6
