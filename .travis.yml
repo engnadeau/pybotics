@@ -34,17 +34,11 @@ matrix:
   - python: 3.7-dev
   - python: nightly
 
-stages:
-- static-test
-- test
-- example-test
-- deploy
-
 install:
-- pip install -e .
+- python setup.py install
 
 script:
-- pytest tests/
+- python setup.py test
 
 after_success:
 - coveralls
@@ -60,19 +54,29 @@ jobs:
     script:
     - chmod +x utilities/run-static-tests.sh
     - ./utilities/run-static-tests.sh
+
+  - stage: basic-test
+    python: 3.6
+    install:
+    - python setup.py install
+    - pip install -r requirements.txt
+    script:
+    - python examples/basic_usage.py
+
   - stage: example-test
     python: 3.6
     install:
+    - python setup.py install
+    - pip install -r requirements.txt
     - pip install -r dev-requirements.txt
-    - pip install -e .
     script:
     - python utilities/test_ipython_examples.py
+
   - stage: deploy
     python: 3.6
     install:
     - pip install -r dev-requirements.txt
-    script:
-    - echo Hello!
+    script: false
     deploy:
     - provider: pypi
       skip_cleanup: true
