@@ -50,7 +50,7 @@ def test_wrap_2_pi(angle):
 
 
 @given(angle=st.floats(allow_nan=False, allow_infinity=False))
-@settings(deadline=300)
+@settings(deadline=None)
 def test_rotation_matrix_xyz(angle, resources_path: Path):
     """Test."""
     # define functions to test
