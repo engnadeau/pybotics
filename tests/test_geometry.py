@@ -1,12 +1,10 @@
 """Test geometry."""
+from collections import Counter
 from pathlib import Path
 from typing import Sequence
 
 import hypothesis.strategies as st
 import numpy as np
-# TODO: collections not recognized as stdlib
-# BODY: import sorting bug: https://youtrack.jetbrains.com/issue/PY-29099
-from collections import Counter  # noqa
 from hypothesis import given, settings
 from hypothesis.extra.numpy import arrays
 from pytest import raises
@@ -155,7 +153,7 @@ def test_vector_2_matrix(vector_transforms: Sequence[dict]):
 def test_matrix_2_vector(vector_transforms: Sequence[dict]):
     """Test."""
     for d in vector_transforms:
-        for c in [e for e in OrientationConvention.__members__.values() \
+        for c in [e for e in OrientationConvention.__members__.values()
                   if d['order'] == e.value]:
             try:
                 actual_vector = matrix_2_vector(

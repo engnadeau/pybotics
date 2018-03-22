@@ -1,8 +1,8 @@
 """Geometry functions and utilities."""
+from enum import Enum
 from typing import Sequence, Union
 
 import numpy as np  # type: ignore
-from enum import Enum
 
 from pybotics.constants import POSITION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
@@ -44,12 +44,12 @@ def vector_2_matrix(
             OrientationConvention, str] = OrientationConvention.EULER_ZYX
 ) -> np.ndarray:
     """
-        Calculate the pose from the position and euler angles.
+    Calculate the pose from the position and euler angles.
 
-        :param convention:
-        :param vector: transform vector
-        :return: 4x4 transform matrix
-        """
+    :param convention:
+    :param vector: transform vector
+    :return: 4x4 transform matrix
+    """
     # get individual variables
     translation_component = vector[:3]
     rotation_component = vector[-3:]
@@ -79,6 +79,7 @@ def matrix_2_vector(
         matrix: np.ndarray,
         convention: OrientationConvention = OrientationConvention.EULER_ZYX
 ) -> np.ndarray:
+    """Convert 4x4 matrix to a vector."""
     # call function
     try:
         return \

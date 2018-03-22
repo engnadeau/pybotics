@@ -7,4 +7,5 @@ exclude =
 show-source = True
 statistics = True
 max-complexity = 10
-
+import-order-style = pep8
+application-import-names = pybotics

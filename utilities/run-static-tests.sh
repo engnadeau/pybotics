@@ -1,15 +1,25 @@
 #!/usr/bin/env bash
 
+# quit script if any test fails
 set -e
+
+# echo each command
 set -x
 
+# type checking
 mypy --strict .
-flake8 --import-order-style=pep8 --application-import-names=pybotics
-vulture --exclude=docs,conftest.py,__init__.py .
+
+# general linting
+# settings found in .flake8
+flake8
+
+# check dead code
+vulture --min-confidence 80 --exclude=docs --sort-by-size .
+
+# check complexity check
 xenon --max-absolute B --max-modules A --max-average A pybotics
+
+# dependency linting
 pipdeptree -w fail -p pybotics
-bandit -r -v pybotics
+bandit -r pybotics
 pipenv check pybotics
-safety check --full-report \
-    -r requirements.txt \
-    -r dev-requirements.txt

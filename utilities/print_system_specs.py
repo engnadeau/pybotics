@@ -1,3 +1,4 @@
+"""Get system debug info."""
 import json
 from platform import platform, machine
 
@@ -5,6 +6,7 @@ import pkg_resources
 
 
 def fetch_dependencies(package_name: str) -> dict:
+    """Fetch dependencies recursively."""
     dist = pkg_resources.get_distribution(package_name)
 
     d = {'package': dist.key, 'version': dist.version}

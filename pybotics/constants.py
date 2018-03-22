@@ -1,3 +1,4 @@
+"""Constants used through the library."""
 GRAVITY = -9.80665  # m/s^2, ISO 80000-3
 TRANSFORM_MATRIX_SHAPE = (4, 4)
 TRANSFORM_VECTOR_LENGTH = 6

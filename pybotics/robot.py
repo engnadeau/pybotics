@@ -54,6 +54,7 @@ class Robot(Sized):
         return self.to_json()
 
     def to_json(self) -> str:
+        """Encode robot model as JSON."""
         encoder = RobotJSONEncoder(sort_keys=True)
         return encoder.encode(self)
 
@@ -94,7 +95,7 @@ class Robot(Sized):
            pose: np.ndarray,
            q: Optional[Sequence[float]] = None,
            ) -> Optional[np.ndarray]:
-
+        """Solve the inverse kinematics."""
         x0 = self.joints if q is None else q
         result = scipy.optimize.least_squares(
             fun=_ik_cost_function,
@@ -129,6 +130,7 @@ class Robot(Sized):
 
     @joints.setter
     def joints(self, value: np.ndarray) -> None:
+        """Set joints."""
         # TODO: check if position is in limits
         self._joints = value
 
@@ -143,6 +145,7 @@ class Robot(Sized):
 
     @home_position.setter
     def home_position(self, value: np.ndarray) -> None:
+        """Set home position."""
         # TODO: check if position is in limits
         self._home_position = value
 
@@ -157,6 +160,7 @@ class Robot(Sized):
 
     @joint_limits.setter
     def joint_limits(self, value: np.ndarray) -> None:
+        """Set joint limits."""
         if value.shape[0] != 2 or value.shape[1] != len(self):
             raise PyboticsError(
                 'position_limits must have shape=(2,{})'.format(len(self)))
@@ -164,6 +168,7 @@ class Robot(Sized):
 
     def jacobian_world(self,
                        q: Optional[Sequence[float]] = None) -> np.ndarray:
+        """Calculate the Jacobian wrt the world frame."""
         q = self.joints if q is None else q
         j_fl = self.jacobian_flange(q)
         pose = self.fk(q)
@@ -182,6 +187,7 @@ class Robot(Sized):
 
     def jacobian_flange(self,
                         q: Optional[Sequence[float]] = None) -> np.ndarray:
+        """Calculate the Jacobian wrt the flange frame."""
         q = self.joints if q is None else q
 
         # init Cartesian jacobian (6-dof in space)
@@ -214,8 +220,8 @@ class Robot(Sized):
                               q: Optional[Sequence[float]] = None,
                               ) -> Union[Sequence[float], np.ndarray]:
         """
-        Calculate the joint torques
-        due to external force applied to the flange frame.
+        Calculate the joint torques due to external flange force.
+
         Method from:
         5.9 STATIC FORCES IN MANIPULATORS
         Craig, John J. Introduction to robotics: mechanics and control.
@@ -258,7 +264,9 @@ class Robot(Sized):
         return np.array(list(reversed(joint_torques)), dtype=float)
 
     def clamp_joints(self,
-                     q: Sequence[float]) -> Union[Sequence[float], np.ndarray]:
+                     q: Sequence[float]
+                     ) -> Union[Sequence[float], np.ndarray]:
+        """Limit joints to joint limits."""
         return np.clip(q, self.joint_limits[0], self.joint_limits[1])
 
 

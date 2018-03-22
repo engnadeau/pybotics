@@ -1,8 +1,8 @@
 """Optimization module."""
+from copy import deepcopy
 from typing import Sequence, Union
 
 import numpy as np  # type: ignore
-from copy import deepcopy
 
 from pybotics import Robot
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH
@@ -11,12 +11,15 @@ from pybotics.geometry import matrix_2_vector, vector_2_matrix
 
 
 class OptimizationHandler:
+    """Handler for optimization tasks."""
+
     def __init__(self,
                  robot: Robot,
                  kinematic_chain_mask: Union[bool, Sequence[bool]] = False,
                  tool_mask: Union[bool, Sequence[bool]] = False,
                  world_mask: Union[bool, Sequence[bool]] = False,
                  ) -> None:
+        """Init handler."""
         self.world_mask = self._validate_transform_mask(
             world_mask, 'world_mask', TRANSFORM_VECTOR_LENGTH)
         self.tool_mask = self._validate_transform_mask(
@@ -28,11 +31,11 @@ class OptimizationHandler:
             robot.kinematic_chain.num_parameters)
 
     @staticmethod
-    def _validate_transform_mask(
-            mask: Union[bool, Sequence[bool]],
-            name: str,
-            required_length: int) -> Sequence[bool]:
-
+    def _validate_transform_mask(mask: Union[bool, Sequence[bool]],
+                                 name: str,
+                                 required_length: int
+                                 ) -> Sequence[bool]:
+        """Validate mask arguments."""
         # validate input
         if isinstance(mask, bool):
             return [mask] * required_length
@@ -43,6 +46,7 @@ class OptimizationHandler:
             return mask
 
     def apply_optimization_vector(self, vector: np.ndarray) -> None:
+        """Apply vector."""
         # get number of parameters
         num_kc_parameters = np.sum(self.kinematic_chain_mask)
         num_tool_parameters = np.sum(self.tool_mask)
@@ -69,6 +73,7 @@ class OptimizationHandler:
         self.robot.world_frame = vector_2_matrix(world_vector)
 
     def generate_optimization_vector(self) -> np.ndarray:
+        """Generate vector."""
         kc_vector = np.compress(self.kinematic_chain_mask,
                                 self.robot.kinematic_chain.vector)
         tool_vector = np.compress(self.tool_mask,
@@ -81,7 +86,9 @@ class OptimizationHandler:
 def optimize_accuracy(optimization_vector: np.ndarray,
                       handler: OptimizationHandler,
                       qs: Sequence[Sequence[float]],
-                      positions: Sequence[Sequence[float]]) -> np.ndarray:
+                      positions: Sequence[Sequence[float]]
+                      ) -> np.ndarray:
+    """Fitness function for accuracy optimization."""
     handler.apply_optimization_vector(optimization_vector)
     errors = compute_absolute_errors(qs=qs,
                                      positions=positions,

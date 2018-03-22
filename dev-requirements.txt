@@ -19,7 +19,6 @@ pytest-cov==2.5.1
 pytest-randomly==1.2.3
 pytest-runner==3.0
 pytest-xdist==1.22.2
-safety==1.6.1
 scikit-learn==0.19.1
 scipy==1.0.0
 setuptools==39.0.1

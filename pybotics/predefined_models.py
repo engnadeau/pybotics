@@ -1,3 +1,4 @@
+"""Predefined robot models."""
 from typing import Optional
 
 import numpy as np  # type: ignore
@@ -7,6 +8,8 @@ from pybotics.kinematic_chain import MDHKinematicChain
 
 
 class KukaLBRiiwa7(Robot):
+    """KUKA LBR iiwa 7 R800 collaborative robot."""
+
     # TODO: add manufacturer's joint limits
     kinematic_chain = MDHKinematicChain(
         np.array([
@@ -22,11 +25,15 @@ class KukaLBRiiwa7(Robot):
 
     def __init__(self,
                  tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None) -> None:
+                 world_frame: Optional[np.ndarray] = None
+                 ) -> None:
+        """Init robot."""
         super().__init__(self.kinematic_chain, tool, world_frame)
 
 
 class MecademicMeca500(Robot):
+    """Mecademic Meca500 small robot."""
+
     # TODO: add manufacturer's joint limits
     kinematic_chain = MDHKinematicChain(
         np.array([
@@ -41,11 +48,15 @@ class MecademicMeca500(Robot):
 
     def __init__(self,
                  tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None) -> None:
+                 world_frame: Optional[np.ndarray] = None
+                 ) -> None:
+        """Init robot."""
         super().__init__(self.kinematic_chain, tool, world_frame)
 
 
 class PUMA560(Robot):
+    """PUMA 560 robot."""
+
     # TODO: add manufacturer's joint limits
     kinematic_chain = MDHKinematicChain(
         np.array([
@@ -60,11 +71,15 @@ class PUMA560(Robot):
 
     def __init__(self,
                  tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None) -> None:
+                 world_frame: Optional[np.ndarray] = None
+                 ) -> None:
+        """Init robot."""
         super().__init__(self.kinematic_chain, tool, world_frame)
 
 
 class UR10(Robot):
+    """Universal Robots UR10 collaborative robot."""
+
     # TODO: add manufacturer's joint limits
     kinematic_chain = MDHKinematicChain(
         np.array([
@@ -79,5 +94,7 @@ class UR10(Robot):
 
     def __init__(self,
                  tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None) -> None:
+                 world_frame: Optional[np.ndarray] = None
+                 ) -> None:
+        """Init robot."""
         super().__init__(self.kinematic_chain, tool, world_frame)

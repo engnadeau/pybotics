@@ -1,15 +1,16 @@
 """Link module."""
+from abc import abstractmethod
+from collections import Sized
 from typing import Sequence, Union
 
 import numpy as np  # type: ignore
-from abc import abstractmethod
-from collections import Sized
 
 
 class Link(Sized):
     """Links: connected joints allowing relative motion of neighboring link."""
 
     def __len__(self) -> int:
+        """Get number of parameters."""
         return self.size
 
     @abstractmethod
@@ -45,6 +46,7 @@ class Link(Sized):
     @property
     @abstractmethod
     def size(self) -> int:
+        """Get number of parameters."""
         raise NotImplementedError
 
 
@@ -60,6 +62,7 @@ class MDHLink(Link):
 
     @property
     def size(self) -> int:
+        """Get number of parameters."""
         return self._size
 
     def __init__(self,
@@ -126,6 +129,7 @@ class MDHLink(Link):
     # noinspection PyMethodOverriding
     @vector.setter
     def vector(self, value: Sequence[float]) -> None:
+        """Set parameters."""
         self.alpha = value[0]
         self.a = value[1]
         self.theta = value[2]

@@ -1,9 +1,11 @@
+"""Test jupyter examples."""
 import logging
 import subprocess
 from pathlib import Path
 
 
 def main():
+    """Glob jupyter notebooks and run them."""
     # path
     examples_path = Path(__file__).parents[1] / 'examples'  # type: Path
     logging.info('Examples path: {}'.format(examples_path))

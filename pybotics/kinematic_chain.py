@@ -1,9 +1,9 @@
 """Kinematic chain module."""
 import logging
+from abc import abstractmethod
 from typing import Optional, Sequence, Sized, Union
 
 import numpy as np  # type: ignore
-from abc import abstractmethod
 
 from pybotics.errors import PyboticsError
 from pybotics.link import Link, MDHLink, RevoluteMDHLink
@@ -11,13 +11,16 @@ from pybotics.link import Link, MDHLink, RevoluteMDHLink
 
 class KinematicChain(Sized):
     """
-    An assembly of rigid bodies connected by joints to provide constrained
-    (or desired) motion that is the mathematical model for a mechanical system.
+    An assembly of rigid bodies connected by joints.
+
+    Provides constrained (or desired) motion that is the
+    mathematical model for a mechanical system.
     """
 
     @property
     @abstractmethod
     def links(self) -> Sequence[Link]:
+        """Get links."""
         raise NotImplementedError
 
     @property
@@ -63,17 +66,22 @@ class KinematicChain(Sized):
 
     @vector.setter
     def vector(self, value: Sequence[float]) -> None:
+        """Set parameters of all links."""
         raise NotImplementedError
 
 
 class MDHKinematicChain(KinematicChain):
+    """Kinematic Chain of MDH links."""
+
     @property
     def links(self) -> Sequence[MDHLink]:
+        """Get links."""
         return self._links
 
     def __init__(self,
                  links: Union[Sequence[MDHLink], np.ndarray]
                  ) -> None:
+        """Init chain."""
         super().__init__()
         # set links
         if isinstance(links, np.ndarray):
@@ -98,15 +106,19 @@ class MDHKinematicChain(KinematicChain):
             self._links = links  # type: Sequence[MDHLink]
 
     def __len__(self) -> int:
+        """Get ndof."""
         return len(self._links)
 
     @property
     def num_parameters(self) -> int:
+        """Get number of parameters of all links."""
         # noinspection PyProtectedMember
         return len(self) * MDHLink._size
 
-    def transforms(self, q: Optional[Sequence[float]] = None) -> \
-            Sequence[np.ndarray]:
+    def transforms(self,
+                   q: Optional[Sequence[float]] = None
+                   ) -> Sequence[np.ndarray]:
+        """Get sequency of 4x4 transforms."""
         q = np.zeros(len(self)) if q is None else q
         transforms = [link.transform(p) for link, p in
                       zip(self._links, q)]  # type: ignore
@@ -114,11 +126,13 @@ class MDHKinematicChain(KinematicChain):
 
     @property
     def vector(self) -> np.ndarray:
+        """Get parameters of all links."""
         return np.array([l.vector for l in self._links]).ravel()
 
     # noinspection PyMethodOverriding
     @vector.setter
     def vector(self, value: Sequence[float]) -> None:
+        """Set parameters of all links."""
         # noinspection PyProtectedMember
         value = np.array(value).reshape((-1, MDHLink._size))
 
