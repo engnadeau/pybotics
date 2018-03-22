@@ -76,12 +76,13 @@ jobs:
     script:
     - python examples/basic_usage.py
 
-  - stage: deploy
+  - stage: deploy-test
     python: 3.6
     install:
     - pip install -r dev-requirements.txt
     script:
-    - echo 'Deploying!!!'
+    - echo 'Deploying test package!!!'
+    - export SETUPTOOLS_SCM_PRETEND_VERSION=$(date +%Y%m%d%H%M$S)
     deploy:
     - provider: pypi
       skip_cleanup: true
@@ -94,6 +95,14 @@ jobs:
         distributions: sdist bdist_wheel
         repo: nnadeau/pybotics
         python: 3.6
+
+  - stage: deploy-tag
+    python: 3.6
+    install:
+    - pip install -r dev-requirements.txt
+    script:
+    - echo 'Deploying tagged package!!!'
+    deploy:
     - provider: pypi
       skip_cleanup: true
       user: nnadeau
