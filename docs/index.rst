@@ -2,11 +2,11 @@ Welcome to pybotics's documentation!
 ====================================
 
 .. toctree::
-:maxdepth: 2
-       :caption: Contents:
+   :maxdepth: 2
+   :caption: Contents:
 
 .. automodule:: pybotics
-:members:
+    :members:
 
 
 Indices and tables

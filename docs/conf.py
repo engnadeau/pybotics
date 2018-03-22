@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-import os
-import sys
 from datetime import datetime
-
 from recommonmark.parser import CommonMarkParser
 from setuptools_scm import get_version
+import os
+import sys
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
