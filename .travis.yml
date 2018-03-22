@@ -1,6 +1,12 @@
-# travis VM config
 dist: trusty
 sudo: false
+
+# Travis only clones the latest 50 commits. We need the full repository to
+# compute the version string from the git metadata:
+# https://github.com/travis-ci/travis-ci/issues/3412#issuecomment-83993903
+# https://github.com/pypa/setuptools_scm/issues/93
+git:
+  depth: 9999999
 
 language: python
 cache: pip
