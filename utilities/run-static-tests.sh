@@ -6,6 +6,9 @@ set -e
 # echo each command
 set -x
 
+# check README
+python setup.py check --strict --metadata
+
 # type checking
 mypy --strict .
 
