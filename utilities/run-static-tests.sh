@@ -4,7 +4,7 @@ set -e
 set -x
 
 mypy --strict .
-flake8 --import-order-style=pep8
+flake8 --import-order-style=pep8 --application-import-names=pybotics
 vulture --exclude=docs,conftest.py,__init__.py .
 xenon --max-absolute B --max-modules A --max-average A pybotics
 pipdeptree -w fail -p pybotics

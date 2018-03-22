@@ -4,8 +4,7 @@ from pathlib import Path
 from pytest import fixture
 import numpy as np
 
-# weight flake8-import-order behaviour
-from pybotics.kinematic_chain import MDHKinematicChain  # noqa
+from pybotics.kinematic_chain import MDHKinematicChain
 from pybotics.robot import Robot
 
 

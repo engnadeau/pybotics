@@ -1,3 +1,4 @@
+"""Test."""
 import hypothesis.strategies as st
 import numpy as np
 import scipy.optimize
@@ -7,8 +8,8 @@ from pytest import raises
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH
 from pybotics.errors import PyboticsError
-from pybotics.optimization import compute_absolute_errors, OptimizationHandler, \
-    optimize_accuracy
+from pybotics.optimization import OptimizationHandler, \
+    compute_absolute_errors, optimize_accuracy
 from pybotics.predefined_models import UR10
 
 
@@ -21,6 +22,7 @@ from pybotics.predefined_models import UR10
     )
 )
 def test_compute_absolute_errors(q: np.ndarray):
+    """Test."""
     robot = UR10()
     pose = robot.fk(q)
     p = pose[:-1, -1]
@@ -37,6 +39,7 @@ def test_compute_absolute_errors(q: np.ndarray):
 
 
 def test_optimization():
+    """Test."""
     # init robot model and error wrt nominal
     actual_robot = UR10()
     actual_robot.tool.position = [0.1, 0, 0]
@@ -83,6 +86,7 @@ def test_optimization():
 
 
 def test_handler_validate_transform_mask():
+    """Test."""
     # test predesigned mask sequence
     OptimizationHandler(robot=UR10(),
                         tool_mask=[False] * TRANSFORM_VECTOR_LENGTH)

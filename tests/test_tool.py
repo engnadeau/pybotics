@@ -1,3 +1,4 @@
+"""Test."""
 import numpy as np
 from pytest import raises
 
@@ -7,6 +8,7 @@ from pybotics.geometry import matrix_2_vector
 
 
 def test_tool():
+    """Test."""
     tool = Tool()
 
     cg = [1, 2, 3]

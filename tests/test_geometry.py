@@ -4,7 +4,9 @@ from typing import Sequence
 
 import hypothesis.strategies as st
 import numpy as np
-from collections import Counter
+# TODO: collections not recognized as stdlib
+# BODY: import sorting bug: https://youtrack.jetbrains.com/issue/PY-29099
+from collections import Counter  # noqa
 from hypothesis import given, settings
 from hypothesis.extra.numpy import arrays
 from pytest import raises
@@ -52,6 +54,7 @@ def test_wrap_2_pi(angle):
 @given(angle=st.floats(allow_nan=False, allow_infinity=False))
 @settings(deadline=300)
 def test_rotation_matrix_xyz(angle, resources_path: Path):
+    """Test."""
     # define functions to test
     rotation_functions = {
         'x': pybotics.geometry.rotation_matrix_x,
@@ -107,6 +110,7 @@ def test_rotation_matrix_xyz(angle, resources_path: Path):
                        allow_infinity=False)
 ))
 def test_translation_matrix(xyz):
+    """Test."""
     matrix = pybotics.geometry.translation_matrix(xyz)
 
     # check orthogonality
@@ -132,6 +136,7 @@ def test_translation_matrix(xyz):
 
 
 def test_vector_2_matrix(vector_transforms: Sequence[dict]):
+    """Test."""
     # test regular usage
     for d in vector_transforms:
         for c in [d['order'], OrientationConvention(d['order'])]:
@@ -148,6 +153,7 @@ def test_vector_2_matrix(vector_transforms: Sequence[dict]):
 
 
 def test_matrix_2_vector(vector_transforms: Sequence[dict]):
+    """Test."""
     for d in vector_transforms:
         for c in [e for e in OrientationConvention.__members__.values() \
                   if d['order'] == e.value]:
@@ -164,6 +170,7 @@ def test_matrix_2_vector(vector_transforms: Sequence[dict]):
 
 
 def test_orientation():
+    """Test."""
     # ensure order and name match
     for e in list(OrientationConvention.__members__.values()):
         name_order = e.name.split('_')[-1].lower()

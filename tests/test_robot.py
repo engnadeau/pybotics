@@ -48,18 +48,22 @@ def test_fk(resources_path: Path):
 
 
 def test_repr():
+    """Test."""
     repr(UR10())
 
 
 def test_len():
+    """Test."""
     len(UR10())
 
 
 def test_str():
+    """Test."""
     str(UR10())
 
 
 def test_home_position():
+    """Test."""
     robot = UR10()
     x = np.ones(len(robot))
     robot.home_position = x
@@ -67,6 +71,7 @@ def test_home_position():
 
 
 def test_joint_limits():
+    """Test."""
     robot = UR10()
     robot.joint_limits = robot.joint_limits.copy()
     with raises(PyboticsError):
@@ -75,12 +80,13 @@ def test_joint_limits():
 
 def test_compute_joint_torques(planar_robot: Robot):
     """
+    Test.
+
     From EXAMPLE 5.7 of
     Craig, John J. Introduction to robotics: mechanics and control.
     Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
     :return:
     """
-
     # set test force and angles
     force = [-100, -200, 0]
     moment = [0] * 3
@@ -122,6 +128,7 @@ def test_compute_joint_torques(planar_robot: Robot):
                 )
        )
 def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
+    """Test."""
     # get link lengths
     lengths = [
         planar_robot.kinematic_chain.links[1].a,
@@ -138,11 +145,9 @@ def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
     c01 = np.cos(q[0] + q[1])
 
     expected = np.zeros((6, 3))
-    expected[0, 0] = -lengths[0] * s0 \
-                     - lengths[1] * s01
+    expected[0, 0] = -lengths[0] * s0 - lengths[1] * s01
     expected[0, 1] = - lengths[1] * s01
-    expected[1, 0] = lengths[0] * c0 \
-                     + lengths[1] * c01
+    expected[1, 0] = lengths[0] * c0 + lengths[1] * c01
     expected[1, 1] = lengths[1] * c01
     expected[-1, :] = 1
 
@@ -153,6 +158,7 @@ def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
 @given(q=arrays(shape=(3,), dtype=float,
                 elements=floats(allow_nan=False, allow_infinity=False)))
 def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
+    """Test."""
     # get link lengths
     lengths = [
         planar_robot.kinematic_chain.links[1].a,
@@ -167,8 +173,7 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
 
     expected = np.zeros((6, 3))
     expected[0, 0] = lengths[0] * s1
-    expected[1, 0] = lengths[0] * c1 + \
-                     lengths[1]
+    expected[1, 0] = lengths[0] * c1 + lengths[1]
     expected[1, 1] = lengths[1]
     expected[-1, :] = 1
 
@@ -190,6 +195,7 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
 )
 @hypothesis.settings(deadline=None)
 def test_ik(q: np.ndarray, q_offset: np.ndarray):
+    """Test."""
     robot = UR10()
     pose = robot.fk(q)
 
