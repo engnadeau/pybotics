@@ -78,7 +78,8 @@ jobs:
     python: 3.6
     install:
     - pip install -r dev-requirements.txt
-    script: false
+    script:
+    - echo 'Deploying!!!'
     deploy:
     - provider: pypi
       skip_cleanup: true
