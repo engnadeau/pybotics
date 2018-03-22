@@ -16,15 +16,13 @@ jobs:
           python3 -m venv venv
           . venv/bin/activate
           python -V
-          pip install -r requirements/main.txt
-          pip install -r requirements/unit-testing.txt
-          pip install -r requirements/versioning.txt
-          python utilities/write_version.py
-          pip install -e .
+          python setup.py install
+          pip install -r requirements.txt
+          pip install -r dev-requirements.txt
 
     - run:
         name: test
         command: |
           . venv/bin/activate
           pip list
-          python -m pytest tests/
+          python setup.py test
