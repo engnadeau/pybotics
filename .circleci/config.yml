@@ -16,9 +16,9 @@ jobs:
           python3 -m venv venv
           . venv/bin/activate
           python -V
-          python setup.py install
           pip install -r requirements.txt
           pip install -r dev-requirements.txt
+          python setup.py install
 
     - run:
         name: test

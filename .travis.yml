@@ -35,6 +35,8 @@ matrix:
   - python: nightly
 
 install:
+- pip install -r requirements.txt
+- pip install -r dev-requirements.txt
 - python setup.py install
 
 script:
@@ -55,20 +57,20 @@ jobs:
     - chmod +x utilities/run-static-tests.sh
     - ./utilities/run-static-tests.sh
 
-  - stage: basic-test
+  - stage: basic-usage-test
     python: 3.6
     install:
-    - python setup.py install
     - pip install -r requirements.txt
+    - python setup.py install
     script:
     - python examples/basic_usage.py
 
   - stage: example-test
     python: 3.6
     install:
-    - python setup.py install
     - pip install -r requirements.txt
     - pip install -r dev-requirements.txt
+    - python setup.py install
     script:
     - python utilities/test_ipython_examples.py
 
