@@ -1,6 +1,6 @@
 """Robot module."""
 from json import JSONEncoder
-from typing import Optional, Sequence, Sized, Any
+from typing import Optional, Sequence, Sized, Any, Union
 
 import numpy as np  # type: ignore
 import scipy.optimize  # type: ignore
@@ -119,7 +119,7 @@ class Robot(Sized):
         return len(self)
 
     @property
-    def joints(self) -> np.ndarray:
+    def joints(self) -> Union[Sequence[float], np.ndarray]:
         """
         Get the robot configuration (e.g., joint positions for serial robot).
 
@@ -133,7 +133,7 @@ class Robot(Sized):
         self._joints = value
 
     @property
-    def home_position(self) -> np.ndarray:
+    def home_position(self) -> Union[Sequence[float], np.ndarray]:
         """
         Get the robot configuration (e.g., joint positions for serial robot).
 
@@ -202,7 +202,7 @@ class Robot(Sized):
             jacobian_flange[:, i] = np.hstack((d, delta))
 
             current_link = self.kinematic_chain.links[i]
-            p = q[i]  # type: ignore
+            p = q[i]
             current_link_transform = current_link.transform(p)
             current_transform = np.dot(current_link_transform,
                                        current_transform)
@@ -212,7 +212,7 @@ class Robot(Sized):
     def compute_joint_torques(self,
                               wrench: Sequence[float],
                               q: Optional[Sequence[float]] = None,
-                              ) -> np.ndarray:
+                              ) -> Union[Sequence[float], np.ndarray]:
         """
         Calculate the joint torques
         due to external force applied to the flange frame.
@@ -257,7 +257,8 @@ class Robot(Sized):
         # reverse torques into correct order
         return np.array(list(reversed(joint_torques)), dtype=float)
 
-    def clamp_joints(self, q: Sequence[float]) -> np.ndarray:
+    def clamp_joints(self,
+                     q: Sequence[float]) -> Union[Sequence[float], np.ndarray]:
         return np.clip(q, self.joint_limits[0], self.joint_limits[1])
 
 

@@ -1,5 +1,5 @@
 """Tool module."""
-from typing import Sequence, Optional
+from typing import Sequence, Optional, Union
 
 import numpy as np  # type: ignore
 
@@ -33,7 +33,7 @@ class Tool:
         self.mass = mass
 
     @property
-    def cg(self) -> np.ndarray:
+    def cg(self) -> Union[Sequence[float], np.ndarray]:
         """
         Centre of gravity.
 
@@ -66,7 +66,7 @@ class Tool:
         self._matrix = value
 
     @property
-    def position(self) -> np.ndarray:
+    def position(self)-> Union[Sequence[float], np.ndarray]:
         """
         Get the position XYZ of the frame.
 

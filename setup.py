@@ -1,10 +1,12 @@
 """Setup module."""
 import logging
 from pathlib import Path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup  # type: ignore
 
 
-def main():
+def main() -> None:
+    """Run setup."""
     # run setup
     setup(name='pybotics',
           packages=find_packages(include=['pybotics']),
@@ -17,7 +19,7 @@ def main():
           long_description_content_type='text/markdown',
           use_scm_version=True,
           setup_requires=['setuptools_scm'],
-          install_requires=get_requirements(),
+          install_requires=get_requirements(),  # type: ignore
           tests_require=['pytest'],
           classifiers=[
               'Development Status :: 4 - Beta',
@@ -44,17 +46,19 @@ def main():
                    'automation kinematics geometry')
 
 
-def get_readme():
+def get_readme() -> str:
+    """Get README text."""
     # description
     readme_path = Path(__file__).parent / 'README.md'
     logging.info('README path: {}'.format(readme_path.resolve()))
     with open(str(readme_path)) as f:
         readme = f.read()
-
     return readme
 
 
-def get_requirements():
+# don't want to import typing... so ignore
+def get_requirements():  # type: ignore
+    """Get requirements list."""
     # requirements
     requirements_path = Path(__file__).parent / 'requirements.txt'
     logging.info('Requirements path: {}'.format(requirements_path.resolve()))

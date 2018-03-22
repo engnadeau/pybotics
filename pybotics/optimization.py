@@ -16,7 +16,7 @@ class OptimizationHandler:
                  kinematic_chain_mask: Union[bool, Sequence[bool]] = False,
                  tool_mask: Union[bool, Sequence[bool]] = False,
                  world_mask: Union[bool, Sequence[bool]] = False,
-                 ):
+                 ) -> None:
         self.world_mask = self._validate_transform_mask(
             world_mask, 'world_mask', TRANSFORM_VECTOR_LENGTH)
         self.tool_mask = self._validate_transform_mask(
@@ -42,7 +42,7 @@ class OptimizationHandler:
         else:
             return mask
 
-    def apply_optimization_vector(self, vector: np.ndarray):
+    def apply_optimization_vector(self, vector: np.ndarray) -> None:
         # get number of parameters
         num_kc_parameters = np.sum(self.kinematic_chain_mask)
         num_tool_parameters = np.sum(self.tool_mask)
@@ -68,7 +68,7 @@ class OptimizationHandler:
         world_vector[self.world_mask] = world_segment
         self.robot.world_frame = vector_2_matrix(world_vector)
 
-    def generate_optimization_vector(self):
+    def generate_optimization_vector(self) -> np.ndarray:
         kc_vector = np.compress(self.kinematic_chain_mask,
                                 self.robot.kinematic_chain.vector)
         tool_vector = np.compress(self.tool_mask,
@@ -81,7 +81,7 @@ class OptimizationHandler:
 def optimize_accuracy(optimization_vector: np.ndarray,
                       handler: OptimizationHandler,
                       qs: Sequence[Sequence[float]],
-                      positions: Sequence[Sequence[float]]):
+                      positions: Sequence[Sequence[float]]) -> np.ndarray:
     handler.apply_optimization_vector(optimization_vector)
     errors = compute_absolute_errors(qs=qs,
                                      positions=positions,
@@ -92,7 +92,7 @@ def optimize_accuracy(optimization_vector: np.ndarray,
 def compute_absolute_errors(qs: Sequence[Sequence[float]],
                             positions: Sequence[Sequence[float]],
                             robot: Robot
-                            ) -> np.ndarray:
+                            ) -> Union[Sequence[float], np.ndarray]:
     """
     Compute the absolute errors of a given set of positions.
 
@@ -105,9 +105,9 @@ def compute_absolute_errors(qs: Sequence[Sequence[float]],
     qs = np.array(qs)
     positions = np.array(positions)
 
-    if qs.ndim == 1:
+    if np.ndim(qs) == 1:
         qs = np.expand_dims(qs, axis=0)
-    if positions.ndim == 1:
+    if np.ndim(positions) == 1:
         positions = np.expand_dims(positions, axis=0)
 
     # compute fk positions

@@ -1,5 +1,5 @@
 """Link module."""
-from typing import Sequence
+from typing import Sequence, Union
 
 import numpy as np  # type: ignore
 from abc import abstractmethod
@@ -13,7 +13,7 @@ class Link(Sized):
         return self.size
 
     @abstractmethod
-    def displace(self, q: float) -> np.ndarray:
+    def displace(self, q: float) -> Union[Sequence[float], np.ndarray]:
         """
         Generate a vector of the new link state given a displacement.
 
@@ -139,14 +139,14 @@ class RevoluteMDHLink(MDHLink):
     https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
     """
 
-    def displace(self, q: float = 0) -> np.ndarray:
+    def displace(self, q: float = 0) -> Union[Sequence[float], np.ndarray]:
         """
         Generate a vector of the new link state given a displacement.
 
         :param q: given displacement
         :return vector of new displacement state
         """
-        v = self.vector.copy()
+        v = np.copy(self.vector)
         v[2] += q
         return v
 
@@ -158,13 +158,13 @@ class PrismaticMDHLink(MDHLink):
     https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
     """
 
-    def displace(self, q: float = 0) -> np.ndarray:
+    def displace(self, q: float = 0) -> Union[Sequence[float], np.ndarray]:
         """
         Generate a vector of the new link state given a displacement.
 
         :param q: given displacement
         :return vector of new displacement state
         """
-        v = self.vector.copy()
+        v = np.copy(self.vector)
         v[3] += q
         return v

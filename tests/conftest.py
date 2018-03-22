@@ -1,20 +1,17 @@
 """Pytest config."""
 from pathlib import Path
 
-import numpy as np
 from pytest import fixture
+import numpy as np
 
-from pybotics.kinematic_chain import MDHKinematicChain
+# weight flake8-import-order behaviour
+from pybotics.kinematic_chain import MDHKinematicChain  # noqa
 from pybotics.robot import Robot
 
 
 @fixture()
 def planar_robot():
-    """
-    Generate planar robot.
-
-    :return:
-    """
+    """Generate planar robot."""
     return Robot(MDHKinematicChain(np.array([
         [0, 0, 0, 0],
         [0, 10, 0, 0],
@@ -24,11 +21,13 @@ def planar_robot():
 
 @fixture()
 def resources_path():
+    """Get resources path."""
     return (Path(__file__).parent / 'resources').resolve()
 
 
 @fixture()
 def vector_transforms():
+    """Get resource data."""
     data = np.genfromtxt(fname=resources_path() / 'vector-transforms.csv',
                          delimiter=',',
                          dtype=str)

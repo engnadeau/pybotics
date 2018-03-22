@@ -61,6 +61,10 @@ class KinematicChain(Sized):
         """
         raise NotImplementedError
 
+    @vector.setter
+    def vector(self, value: Sequence[float]) -> None:
+        raise NotImplementedError
+
 
 class MDHKinematicChain(KinematicChain):
     @property

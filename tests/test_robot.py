@@ -107,6 +107,10 @@ def test_compute_joint_torques(planar_robot: Robot):
                                                         wrench=wrench)
     np.testing.assert_allclose(actual_torques, expected_torques)
 
+    planar_robot.joints = joint_angles
+    actual_torques = planar_robot.compute_joint_torques(wrench=wrench)
+    np.testing.assert_allclose(actual_torques, expected_torques)
+
 
 @given(q=arrays(shape=(3,),
                 dtype=float,
