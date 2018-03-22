@@ -3,7 +3,8 @@ count = True
 verbose = 1
 exclude =
     docs,
-    examples
+    examples,
+    build
 show-source = True
 statistics = True
 max-complexity = 10
