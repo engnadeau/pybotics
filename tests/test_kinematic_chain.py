@@ -36,3 +36,10 @@ def test_to_dict():
     link = RevoluteMDHLink()
     kc = MDHKinematicChain([link])
     kc.to_dict()
+
+
+def test_repr():
+    """Test."""
+    link = RevoluteMDHLink()
+    kc = MDHKinematicChain([link])
+    repr(kc)

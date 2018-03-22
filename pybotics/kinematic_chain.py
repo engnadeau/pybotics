@@ -1,11 +1,12 @@
 """Kinematic chain module."""
 import logging
 from abc import abstractmethod
-from typing import Optional, Sequence, Sized, Union, Dict
+from typing import Dict, Optional, Sequence, Sized, Union
 
 import numpy as np  # type: ignore
 
 from pybotics.errors import PyboticsError
+from pybotics.json_encoder import JSONEncoder
 from pybotics.link import Link, MDHLink, RevoluteMDHLink
 
 
@@ -16,6 +17,15 @@ class KinematicChain(Sized):
     Provides constrained (or desired) motion that is the
     mathematical model for a mechanical system.
     """
+
+    def __repr__(self) -> str:
+        """Encode model as JSON."""
+        return self.to_json()
+
+    def to_json(self) -> str:
+        """Encode model as JSON."""
+        encoder = JSONEncoder(sort_keys=True)
+        return encoder.encode(self)
 
     @property
     def matrix(self) -> np.ndarray:

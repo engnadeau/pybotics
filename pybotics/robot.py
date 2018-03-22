@@ -1,12 +1,12 @@
 """Robot module."""
-from json import JSONEncoder
-from typing import Optional, Sequence, Sized, Any, Union
+from typing import Optional, Sequence, Sized, Union
 
 import numpy as np  # type: ignore
 import scipy.optimize  # type: ignore
 
 from pybotics.constants import ROTATION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
+from pybotics.json_encoder import JSONEncoder
 from pybotics.kinematic_chain import KinematicChain
 from pybotics.tool import Tool
 
@@ -60,7 +60,7 @@ class Robot(Sized):
 
     def to_json(self) -> str:
         """Encode robot model as JSON."""
-        encoder = RobotJSONEncoder(sort_keys=True)
+        encoder = JSONEncoder(sort_keys=True)
         return encoder.encode(self)
 
     def __str__(self) -> str:
@@ -286,38 +286,6 @@ class Robot(Sized):
             return None
         else:
             return q
-
-
-class RobotJSONEncoder(JSONEncoder):
-    """Robot JSON Encoder class."""
-
-    def default(self, o: Any) -> Any:  # pragma: no cover
-        """
-        Return serializable robot objects.
-
-        :param o:
-        :return:
-        """
-        # process custom instances
-        if isinstance(o, np.ndarray):
-            return o.tolist()
-
-        if isinstance(o, np.generic):
-            return str(o)
-
-        if isinstance(o, np.random.RandomState):
-            return
-
-        try:
-            o = o.__dict__
-        except AttributeError:
-            pass
-        else:
-            return o
-
-        # let the base class default method raise the TypeError
-        # https://docs.python.org/3/library/json.html
-        return JSONEncoder.default(self, o)
 
 
 def _ik_cost_function(q: np.ndarray,
