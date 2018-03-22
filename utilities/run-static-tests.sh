@@ -16,8 +16,6 @@ flake8
 # check dead code
 vulture --min-confidence 80 --exclude=docs --sort-by-size .
 
-# check complexity check
-xenon --max-absolute B --max-modules A --max-average A pybotics
 
 # dependency linting
 pipdeptree -w fail -p pybotics
