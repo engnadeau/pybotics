@@ -136,7 +136,9 @@ class Robot(Sized):
     @joints.setter
     def joints(self, value: np.ndarray) -> None:
         """Set joints."""
-        # TODO: check if position is in limits
+        if np.any(value < self.joint_limits[0]) or \
+                np.any(value > self.joint_limits[1]):
+            raise PyboticsError('Joint limits exceeded.')
         self._joints = value
 
     @property

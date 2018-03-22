@@ -73,9 +73,16 @@ def test_home_position():
 def test_joint_limits():
     """Test."""
     robot = UR10()
+
+    # test setter
     robot.joint_limits = robot.joint_limits.copy()
+
+    # test errors
     with raises(PyboticsError):
         robot.joint_limits = np.zeros(1)
+
+    with raises(PyboticsError):
+        robot.joints = robot.joint_limits.copy()[1] + 10
 
 
 def test_compute_joint_torques(planar_robot: Robot):
