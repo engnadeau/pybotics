@@ -95,20 +95,9 @@ class Robot(Sized):
         :param q:
         :return: 4x4 transform matrix of the FK pose
         """
-        # validate
-        q = self.joints if q is None else q
-
-        # gather transforms
-        # noinspection PyListCreation
-        transforms = []
-        transforms.append(self.world_frame)
-        transforms.extend(self.kinematic_chain.transforms(q))
-        transforms.append(self.tool.matrix)
 
         # matrix multiply through transforms
-        pose = np.eye(4, dtype=float)
-        for t in transforms:
-            pose = np.dot(pose, t)
+        pose = np.linalg.multi_dot(self.transforms(q))
 
         return pose
 
