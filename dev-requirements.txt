@@ -9,7 +9,7 @@ hypothesis==3.44.16
 jupyter==1.0.0
 matplotlib==2.1.1
 mccabe==0.6.1
-mypy==0.570
+mypy==0.580
 pandas==0.22.0
 pep8-naming==0.5.0
 pipdeptree==0.10.1
