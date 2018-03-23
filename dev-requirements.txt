@@ -17,7 +17,7 @@ pipenv==9.0.3
 pytest==3.3.2
 pytest-cov==2.5.1
 pytest-randomly==1.2.3
-pytest-runner==3.0
+pytest-runner==4.2
 pytest-xdist==1.22.2
 readme_renderer==17.4
 scikit-learn==0.19.1
