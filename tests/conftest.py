@@ -1,72 +1,37 @@
 """Pytest config."""
+from pathlib import Path
 
-import numpy as np
 from pytest import fixture
+import numpy as np
 
-from pybotics.frame import Frame
-from pybotics.kinematic_chain import KinematicChain
+from pybotics.kinematic_chain import MDHKinematicChain
 from pybotics.robot import Robot
-from pybotics.robot_model import UR10
-from pybotics.tool import Tool
 
 
-@fixture(name='serial_robot')
-def serial_robot_fixture():
-    """
-    Generate serial robot.
-
-    :return:
-    """
-    return UR10()
-
-
-@fixture(name='planar_robot')
-def planar_robot_fixture(planar_kc):
-    """
-    Generate planar robot.
-
-    :return:
-    """
-    return Robot(planar_kc)
-
-
-@fixture(name='planar_kc')
-def planar_kc_fixture():
-    """
-    Generate planar kinematic chain.
-
-    :return:
-    """
-    mdh = np.array([
+@fixture()
+def planar_robot():
+    """Generate planar robot."""
+    return Robot(MDHKinematicChain(np.array([
         [0, 0, 0, 0],
         [0, 10, 0, 0],
         [0, 20, 0, 0]
-    ])
-    kc = KinematicChain.from_array(mdh)
-    return kc
+    ])))
 
 
-@fixture(name='tool')
-def tool_fixture():
-    """
-    Generate tool.
-
-    :return:
-    """
-    tool = Tool()
-    tool.position = [10, 20, 30]
-    tool.mass = 5
-    tool.cg = [-10, -20, -30]
-    return tool
+@fixture()
+def resources_path():
+    """Get resources path."""
+    return (Path(__file__).parent / 'resources').resolve()
 
 
-@fixture(name='world_frame')
-def world_frame_fixture():
-    """
-    Generate tool.
-
-    :return:
-    """
-    frame = Frame()
-    frame.position = [10, 20, 30]
-    return frame
+@fixture()
+def vector_transforms():
+    """Get resource data."""
+    data = np.genfromtxt(fname=resources_path() / 'vector-transforms.csv',
+                         delimiter=',',
+                         dtype=str)
+    return [{'vector': d[:6].astype(float),
+             'transform': d[6:-1].astype(float),
+             'order': d[-1]
+             }
+            for d in data]

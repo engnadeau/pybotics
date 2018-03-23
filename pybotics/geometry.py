@@ -1,49 +1,94 @@
 """Geometry functions and utilities."""
-from typing import Sequence
+from enum import Enum
+from typing import Sequence, Union
 
 import numpy as np  # type: ignore
 
-from pybotics.constants import TRANSFORM_VECTOR_LENGTH
-from pybotics.errors import Matrix4x4Error, SequenceError
-from pybotics.validation import is_4x4_ndarray, is_1d_sequence
+from pybotics.constants import POSITION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
+from pybotics.errors import PyboticsError
 
 
-def euler_zyx_2_matrix(vector: Sequence[float]) -> np.ndarray:
+class OrientationConvention(Enum):
+    """Orientation of a body with respect to a fixed coordinate system."""
+
+    EULER_XYX = 'xyx'
+    EULER_XYZ = 'xyz'
+    EULER_XZX = 'xzx'
+    EULER_XZY = 'xzy'
+    EULER_YXY = 'yxy'
+    EULER_YXZ = 'yxz'
+    EULER_YZX = 'yzx'
+    EULER_YZY = 'yzy'
+    EULER_ZXY = 'zxy'
+    EULER_ZXZ = 'zxz'
+    EULER_ZYX = 'zyx'
+    EULER_ZYZ = 'zyz'
+
+    FIXED_XYX = 'xyx'
+    FIXED_XYZ = 'zyx'
+    FIXED_XZX = 'xzx'
+    FIXED_XZY = 'yzx'
+    FIXED_YXY = 'yxy'
+    FIXED_YXZ = 'zxy'
+    FIXED_YZX = 'xzy'
+    FIXED_YZY = 'yzy'
+    FIXED_ZXY = 'yxz'
+    FIXED_ZXZ = 'zxz'
+    FIXED_ZYX = 'xyz'
+    FIXED_ZYZ = 'zyz'
+
+
+def vector_2_matrix(
+        vector: Sequence[float],
+        convention: Union[
+            OrientationConvention, str] = OrientationConvention.EULER_ZYX
+) -> np.ndarray:
     """
     Calculate the pose from the position and euler angles.
 
+    :param convention:
     :param vector: transform vector
     :return: 4x4 transform matrix
     """
-    # validate input
-    if not is_1d_sequence(vector, TRANSFORM_VECTOR_LENGTH):
-        raise SequenceError('vector', TRANSFORM_VECTOR_LENGTH)
-
     # get individual variables
-    x, y, z, a, b, c = vector
+    translation_component = vector[:3]
+    rotation_component = vector[-3:]
 
-    # get trig values
-    ca = np.cos(a)
-    sa = np.sin(a)
+    # validate and extract orientation info
+    if isinstance(convention, OrientationConvention):
+        convention = convention.value
+    try:
+        OrientationConvention(convention)
+    except ValueError as e:
+        raise PyboticsError(str(e))
 
-    cb = np.cos(b)
-    sb = np.sin(b)
+    # iterate through rotation order
+    # build rotation matrix
+    transform_matrix = np.eye(TRANSFORM_MATRIX_SHAPE[0])
+    for axis, value in zip(convention, rotation_component):  # type: ignore
+        current_rotation = globals()['rotation_matrix_{}'.format(axis)](value)
+        transform_matrix = np.dot(transform_matrix, current_rotation)
 
-    cc = np.cos(c)
-    sc = np.sin(c)
+    # add translation component
+    transform_matrix[:-1, -1] = translation_component
 
-    # get resulting transform
-    transform = [
-        [cb * cc, -cb * sc, sb, x],
-        [ca * sc + cc * sa * sb, ca * cc - sa * sb * sc, -cb * sa, y],
-        [sa * sc - ca * cc * sb, cc * sa + ca * sb * sc, ca * cb, z],
-        [0, 0, 0, 1]
-    ]
-
-    return np.array(transform, dtype=np.float)
+    return transform_matrix
 
 
-def matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
+def matrix_2_vector(
+        matrix: np.ndarray,
+        convention: OrientationConvention = OrientationConvention.EULER_ZYX
+) -> np.ndarray:
+    """Convert 4x4 matrix to a vector."""
+    # call function
+    try:
+        return \
+            globals()['_matrix_2_{}'.format(convention.name.lower())](matrix)
+    except KeyError:  # pragma: no cover
+        raise NotImplementedError
+
+
+def _matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
     """
     Calculate the equivalent position and euler angles of the given pose.
 
@@ -51,37 +96,30 @@ def matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
     :param matrix: 4x4 transform matrix
     :return: transform vector
     """
-    if not is_4x4_ndarray(matrix):
-        raise Matrix4x4Error('matrix')
-
-    x = matrix[0, 3]
-    y = matrix[1, 3]
-    z = matrix[2, 3]
-
     # solution degenerates near ry = +/- 90deg
-    cos_ry = np.sqrt(matrix[1, 2] ** 2 + matrix[2, 2] ** 2)
-    sin_ry = matrix[0, 2]
+    sb = -matrix[2, 0]
+    cb = np.sqrt(matrix[0, 0] ** 2 + matrix[1, 0] ** 2)
 
-    if np.isclose([cos_ry], [0]):
-        rx = 0.0
-        if sin_ry > 0:
-            ry = np.pi / 2
-            rz = np.arctan2(matrix[1, 0], -matrix[2, 0])
-        else:
-            ry = -np.pi / 2
-            rz = np.arctan2(matrix[1, 0], matrix[2, 0])
+    if np.isclose(cb, 0):
+        a = 0.0
+        b = np.sign(sb) * np.pi / 2
+
+        sc = matrix[0, 1]
+        cc = matrix[1, 1]
+        c = np.sign(sb) * np.arctan2(sc, cc)
     else:
-        sin_rx = -matrix[1, 2] / cos_ry
-        cos_rx = matrix[2, 2] / cos_ry
-        rx = np.arctan2(sin_rx, cos_rx)
+        b = np.arctan2(sb, cb)
 
-        ry = np.arctan2(sin_ry, cos_ry)
+        sa = matrix[1, 0] / cb
+        ca = matrix[0, 0] / cb
+        a = np.arctan2(sa, ca)
 
-        sin_rz = -matrix[0, 1] / cos_ry
-        cos_rz = matrix[0, 0] / cos_ry
-        rz = np.arctan2(sin_rz, cos_rz)
+        sc = matrix[2, 1] / cb
+        cc = matrix[2, 2] / cb
+        c = np.arctan2(sc, cc)
 
-    return np.array([x, y, z, rx, ry, rz])
+    vector = np.hstack((matrix[: -1, -1], [a, b, c]))
+    return vector
 
 
 def wrap_2_pi(angle: float) -> float:
@@ -143,6 +181,11 @@ def rotation_matrix_z(angle: float) -> np.ndarray:
 
 def translation_matrix(xyz: Sequence[float]) -> np.ndarray:
     """Generate a basic 4x4 translation matrix."""
+    # validate
+    if len(xyz) != POSITION_VECTOR_LENGTH:
+        raise PyboticsError(
+            'len(xyz) must be {}'.format(POSITION_VECTOR_LENGTH))
+
     matrix = np.eye(4)
     matrix[:-1, -1] = xyz
 

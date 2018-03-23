@@ -1,23 +1,25 @@
 #!/usr/bin/env bash
 
+# quit script if any test fails
+set -e
+
+# echo each command
+set -x
+
+# check README
+python setup.py check --strict --metadata
+
 # type checking
-mypy --strict pybotics
+mypy --strict .
 
-# linters
+# general linting
+# settings found in .flake8
 flake8
-vulture --exclude=docs,conftest.py,__init__.py .
 
-# quality
-xenon --max-absolute B --max-modules A --max-average A pybotics
+# check dead code
+vulture --min-confidence 80 --exclude=docs,build,.eggs --sort-by-size .
 
-# security & dependencies
+# dependency linting
 pipdeptree -w fail -p pybotics
-bandit -r -v pybotics
+bandit -r pybotics
 pipenv check pybotics
-safety check --full-report \
-    -r requirements/main.txt \
-    -r requirements/example-testing.txt \
-    -r requirements/unit-testing.txt \
-    -r requirements/deployment.txt \
-    -r requirements/versioning.txt \
-    -r requirements/static-testing.txt

@@ -1,2 +1,0 @@
-setuptools==39.0.1
-

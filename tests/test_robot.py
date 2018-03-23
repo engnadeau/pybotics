@@ -1,194 +1,233 @@
 """Test robot."""
-import json
-from itertools import chain
-from typing import Sequence
+from pathlib import Path
 
+import hypothesis
 import numpy as np
+from hypothesis import given
+from hypothesis.extra.numpy import arrays
+from hypothesis.strategies import floats
 from pytest import raises
 
-from pybotics.constants import TRANSFORM_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
-from pybotics.errors import SequenceError, PyboticsError
-from pybotics.geometry import euler_zyx_2_matrix
-from pybotics.kinematic_chain import KinematicChain
+from pybotics.constants import TRANSFORM_MATRIX_SHAPE
+from pybotics.errors import PyboticsError
+from pybotics.predefined_models import UR10
 from pybotics.robot import Robot
-from pybotics.robot_optimization_mask import RobotOptimizationMask
 
 
-def test_fk(serial_robot):
+def test_fk(resources_path: Path):
     """
     Test robot.
 
-    :param serial_robot:
+    :param robot:
     :return:
     """
-    joints = np.deg2rad([10, 20, 30, 40, 50, 60])
-    desired_pose = np.array(
-        [-0.786357, -0.607604, 0.111619, -776.143784,
-         -0.527587, 0.566511, -0.633022, -363.462788,
-         0.321394, -0.556670, -0.766044, -600.056043,
-         0, 0, 0, 1]
-    ).reshape(TRANSFORM_MATRIX_SHAPE)
+    # get resource
+    path = resources_path / 'ur10-joints-poses.csv'
+    data = np.loadtxt(str(path), delimiter=',')
+    if data.ndim == 1:
+        data = np.expand_dims(data, axis=0)
 
-    # test with position argument
-    actual_pose = serial_robot.fk(position=joints)
-    np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
+    # load robot
+    robot = UR10()
 
-    # test with internal position attribute
-    serial_robot.position = joints
-    actual_pose = serial_robot.fk()
-    np.testing.assert_allclose(actual_pose, desired_pose, atol=1e-6)
+    # test
+    for d in data:
+        joints = np.deg2rad(d[:robot.ndof])
+        desired_pose = d[robot.ndof:].reshape(TRANSFORM_MATRIX_SHAPE)
 
-    # test validation
-    with raises(SequenceError):
-        serial_robot.fk(position=np.ones(len(serial_robot) * 2))
+        atol = 1e-3
 
+        # test with position argument
+        actual_pose = robot.fk(q=joints)
+        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
 
-def test_optimization(serial_robot):
-    """
-    Test robot.
-
-    :param serial_robot:
-    :return:
-    """
-    masked_index = 1
-    serial_robot.world_frame.matrix = euler_zyx_2_matrix([1, 2, 3,
-                                                          np.deg2rad(10),
-                                                          np.deg2rad(20),
-                                                          np.deg2rad(30)])
-    serial_robot.tool.matrix = euler_zyx_2_matrix([1, 2, 3,
-                                                   np.deg2rad(10),
-                                                   np.deg2rad(20),
-                                                   np.deg2rad(30)])
-
-    # test mask
-    mask = RobotOptimizationMask(world_frame=True,
-                                 kinematic_chain=True,
-                                 tool=True)
-    serial_robot.optimization_mask = mask
-
-    assert isinstance(serial_robot.optimization_mask.world_frame, Sequence)
-    assert all(serial_robot.optimization_mask.world_frame)
-    assert len(serial_robot.
-               optimization_mask.
-               world_frame) == TRANSFORM_VECTOR_LENGTH
-
-    assert isinstance(serial_robot.optimization_mask.kinematic_chain, Sequence)
-    assert all(serial_robot.optimization_mask.kinematic_chain)
-    assert len(serial_robot.
-               optimization_mask.
-               kinematic_chain) == serial_robot.kinematic_chain.num_parameters
-
-    assert isinstance(serial_robot.optimization_mask.tool, Sequence)
-    assert all(serial_robot.optimization_mask.tool)
-    assert len(serial_robot.
-               optimization_mask.
-               tool) == TRANSFORM_VECTOR_LENGTH
-
-    # test optimization vector
-    # apply mask with single False
-    # check to make sure everything is properly set
-    frame_mask = [True] * TRANSFORM_VECTOR_LENGTH
-    frame_mask[masked_index] = False
-
-    kc_mask = [True] * serial_robot.kinematic_chain.num_parameters
-    kc_mask[masked_index] = False
-
-    mask = RobotOptimizationMask(world_frame=frame_mask,
-                                 kinematic_chain=kc_mask,
-                                 tool=frame_mask)
-    serial_robot.optimization_mask = mask
-
-    # these masked elements should not change after the optimization applied
-    masked_world_element = serial_robot.world_frame.vector()[masked_index]
-    masked_kc_element = serial_robot.kinematic_chain.vector[masked_index]
-    masked_tool_element = serial_robot.tool.vector()[masked_index]
-
-    new_optimization_vector = serial_robot.optimization_vector * 2
-    serial_robot.apply_optimization_vector(new_optimization_vector)
-
-    np.testing. \
-        assert_almost_equal(serial_robot.world_frame.vector()[masked_index],
-                            masked_world_element)
-    np.testing. \
-        assert_almost_equal(serial_robot.
-                            kinematic_chain.vector[masked_index],
-                            masked_kc_element)
-    np.testing. \
-        assert_almost_equal(serial_robot.tool.vector()[masked_index],
-                            masked_tool_element)
-
-    leftover_world_vector = [e for i, e in
-                             enumerate(serial_robot.world_frame.vector()) if
-                             i != masked_index]
-    leftover_kc_vector = [e for i, e in
-                          enumerate(serial_robot.kinematic_chain.vector) if
-                          i != masked_index]
-    leftover_tool_vector = [e for i, e in
-                            enumerate(serial_robot.tool.vector()) if
-                            i != masked_index]
-
-    leftover_vector = list(chain(leftover_world_vector,
-                                 leftover_kc_vector,
-                                 leftover_tool_vector))
-    np.testing.assert_allclose(leftover_vector,
-                               new_optimization_vector,
-                               atol=1e-6)
+        # test with internal position attribute
+        robot.joints = joints
+        actual_pose = robot.fk()
+        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
 
 
-def test_position(serial_robot):
-    """
-    Test robot.
-
-    :param serial_robot:
-    :return:
-    """
-    with raises(SequenceError):
-        serial_robot.position = np.ones(len(serial_robot) * 2)
+def test_repr():
+    """Test."""
+    repr(UR10())
 
 
-def test_position_limits(serial_robot):
-    """
-    Test robot.
+def test_len():
+    """Test."""
+    len(UR10())
 
-    :param serial_robot:
-    :return:
-    """
-    # test normal usage
-    limits = serial_robot.position_limits
-    serial_robot.position_limits = limits * 2
+
+def test_str():
+    """Test."""
+    str(UR10())
+
+
+def test_home_position():
+    """Test."""
+    robot = UR10()
+    x = np.ones(len(robot))
+    robot.home_position = x
+    np.testing.assert_allclose(robot.home_position, x)
+
+
+def test_joint_limits():
+    """Test."""
+    robot = UR10()
+
+    # test setter
+    robot.joint_limits = robot.joint_limits.copy()
+
+    # test errors
+    with raises(PyboticsError):
+        robot.joint_limits = np.zeros(1)
 
     with raises(PyboticsError):
-        serial_robot.position_limits = np.ones((2, len(serial_robot) * 2))
-    with raises(PyboticsError):
-        serial_robot.position_limits = np.ones((1, len(serial_robot)))
+        robot.joints = robot.joint_limits.copy()[1] + 10
 
 
-def test_init():
+def test_compute_joint_torques(planar_robot: Robot):
     """
-    Test robot.
+    Test.
 
+    From EXAMPLE 5.7 of
+    Craig, John J. Introduction to robotics: mechanics and control.
+    Vol. 3. Upper Saddle River: Pearson Prentice Hall, 2005.
     :return:
     """
-    Robot(KinematicChain.from_array(np.ones(4)))
+    # set test force and angles
+    force = [-100, -200, 0]
+    moment = [0] * 3
+    wrench = force + moment
+    joint_angles = np.deg2rad([30, 60, 0])
+
+    # get link lengths
+    lengths = [
+        planar_robot.kinematic_chain.links[1].a,
+        planar_robot.kinematic_chain.links[2].a
+    ]
+
+    # calculate expected torques
+    expected_torques = [
+        lengths[0] * np.sin(joint_angles[1]) * force[0] +
+        (lengths[1] + lengths[0] *
+         np.cos(joint_angles[1])) * force[1],
+        lengths[1] * force[1],
+        0
+    ]
+
+    # test
+    actual_torques = planar_robot.compute_joint_torques(q=joint_angles,
+                                                        wrench=wrench)
+    np.testing.assert_allclose(actual_torques, expected_torques)
+
+    planar_robot.joints = joint_angles
+    actual_torques = planar_robot.compute_joint_torques(wrench=wrench)
+    np.testing.assert_allclose(actual_torques, expected_torques)
 
 
-def test_repr(serial_robot):
-    s = repr(serial_robot)
+@given(q=arrays(shape=(3,),
+                dtype=float,
+                elements=floats(max_value=1e9,
+                                min_value=-1e9,
+                                allow_nan=False,
+                                allow_infinity=False
+                                )
+                )
+       )
+def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
+    """Test."""
+    # get link lengths
+    lengths = [
+        planar_robot.kinematic_chain.links[1].a,
+        planar_robot.kinematic_chain.links[2].a
+    ]
 
-    # check for important attributes
-    assert '_position' in s
-    assert '_position_limits' in s
-    assert 'world_frame' in s
-    assert 'kinematic_chain' in s
-    assert 'tool' in s
+    # example from Craig has last joint set to 0
+    q[-1] = 0
 
-    # check if valid json
-    json.loads(s)
+    s0 = np.sin(q[0])
+    c0 = np.cos(q[0])
 
-    # check str()
-    assert str(serial_robot) == s
+    s01 = np.sin(q[0] + q[1])
+    c01 = np.cos(q[0] + q[1])
+
+    expected = np.zeros((6, 3))
+    expected[0, 0] = -lengths[0] * s0 - lengths[1] * s01
+    expected[0, 1] = - lengths[1] * s01
+    expected[1, 0] = lengths[0] * c0 + lengths[1] * c01
+    expected[1, 1] = lengths[1] * c01
+    expected[-1, :] = 1
+
+    actual = planar_robot.jacobian_world(q)
+    np.testing.assert_allclose(actual, expected, atol=1e-3)
 
 
-def test_to_json(serial_robot: Robot):
-    js = serial_robot.to_json()
-    json.loads(js)
+@given(q=arrays(shape=(3,), dtype=float,
+                elements=floats(allow_nan=False, allow_infinity=False)))
+def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
+    """Test."""
+    # get link lengths
+    lengths = [
+        planar_robot.kinematic_chain.links[1].a,
+        planar_robot.kinematic_chain.links[2].a
+    ]
+
+    # example from Craig has last joint set to 0
+    q[-1] = 0
+
+    s1 = np.sin(q[1])
+    c1 = np.cos(q[1])
+
+    expected = np.zeros((6, 3))
+    expected[0, 0] = lengths[0] * s1
+    expected[1, 0] = lengths[0] * c1 + lengths[1]
+    expected[1, 1] = lengths[1]
+    expected[-1, :] = 1
+
+    actual = planar_robot.jacobian_flange(q)
+    np.testing.assert_allclose(actual, expected, atol=1e-6)
+
+
+@given(
+    q=arrays(shape=(UR10.kinematic_chain.ndof,), dtype=float,
+             elements=floats(allow_nan=False,
+                             allow_infinity=False,
+                             max_value=np.pi,
+                             min_value=-np.pi)),
+    q_offset=arrays(shape=(UR10.kinematic_chain.ndof,), dtype=float,
+                    elements=floats(allow_nan=False,
+                                    allow_infinity=False,
+                                    max_value=np.deg2rad(1),
+                                    min_value=np.deg2rad(-1)))
+)
+@hypothesis.settings(deadline=None)
+def test_ik(q: np.ndarray, q_offset: np.ndarray):
+    """Test."""
+    robot = UR10()
+    pose = robot.fk(q)
+
+    # IK is hard to solve without a decent seed
+    q_actual = robot.ik(pose, q=robot.clamp_joints(q + q_offset))
+
+    if q_actual is None:
+        # ik couldn't be solved
+        # don't fail test
+        return
+
+    actual_pose = robot.fk(q_actual)
+
+    # test the matrix with lower accuracy
+    # rotation components are hard to achieve when x0 isn't good
+    np.testing.assert_allclose(actual_pose, pose, atol=1)
+
+    # test the position with higher accuracy
+    desired_position = pose[:-1, -1]
+    actual_position = actual_pose[:-1, -1]
+    np.testing.assert_allclose(actual_position, desired_position, atol=1e-1)
+
+
+def test_random_joints():
+    """Test."""
+    robot = UR10()
+    robot.random_joints()
+    robot.random_joints(in_place=True)

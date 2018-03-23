@@ -1,6 +1,12 @@
-# travis VM config
 dist: trusty
 sudo: false
+
+# Travis only clones the latest 50 commits. We need the full repository to
+# compute the version string from the git metadata:
+# https://github.com/travis-ci/travis-ci/issues/3412#issuecomment-83993903
+# https://github.com/pypa/setuptools_scm/issues/93
+git:
+  depth: 9999999
 
 language: python
 cache: pip
@@ -18,7 +24,6 @@ addons:
 notifications:
   email: false
   
-# unit tests
 python:
 - 3.4
 - 3.5
@@ -34,79 +39,62 @@ matrix:
   - python: 3.7-dev
   - python: nightly
 
-stages:
-- static-test
-- test
-- example-test
-- deploy
+before_install:
+# if not a tag, change version to timestamp for test-pypi
+- echo "TRAVIS_TAG = $TRAVIS_TAG"
+- if [ -z "$TRAVIS_TAG" ]; then export SETUPTOOLS_SCM_PRETEND_VERSION=$(date +%Y%m%d%H%M$S); fi
+- echo "SETUPTOOLS_SCM_PRETEND_VERSION = $SETUPTOOLS_SCM_PRETEND_VERSION"
 
 install:
-- pip install -r requirements/main.txt
-- pip install -r requirements/unit-testing.txt
-- pip install -r requirements/versioning.txt
-- python utilities/write_version.py
-- pip install -e .
+- pip install -r requirements.txt
+- python setup.py install
+
+before_script:
+- chmod +x utilities/run-static-tests.sh
 
 script:
-- pytest tests/
+# basic usage test (without dev packages)
+- python examples/basic_usage.py
+# dev requires are installed after basic use test
+- pip install -r dev-requirements.txt
+# unit tests
+- python setup.py test
+# specific tests
+- if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./utilities/run-static-tests.sh; fi
+- if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then python utilities/test_jupyter_examples.py; fi
 
 after_success:
 - coveralls
 - codecov
 
-# additional jobs
-jobs:
-  include:
-  - stage: static-test
+deploy:
+- provider: pypi
+  skip_cleanup: true
+  user: nnadeau
+  password:
+    secure: "gN+oTjGRS3snYKcVtgy11GgdKHOVTygRxFLz0GCf0FLgN20FJpaTAq92b4+i1n2akvu+0spIE91UO7Ii39InLR79nJXgJZ8Z1XsRuf8lZ44dkvy/jaUdsMgYeLKGGTXpc/8CdK2DaU4BMSVGNlzIDPg8HySSv1sAAR4kQ070p1Gl/XwT0GvX/r0WrfA023rWlG9HnOnq8c/MtZVRX9SPxxDGv4YhWSZsIAyO6zawbzaOFtmamX2Pc13m1tWftpYtGWWGKW7Kmf9/zW7sbXbcikyKDB66lNyB2ARrN1l9OdRXkjHN457YpMOxAg71azazcim6JdarYtjeVpuS1b98UVReE897uSdylzp1sq99ZMJ5GFpu345K7sShvPH6DCJOQnaoiXQSW60oQ8BqS6NpmxfKsOj3KOXSbbV8S2ygr5FcbTpsxD3d9qOGTo/DcwN2/2nVxXUO6ZjsPCaKNjTFk6Mwv9v17lGQGebq4hG4Za/k5T78B91ELSqDfZ2+x+kJzJ50Vd1yfPayxh4mEyAAqnnVYELuxIbXx+AZjMf9hZyEeKkCIebQU++LVoJraYSdG6YbhX2qBjj4r0/YmcskOrZO3SmEvCsMV/kgZMwEcgH0u/cRxUPkvGKTEgiBtSJ5K9ytG6JmS15nFy6SaYPtXeNnBaAdLtmF6PmEgF2CL4g="
+  server: https://test.pypi.org/legacy/
+  on:
+    all_branches: true
+    distributions: sdist bdist_wheel
+    repo: nnadeau/pybotics
     python: 3.6
-    install:
-    - pip install -r requirements/static-testing.txt
-    script:
-    - chmod +x utilities/run-static-tests.sh
-    - ./utilities/run-static-tests.sh
-  - stage: example-test
+- provider: pypi
+  skip_cleanup: true
+  user: nnadeau
+  password:
+    secure: "xJKEKNbGAlBcC/d6Z+3pRTSLA1KMhtb8ayVbsuyDa0tbmoZij7n6e3xbFx7matI0eB38YXrdP0gVO60T7EruLPlkyJSWlJMF4citdv/v5wnxZjzXTfYHY+4ym9uA+jHpZEyBiQY6Nfoj3FhqMUxXxwG0OI44wrMHFa8wLTHkCNJxRTRh63JyiGddqfwtgrsqiNRS60gVvYf+xjg09YjY4039TuaFf/HMJkJuivpgQBl2IbPxKYiGphNvDwxz2V6h0TrJCR/yK+3mV+2yaBVqSTaNQfmHf+VvUij7YX7POmrmMVif4Oxd1cFQoevnpZOOC7r0Bpg5Ts/bWPQKYn4+bPPm4e0e6Z1dmknLVInVLBGV4NzcbWsTuDqBvxZNOz+R7q9BKI7SVetYb0ZP1ceD5xORk3uNU5ROmPrXYC3+XCnHW8tmuewjFyzy7R62a7bfXBaWUptG0SFNn65KEVJvNE9d17hPpMO49Wmp5dHfp/Yqklr2KI+PZOmET0uvODUqB6F1bIYAShkUDS8Pq3fTu7uX5/wqoQ8kUHTi8xtnzjSnhrYTpbiSroz2rVeuHYlBdXYOoTUwJGN+6w/srijHKyAdUpiQMR7h46L4VIFqoUoq4W0ZiPwfsM3fWsTCtIwMZSH7rQDHWSIOnrAlv93c3kxwmkhsl1pRxHVQ7AwogUg="
+  on:
+    tags: true
+    branch: master
+    distributions: sdist bdist_wheel
+    repo: nnadeau/pybotics
     python: 3.6
-    install:
-    - pip install -r requirements/main.txt
-    - pip install -r requirements/example-testing.txt
-    - pip install -e .
-    script:
-    - python utilities/test_ipython_examples.py
-  - stage: deploy
+- provider: releases
+  api_key:
+    secure: "T22m7+XHswKDx1NmONF0S+DeUW9OmSt08yzQlVZNg2d9Y3M/RNGnAhri2zh2GuqLKXCCegBMVMqXwOhrgXgOAUiqu58Lc/mEL8FJvb6Dd32Y8qZE17OhY/rta4DFJc6otJSFZB+EZva8Y3o61UBq67OD93W+7JOxhB/sSYJeajVRqRC85j6g4j3cX3KQWQH2teLGNLQ1fTaDf3pfxoF8yt5J78yv6FrVsHtU/Ya7wkqEyciSvoIoccH3T+2OFaqSblaSrZ8lVb38F6IZssQ83zAFg8HwMr6bSSYXa++I41kwiaCaFPBUQrPnoQeU6I4HO+SXNYnmpprXfJZhl17S7RhcB70DHfgR4RqrT4g2XgiMqwShSzfpgujC8SRDG8+HUbETcsEuHpDAWdo/uvLSppl4ba5BnbHFbTd/ggzrz2yWuihGD1J81d5um+Pgiu3N216tZKGozszqyp0ZxwZw9BxFq81SBRw7lToPhZltex29jdDR+9x/JEVcZ0hs32N2K12N2a3FeCPzlikUysJfTo9vbHH4E9aIijx0Xr6nqp6kSsCgNBFFf2QLjaavES5TYSctupD/5Uaz3VGkTjXrTL8y8XGwN7YAwnrpuiApGX61OY0UdSwnm/XI3yNjnQkObvYyx7/xuV2koLsA1vO+bUg66fQ6hul3ll9uTg1vWJE="
+  on:
+    tags: true
+    branch: master
+    repo: nnadeau/pybotics
     python: 3.6
-    install:
-    - pip install -r requirements/deployment.txt
-    - pip install -r requirements/versioning.txt
-    script:
-    - python utilities/write_version.py
-    deploy:
-    - provider: pypi
-      skip_cleanup: true
-      user: nnadeau
-      password:
-        secure: "gN+oTjGRS3snYKcVtgy11GgdKHOVTygRxFLz0GCf0FLgN20FJpaTAq92b4+i1n2akvu+0spIE91UO7Ii39InLR79nJXgJZ8Z1XsRuf8lZ44dkvy/jaUdsMgYeLKGGTXpc/8CdK2DaU4BMSVGNlzIDPg8HySSv1sAAR4kQ070p1Gl/XwT0GvX/r0WrfA023rWlG9HnOnq8c/MtZVRX9SPxxDGv4YhWSZsIAyO6zawbzaOFtmamX2Pc13m1tWftpYtGWWGKW7Kmf9/zW7sbXbcikyKDB66lNyB2ARrN1l9OdRXkjHN457YpMOxAg71azazcim6JdarYtjeVpuS1b98UVReE897uSdylzp1sq99ZMJ5GFpu345K7sShvPH6DCJOQnaoiXQSW60oQ8BqS6NpmxfKsOj3KOXSbbV8S2ygr5FcbTpsxD3d9qOGTo/DcwN2/2nVxXUO6ZjsPCaKNjTFk6Mwv9v17lGQGebq4hG4Za/k5T78B91ELSqDfZ2+x+kJzJ50Vd1yfPayxh4mEyAAqnnVYELuxIbXx+AZjMf9hZyEeKkCIebQU++LVoJraYSdG6YbhX2qBjj4r0/YmcskOrZO3SmEvCsMV/kgZMwEcgH0u/cRxUPkvGKTEgiBtSJ5K9ytG6JmS15nFy6SaYPtXeNnBaAdLtmF6PmEgF2CL4g="
-      server: https://test.pypi.org/legacy/
-      on:
-        all_branches: true
-        distributions: sdist bdist_wheel
-        repo: nnadeau/pybotics
-        python: 3.6
-    - provider: pypi
-      skip_cleanup: true
-      user: nnadeau
-      password:
-        secure: "xJKEKNbGAlBcC/d6Z+3pRTSLA1KMhtb8ayVbsuyDa0tbmoZij7n6e3xbFx7matI0eB38YXrdP0gVO60T7EruLPlkyJSWlJMF4citdv/v5wnxZjzXTfYHY+4ym9uA+jHpZEyBiQY6Nfoj3FhqMUxXxwG0OI44wrMHFa8wLTHkCNJxRTRh63JyiGddqfwtgrsqiNRS60gVvYf+xjg09YjY4039TuaFf/HMJkJuivpgQBl2IbPxKYiGphNvDwxz2V6h0TrJCR/yK+3mV+2yaBVqSTaNQfmHf+VvUij7YX7POmrmMVif4Oxd1cFQoevnpZOOC7r0Bpg5Ts/bWPQKYn4+bPPm4e0e6Z1dmknLVInVLBGV4NzcbWsTuDqBvxZNOz+R7q9BKI7SVetYb0ZP1ceD5xORk3uNU5ROmPrXYC3+XCnHW8tmuewjFyzy7R62a7bfXBaWUptG0SFNn65KEVJvNE9d17hPpMO49Wmp5dHfp/Yqklr2KI+PZOmET0uvODUqB6F1bIYAShkUDS8Pq3fTu7uX5/wqoQ8kUHTi8xtnzjSnhrYTpbiSroz2rVeuHYlBdXYOoTUwJGN+6w/srijHKyAdUpiQMR7h46L4VIFqoUoq4W0ZiPwfsM3fWsTCtIwMZSH7rQDHWSIOnrAlv93c3kxwmkhsl1pRxHVQ7AwogUg="
-      on:
-        tags: true
-        branch: master
-        distributions: sdist bdist_wheel
-        repo: nnadeau/pybotics
-        python: 3.6
-    - provider: releases
-      api_key:
-        secure: T22m7+XHswKDx1NmONF0S+DeUW9OmSt08yzQlVZNg2d9Y3M/RNGnAhri2zh2GuqLKXCCegBMVMqXwOhrgXgOAUiqu58Lc/mEL8FJvb6Dd32Y8qZE17OhY/rta4DFJc6otJSFZB+EZva8Y3o61UBq67OD93W+7JOxhB/sSYJeajVRqRC85j6g4j3cX3KQWQH2teLGNLQ1fTaDf3pfxoF8yt5J78yv6FrVsHtU/Ya7wkqEyciSvoIoccH3T+2OFaqSblaSrZ8lVb38F6IZssQ83zAFg8HwMr6bSSYXa++I41kwiaCaFPBUQrPnoQeU6I4HO+SXNYnmpprXfJZhl17S7RhcB70DHfgR4RqrT4g2XgiMqwShSzfpgujC8SRDG8+HUbETcsEuHpDAWdo/uvLSppl4ba5BnbHFbTd/ggzrz2yWuihGD1J81d5um+Pgiu3N216tZKGozszqyp0ZxwZw9BxFq81SBRw7lToPhZltex29jdDR+9x/JEVcZ0hs32N2K12N2a3FeCPzlikUysJfTo9vbHH4E9aIijx0Xr6nqp6kSsCgNBFFf2QLjaavES5TYSctupD/5Uaz3VGkTjXrTL8y8XGwN7YAwnrpuiApGX61OY0UdSwnm/XI3yNjnQkObvYyx7/xuV2koLsA1vO+bUg66fQ6hul3ll9uTg1vWJE=
-      on:
-        tags: true
-        branch: master
-        repo: nnadeau/pybotics
-        python: 3.6

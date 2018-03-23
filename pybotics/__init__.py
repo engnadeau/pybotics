@@ -1,38 +1,21 @@
 """Pybotics modules."""
-from . import calibration
-from . import constants
-from . import errors
-from . import geometry
-from . import validation
-from .frame import Frame
-from .kinematic_chain import KinematicChain
-from .kinematic_pair import KinematicPair
-from .link import Link
-from .link_convention import LinkConvention
-from .mdh_link import MDHLink
-from .orientation_convention import OrientationConvention
-from .revolute_mdh_link import RevoluteMDHLink
-from .robot import Robot
-from .robot_optimization_mask import RobotOptimizationMask
-from .tool import Tool
-from . import robot_model
+import logging
 
-__all__ = [
-    'calibration',
-    'constants',
-    'errors',
-    'Frame',
-    'geometry',
-    'robot_model',
-    'KinematicChain',
-    'KinematicPair',
-    'Link',
-    'LinkConvention',
-    'MDHLink',
-    'OrientationConvention',
-    'RevoluteMDHLink',
-    'Robot',
-    'RobotOptimizationMask',
-    'Tool',
-    'validation',
-]
+from pkg_resources import get_distribution, DistributionNotFound
+
+# setup version info
+try:
+    __version__ = get_distribution(__name__).version
+except DistributionNotFound:  # pragma: no cover
+    # package is not installed
+    pass
+
+# import modules
+from .kinematic_chain import KinematicChain
+from .robot import Robot
+from .tool import Tool
+
+__all__ = ['KinematicChain', 'Robot', 'Tool']
+
+# set logging
+logging.getLogger(__name__).addHandler(logging.NullHandler())

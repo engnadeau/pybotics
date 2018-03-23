@@ -1,32 +1,28 @@
-"""Test tool."""
+"""Test."""
 import numpy as np
 from pytest import raises
 
-from pybotics.constants import POSITION_VECTOR_LENGTH
-from pybotics.errors import SequenceError
+from pybotics import Tool
+from pybotics.errors import PyboticsError
+from pybotics.geometry import matrix_2_vector
 
 
-def test_cg(tool):
-    """
-    Test tool.
+def test_tool():
+    """Test."""
+    tool = Tool()
 
-    :param tool:
-    :return:
-    """
-    new_cg = [9, 9, 9]
-    tool.cg = new_cg
-    np.testing.assert_allclose(tool.cg, new_cg)
+    cg = [1, 2, 3]
+    tool.cg = cg
+    np.testing.assert_allclose(tool.cg, cg)
 
-    with raises(SequenceError):
-        tool.cg = np.ones(POSITION_VECTOR_LENGTH * 2)
+    with raises(PyboticsError):
+        tool.cg = [1, 2, 3, 4]
 
+    with raises(PyboticsError):
+        tool.matrix = np.eye(5)
 
-def test_mass(tool):
-    """
-    Test tool.
+    p = [1, 2, 3]
+    tool.position = p
+    np.testing.assert_allclose(tool.position, p)
 
-    :param tool:
-    :return:
-    """
-    m = tool.mass
-    tool.mass = m
+    np.testing.assert_allclose(tool.vector, matrix_2_vector(tool.matrix))
