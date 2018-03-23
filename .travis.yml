@@ -61,7 +61,6 @@ script:
 - python setup.py test
 # specific tests
 - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./utilities/run-static-tests.sh; fi
-- if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then python utilities/test_jupyter_examples.py; fi
 
 after_success:
 - coveralls
