@@ -24,5 +24,5 @@ scikit-learn==0.19.1
 scipy==1.0.0
 setuptools==39.0.1
 setuptools_scm==1.16.1
-twine==1.11.0rc1
+twine==1.11.0
 vulture==0.26
