@@ -174,11 +174,12 @@ class MDHKinematicChain(KinematicChain):
 
     def transforms(self,
                    q: Optional[Sequence[float]] = None
-                   ) -> Sequence[np.ndarray]:
+                   ) -> np.ndarray:
         """Get sequency of 4x4 transforms."""
         q = np.zeros(len(self)) if q is None else q
-        transforms = [link.transform(p) for link, p in
-                      zip(self._links, q)]  # type: ignore
+        transforms = np.array(
+            [link.transform(p) for link, p in zip(self._links, q)]
+        )
         return transforms
 
     @property
