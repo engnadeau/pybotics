@@ -17,7 +17,7 @@ mypy --strict .
 flake8
 
 # check dead code
-vulture --min-confidence 80 --exclude=docs,build --sort-by-size .
+vulture --min-confidence 80 --exclude=docs,build,.eggs --sort-by-size .
 
 # dependency linting
 pipdeptree -w fail -p pybotics

@@ -3,8 +3,10 @@ count = True
 verbose = 1
 exclude =
     docs,
-    examples,
-    build
+    build,
+    .tox,
+    __pycache__,
+    .eggs
 show-source = True
 statistics = True
 max-complexity = 10
