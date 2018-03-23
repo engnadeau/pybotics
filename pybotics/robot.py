@@ -71,6 +71,22 @@ class Robot(Sized):
         """
         return self.__repr__()
 
+    def transforms(self,
+                   q: Optional[Sequence[float]] = None
+                   ) -> Sequence[np.ndarray]:
+        """Gather transforms."""
+        # validate
+        q = self.joints if q is None else q
+
+        # gather transforms
+        # noinspection PyListCreation
+        xs = []
+        xs.append(self.world_frame)
+        xs.extend(self.kinematic_chain.transforms(q))
+        xs.append(self.tool.matrix)
+
+        return xs
+
     def fk(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
         """
         Compute the forward kinematics of a given position.
