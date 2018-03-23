@@ -7,7 +7,7 @@ flake8-import-order==0.17.1
 flake8==3.5.0
 hypothesis==3.44.16
 jupyter==1.0.0
-matplotlib==2.1.1
+matplotlib==2.2.2
 mccabe==0.6.1
 mypy==0.570
 pandas==0.22.0
