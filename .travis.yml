@@ -39,6 +39,12 @@ matrix:
   - python: 3.7-dev
   - python: nightly
 
+before_install:
+# if not a tag, change version to timestamp for test-pypi
+- echo "TRAVIS_TAG = $TRAVIS_TAG"
+- if [ -z "$TRAVIS_TAG" ]; then export SETUPTOOLS_SCM_PRETEND_VERSION=$(date +%Y%m%d%H%M$S); fi
+- echo "SETUPTOOLS_SCM_PRETEND_VERSION = $SETUPTOOLS_SCM_PRETEND_VERSION"
+
 install:
 - pip install -r requirements.txt
 - python setup.py install
@@ -60,12 +66,6 @@ script:
 after_success:
 - coveralls
 - codecov
-
-before_deploy:
-# if not a tag, change version to timestamp for test-pypi
-- echo 'TRAVIS_TAG = $TRAVIS_TAG'
-- if [ -z "$TRAVIS_TAG" ]; then export SETUPTOOLS_SCM_PRETEND_VERSION=$(date +%Y%m%d%H%M$S); fi
-- echo 'SETUPTOOLS_SCM_PRETEND_VERSION = $SETUPTOOLS_SCM_PRETEND_VERSION'
 
 deploy:
 - provider: pypi
