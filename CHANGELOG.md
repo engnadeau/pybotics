@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.6.0] - 2018-03-23
+### Added
+- Jacobian methods
+- Basic usage script: `examples/basic_usage.py`
+- `pybotics.__version__`
+- `least_squares` IK method
+- `Robot.home_joints`
+- Various setters/getters
+- More angle conventions and conversions
+- Various useful `__repr__`
+
+### Changed
+- Simplified requirements files
+- Simplified `pybotics/__init__.py` structure
+- Versions now managed by `setuptools_scm`
+- Simplified overall API, see examples for more detail
+- Optimization vector/mask only exist in the context of `OptimizationHandler`
+- `Robot.random_joints()` can return array or has `inplace` flag
+
+### Fixed
+- Joint limits are checked when setting `Robot.joints`
+- Various CI and test improvements
+
 ## [0.5.0] - 2017-11-18
 ### Fixed
 - [Implicit `GitPython` dependency](https://github.com/nnadeau/pybotics/issues/214)
