@@ -1,28 +1,23 @@
 version: 2
 
 jobs:
-  build:
+  linux:
     docker:
-    - image: circleci/python:3.6.1
-
-    working_directory: ~/repo
-
+    - image: circleci/python:3
     steps:
     - checkout
-
-    - run:
-        name: install
-        command: |
-          python3 -m venv venv
-          . venv/bin/activate
-          python -V
-          pip install -r requirements.txt
-          pip install -r dev-requirements.txt
-          python setup.py install
-
-    - run:
-        name: test
-        command: |
-          . venv/bin/activate
-          pip list
-          python setup.py test
+    - run: python -V
+    - run: pip install -r requirements.txt
+    - run: pip install -r dev-requirements.txt
+    - run: python setup.py install
+    - run: python setup.py test
+  osx:
+    macos:
+      xcode: '9.2'
+    steps:
+    - checkout
+    - run: python -V
+    - run: pip install -r requirements.txt
+    - run: pip install -r dev-requirements.txt
+    - run: python setup.py install
+    - run: python setup.py test
