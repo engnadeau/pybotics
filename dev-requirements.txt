@@ -23,6 +23,6 @@ readme_renderer==17.4
 scikit-learn==0.19.1
 scipy==1.0.0
 setuptools==39.0.1
-setuptools_scm==1.16.1
+setuptools_scm==1.17.0
 twine==1.11.0rc1
 vulture==0.26
