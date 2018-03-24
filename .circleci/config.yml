@@ -21,3 +21,10 @@ jobs:
     - run: pip install -r dev-requirements.txt
     - run: python setup.py install
     - run: python setup.py test
+
+workflows:
+  version: 2
+  test:
+    jobs:
+    - linux
+    - osx
