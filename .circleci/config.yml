@@ -7,6 +7,9 @@ jobs:
     steps:
     - checkout
     - run: python -V
+    - run: python -m venv venv
+    - run: . venv/bin/activate
+    - run: python -V
     - run: pip install -r requirements.txt
     - run: pip install -r dev-requirements.txt
     - run: python setup.py install
@@ -16,6 +19,9 @@ jobs:
       xcode: '9.2'
     steps:
     - checkout
+    - run: python -V
+    - run: python -m venv venv
+    - run: . venv/bin/activate
     - run: python -V
     - run: pip install -r requirements.txt
     - run: pip install -r dev-requirements.txt
