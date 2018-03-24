@@ -25,3 +25,4 @@ setuptools==39.0.1
 setuptools_scm==1.16.1
 twine==1.11.0rc1
 vulture==0.26
+wheel==0.30.0
