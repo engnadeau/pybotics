@@ -1,4 +1,5 @@
 """Predefined robot models."""
+from copy import deepcopy
 from typing import Any
 
 import numpy as np  # type: ignore
@@ -25,7 +26,7 @@ class KukaLBRiiwa7(Robot):
 
     def __init__(self, **kwargs: Any) -> None:
         """Init robot."""
-        super().__init__(self.kinematic_chain, **kwargs)
+        super().__init__(deepcopy(self.kinematic_chain), **kwargs)
 
 
 class MecademicMeca500(Robot):
@@ -45,7 +46,7 @@ class MecademicMeca500(Robot):
 
     def __init__(self, **kwargs: Any) -> None:
         """Init robot."""
-        super().__init__(self.kinematic_chain, **kwargs)
+        super().__init__(deepcopy(self.kinematic_chain), **kwargs)
 
 
 class PUMA560(Robot):
@@ -65,7 +66,7 @@ class PUMA560(Robot):
 
     def __init__(self, **kwargs: Any) -> None:
         """Init robot."""
-        super().__init__(self.kinematic_chain, **kwargs)
+        super().__init__(deepcopy(self.kinematic_chain), **kwargs)
 
 
 class UR10(Robot):
@@ -85,4 +86,4 @@ class UR10(Robot):
 
     def __init__(self, **kwargs: Any) -> None:
         """Init robot."""
-        super().__init__(self.kinematic_chain, **kwargs)
+        super().__init__(deepcopy(self.kinematic_chain), **kwargs)
