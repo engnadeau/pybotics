@@ -10,7 +10,7 @@ mccabe==0.6.1
 mypy==0.580
 pep8-naming==0.5.0
 pipdeptree==0.10.1
-pipenv==9.0.3
+pipenv==11.9.0
 pytest==3.3.2
 pytest-cov==2.5.1
 pytest-randomly==1.2.3
