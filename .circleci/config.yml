@@ -30,7 +30,7 @@ jobs:
     - run:
         name: install
         command: |
-          brew install python3
+          brew upgrade python
           python3 -V
           python3 -m venv venv
           . venv/bin/activate
