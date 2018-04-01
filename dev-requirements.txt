@@ -15,7 +15,7 @@ pytest==3.3.2
 pytest-cov==2.5.1
 pytest-randomly==1.2.3
 pytest-runner==4.2
-readme_renderer==17.4
+readme_renderer==18.0
 scipy==1.0.1
 setuptools==39.0.1
 twine==1.11.0
