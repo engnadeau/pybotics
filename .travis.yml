@@ -47,27 +47,23 @@ before_install:
 - echo "SETUPTOOLS_SCM_PRETEND_VERSION = $SETUPTOOLS_SCM_PRETEND_VERSION"
 
 install:
-- pip install -U pipenv
-- pipenv install -r requirements.txt
-- pipenv shell
+- pip install --upgrade --upgrade-strategy=only-if-needed -r requirements.txt
 - python setup.py install
 
 before_script:
 - chmod +x utilities/run-static-tests.sh
 
 script:
-- pipenv shell
 # basic usage test (without dev packages)
 - python examples/basic_usage.py
 # dev requires are installed after basic use test
-- pipenv install --dev -r dev-requirements.txt
+- pip install --upgrade --upgrade-strategy=only-if-needed -r dev-requirements.txt
 # unit tests
 - python setup.py test
 # specific tests
 - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./utilities/run-static-tests.sh; fi
 
 after_success:
-- pipenv shell
 - coveralls
 - codecov
 
