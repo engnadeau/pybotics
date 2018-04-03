@@ -20,6 +20,8 @@ flake8
 vulture --min-confidence 80 --exclude=docs,build,.eggs --sort-by-size .
 
 # dependency linting
+pip list
 pipdeptree -w fail -p pybotics
 bandit -r pybotics
 pipenv check pybotics
+pipenv graph
