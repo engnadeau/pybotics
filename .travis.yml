@@ -23,7 +23,7 @@ addons:
 
 notifications:
   email: false
-  
+
 python:
 - 3.4
 - 3.5
@@ -40,13 +40,14 @@ matrix:
   - python: nightly
 
 before_install:
+- pip list
 # if not a tag, change version to timestamp for test-pypi
 - echo "TRAVIS_TAG = $TRAVIS_TAG"
 - if [ -z "$TRAVIS_TAG" ]; then export SETUPTOOLS_SCM_PRETEND_VERSION=$(date +%Y%m%d%H%M$S); fi
 - echo "SETUPTOOLS_SCM_PRETEND_VERSION = $SETUPTOOLS_SCM_PRETEND_VERSION"
 
 install:
-- pip install -r requirements.txt
+- pip install --upgrade --upgrade-strategy=only-if-needed -r requirements.txt
 - python setup.py install
 
 before_script:
@@ -56,7 +57,7 @@ script:
 # basic usage test (without dev packages)
 - python examples/basic_usage.py
 # dev requires are installed after basic use test
-- pip install -r dev-requirements.txt
+- pip install --upgrade --upgrade-strategy=only-if-needed -r dev-requirements.txt
 # unit tests
 - python setup.py test
 # specific tests
