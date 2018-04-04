@@ -67,9 +67,6 @@ after_success:
 - coveralls
 - codecov
 
-before_deploy:
-- pip list
-
 deploy:
 - provider: pypi
   distributions: sdist bdist_wheel
@@ -101,6 +98,3 @@ deploy:
     branch: master
     repo: nnadeau/pybotics
     python: 3.6
-
-after_deploy:
-- pip list
