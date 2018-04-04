@@ -79,7 +79,7 @@ deploy:
   server: https://test.pypi.org/legacy/
   on:
     all_branches: true
-    distributions: sdist
+    distributions: "sdist bdist_wheel"
     repo: nnadeau/pybotics
     python: 3.6
 - provider: pypi
