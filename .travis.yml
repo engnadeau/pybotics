@@ -69,6 +69,7 @@ after_success:
 
 deploy:
 - provider: pypi
+  distributions: sdist bdist_wheel
   skip_cleanup: true
   user: nnadeau
   password:
@@ -76,10 +77,10 @@ deploy:
   server: https://test.pypi.org/legacy/
   on:
     all_branches: true
-    distributions: sdist bdist_wheel
     repo: nnadeau/pybotics
     python: 3.6
 - provider: pypi
+  distributions: sdist bdist_wheel
   skip_cleanup: true
   user: nnadeau
   password:
@@ -87,7 +88,6 @@ deploy:
   on:
     tags: true
     branch: master
-    distributions: sdist bdist_wheel
     repo: nnadeau/pybotics
     python: 3.6
 - provider: releases
