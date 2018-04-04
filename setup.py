@@ -18,7 +18,7 @@ def main() -> None:
           long_description=get_readme(),
           long_description_content_type='text/markdown',
           use_scm_version=True,
-          setup_requires=['setuptools_scm'],
+          setup_requires=['setuptools', 'setuptools_scm'],
           install_requires=get_requirements(),  # type: ignore
           tests_require=['pytest'],
           classifiers=[
