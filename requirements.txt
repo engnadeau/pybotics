@@ -1,3 +1,5 @@
 numpy>=1.9.0
 typing>=3.5.0
 scipy>=1.0.0
+setuptools>=38.6.0
+setuptools_scm>=1.16.0
