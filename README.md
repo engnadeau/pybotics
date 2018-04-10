@@ -1,4 +1,4 @@
-# ![](media/robotic-arm.png) pybotics
+# ![](https://raw.githubusercontent.com/nnadeau/pybotics/master/media/robotic-arm.png) pybotics
 The Python Toolbox for Robotics
 
 |Component|Badges|
@@ -27,8 +27,8 @@ pip install pybotics
 ```
 
 ### Applications & Examples
-- [Kinematics](examples/forward_kinematics.ipynb)
-- [Calibration](examples/calibration.ipynb)
+- [Kinematics](https://pybotics.readthedocs.io/en/latest/examples/modules.html)
+- [Calibration](https://pybotics.readthedocs.io/en/latest/examples/modules.html)
 - Trajectory and path planning
 
 ## Featured In
