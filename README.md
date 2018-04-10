@@ -1,4 +1,4 @@
-# ![](media/robotic-arm.png) pybotics
+# ![](https://raw.githubusercontent.com/nnadeau/pybotics/master/media/robotic-arm.png) pybotics
 The Python Toolbox for Robotics
 
 |Component|Badges|
