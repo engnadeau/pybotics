@@ -55,7 +55,7 @@ before_script:
 
 script:
 # basic usage test (without dev packages)
-- python examples/basic_usage.py
+- python docs/examples/basic_usage.py
 # dev requires are installed after basic use test
 - pip install --upgrade --upgrade-strategy=only-if-needed -r dev-requirements.txt
 # unit tests
