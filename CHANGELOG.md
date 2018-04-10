@@ -6,16 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [0.6.0] - 2018-03-23
+## [0.6.0] - 2018-04-10
 ### Added
 - Jacobian methods
-- Basic usage script: `examples/basic_usage.py`
-- `pybotics.__version__`
+- Basic usage script: `docs/examples/basic_usage.py`
+- `pybotics.__version__` built-in using `setuptools_scm`
 - `least_squares` IK method
 - `Robot.home_joints`
 - Various setters/getters
 - More angle conventions and conversions
 - Various useful `__repr__`
+- OSX and Linux CircleCI builds
+- Windows builds with AppVeyor
+- `.flake8` config
+- Repo bots (e.g., `.github/config.yml`, `.github/stale.yml`)
 
 ### Changed
 - Simplified requirements files
@@ -24,10 +28,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Simplified overall API, see examples for more detail
 - Optimization vector/mask only exist in the context of `OptimizationHandler`
 - `Robot.random_joints()` can return array or has `inplace` flag
+- PyUp now creates PRs as individual packages are updated instead of a daily check
+- Pruning/excluding files in `MANIFEST`
+- Improved RTD documentation
 
 ### Fixed
 - Joint limits are checked when setting `Robot.joints`
 - Various CI and test improvements
+- Typo in `.github/ISSUE_TEMPLATE.md`
+- TravisCI `distributions` key in wrong location
 
 ## [0.5.0] - 2017-11-18
 ### Fixed
