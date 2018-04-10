@@ -2,11 +2,10 @@ Welcome to pybotics's documentation!
 ====================================
 
 .. toctree::
-    :maxdepth: 2
-    :caption: Contents:
-    :glob:
+    :maxdepth: 3
 
-    pybotics/*
+    pybotics/modules.rst
+    examples/modules.rst
 
 Indices and tables
 ==================
