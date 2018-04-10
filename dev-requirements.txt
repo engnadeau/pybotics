@@ -23,5 +23,6 @@ twine==1.11.0
 setuptools_scm==1.17.0
 sphinx==1.7.2
 sphinx-autobuild==0.7.1
+nbsphinx==0.3.2
 vulture==0.26
 wheel==0.31.0
