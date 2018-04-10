@@ -25,9 +25,10 @@ copyright = '2018, Nicholas Nadeau'
 author = 'Nicholas Nadeau'
 
 # The short X.Y version
-#version = ''
+from setuptools_scm import get_version
+version = get_version(root='..', relative_to=__file__)
 # The full version, including alpha/beta/rc tags
-#release = ''
+release = get_version(root='..', relative_to=__file__)
 
 
 # -- General configuration ---------------------------------------------------
