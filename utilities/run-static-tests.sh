@@ -6,8 +6,9 @@ set -e
 # echo each command
 set -x
 
-# check README
+# packaging checks
 python setup.py check --strict --metadata
+check-manifest -v
 
 # type checking
 mypy --strict .
