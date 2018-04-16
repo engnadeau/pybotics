@@ -70,13 +70,6 @@ def get_long_description() -> str:
         description += '\n'
         description += f.read()
 
-    # add changelog
-    path = Path(__file__).parent / 'CHANGELOG.md'
-    logging.info('CHANGELOG path: {}'.format(path.resolve()))
-    with open(str(path)) as f:
-        description += '\n'
-        description += f.read()
-
     return description
 
 
