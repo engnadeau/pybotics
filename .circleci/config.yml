@@ -12,8 +12,8 @@ jobs:
           python -m venv venv
           . venv/bin/activate
           python -V
-          pip install -r requirements.txt
-          pip install -r dev-requirements.txt
+          pip install -q -r requirements.txt
+          pip install -q -r dev-requirements.txt
           python setup.py install
     - run:
         name: test
@@ -35,8 +35,8 @@ jobs:
           python3 -m venv venv
           . venv/bin/activate
           python -V
-          pip install -r requirements.txt
-          pip install -r dev-requirements.txt
+          pip install -q -r requirements.txt
+          pip install -q -r dev-requirements.txt
           python setup.py install
     - run:
         name: test
