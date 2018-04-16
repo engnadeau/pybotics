@@ -1,3 +1,7 @@
+```
+This is the historical CHANGELOG from before the integration of [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator)
+```
+
 # Changelog
 All notable changes to this project will be documented in this file.
 

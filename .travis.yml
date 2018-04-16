@@ -1,6 +1,12 @@
 dist: trusty
 sudo: false
 
+env:
+  global:
+  # CHANGELOG_GITHUB_TOKEN
+  - secure: "tLHpXDdJfqeSvYxz82O38V+TX87AccwOQ5n4XpOzNadOl+KNav4zUvs/ryeCCKwUiFZcEuo41sGIFVTU07jljRcNmsRnlPIRGedwPBWgt7s+9pEZ4ZgDRRuTy0jYabSv3Ju16o+R1yns4/lw5IGR+xVYLCVQT0guI8RjDdWDdb/EPp/A2IG8jPORxwGidMsDFVCugrEBHDhG2MCYv5iqb2o9DmCvx9Yu/YXeGZUPHL6Q9pHGiksrR23J/bw6LswvQh5r3aBh3hoh2UiGXuLtIEJIJ1g6NcAJ4QGsVU8e9byryPxiy6T3ff+GwWuVCICsGwHUGXH6oqJv83PcnUzYG4FooATRXNUeERt1N9IcChgqI/SGIEPYKi7gsRYxhEYqWIBn8aItaJBmunYzMFZdj3pLo8SPGt3+5JlxQ7eXg/Q2lL1mBoFdTJ7P806icdT57IaEh9MaXFRG3pLMHWe2zON+mip2LMFWfyg9RXFRKhpn0geKDlC22eQYy2gl5yv0ZJKCSPyYx79/MHJcc+SINa2XkKf3nTtsKzmcMjdLE2ri4xH7XfMJGABlCjby5IayF4XrdmTx1waw36zvWol+Ut2CELQpG2gSh+lrzf/M5P6apb6hElbwV1WnyDPeK8XNfGGKUPDn9uzy58NxNQ7Rq667ujPUsmbpPXGA9+0GLkE="
+
+
 # Travis only clones the latest 50 commits. We need the full repository to
 # compute the version string from the git metadata:
 # https://github.com/travis-ci/travis-ci/issues/3412#issuecomment-83993903
@@ -66,6 +72,7 @@ script:
 after_success:
 - coveralls
 - codecov
+- if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./utilities/generate-changelog.sh; fi
 
 deploy:
 - provider: pypi
