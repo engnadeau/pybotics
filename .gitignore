@@ -368,3 +368,4 @@ ENV/
 README.rst
 doxygen/
 examples/*.html
+/.pytest_cache/
