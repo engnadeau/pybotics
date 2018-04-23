@@ -23,7 +23,7 @@ scipy==1.0.1
 setuptools==39.0.1
 twine==1.11.0
 setuptools_scm==2.0.0
-sphinx==1.7.2
+sphinx==1.7.3
 sphinx-autobuild==0.7.1
 nbsphinx==0.3.2
 vulture==0.26
