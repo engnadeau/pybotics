@@ -8,15 +8,16 @@
 
 # -- Path setup --------------------------------------------------------------
 
+import sys
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-import sys
+
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('examples'))
-
 
 # -- Project information -----------------------------------------------------
 
@@ -26,10 +27,10 @@ author = 'Nicholas Nadeau'
 
 # The short X.Y version
 from setuptools_scm import get_version
+
 version = get_version(root='..', relative_to=__file__)
 # The full version, including alpha/beta/rc tags
 release = get_version(root='..', relative_to=__file__)
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -47,6 +48,8 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+    'sphinx_automodapi.automodapi',
+    'sphinx_automodapi.smart_resolver',
     'nbsphinx'
 ]
 
@@ -76,7 +79,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**.ipynb_checkpoints']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
-
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -122,20 +124,18 @@ html_static_path = [
 #
 html_sidebars = {
     '**': [
-            'about.html',
-            'navigation.html',
-            'relations.html',
-            'searchbox.html',
-            'donate.html',
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+        'donate.html',
     ]
 }
-
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'pyboticsdoc'
-
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -165,7 +165,6 @@ latex_documents = [
      'Nicholas Nadeau', 'manual'),
 ]
 
-
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -174,7 +173,6 @@ man_pages = [
     (master_doc, 'pybotics', 'pybotics Documentation',
      [author], 1)
 ]
-
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -186,7 +184,6 @@ texinfo_documents = [
      author, 'pybotics', 'One line description of project.',
      'Miscellaneous'),
 ]
-
 
 # -- Options for Epub output -------------------------------------------------
 
@@ -207,7 +204,6 @@ epub_copyright = copyright
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
-
 
 # -- Extension configuration -------------------------------------------------
 

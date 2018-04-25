@@ -1,11 +1,18 @@
 Welcome to pybotics's documentation!
 ====================================
 
-.. toctree::
-    :maxdepth: 3
+.. automodapi:: pybotics.constants
+.. automodapi:: pybotics.errors
+.. automodapi:: pybotics.geometry
+.. automodapi:: pybotics.json_encoder
+.. automodapi:: pybotics.kinematic_chain
+.. automodapi:: pybotics.link
+.. automodapi:: pybotics.optimization
+.. automodapi:: pybotics.predefined_models
+.. automodapi:: pybotics.robot
+.. automodapi:: pybotics.tool
+.. automodapi:: pybotics.validation
 
-    pybotics/modules.rst
-    examples/modules.rst
 
 Indices and tables
 ==================
