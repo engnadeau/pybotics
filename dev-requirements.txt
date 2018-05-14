@@ -27,4 +27,4 @@ sphinx==1.7.4
 sphinx-autobuild==0.7.1
 nbsphinx==0.3.3
 vulture==0.26
-wheel==0.31.0
+wheel==0.31.1
