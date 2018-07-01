@@ -13,7 +13,7 @@ mccabe==0.6.1
 mypy==0.600
 pytest==3.5.1
 pep8-naming==0.7.0
-pipdeptree==0.11.0
+pipdeptree==0.13.0
 pipenv==2018.6.25
 pytest-cov==2.5.1
 pytest-randomly==1.2.3
