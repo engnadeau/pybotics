@@ -8,13 +8,13 @@ flake8-docstrings==1.3.0
 flake8-import-order==0.17.1
 pycodestyle==2.3.1
 flake8==3.5.0
-hypothesis==3.64.2
+hypothesis==3.65.3
 mccabe==0.6.1
 mypy==0.600
 pytest==3.5.1
 pep8-naming==0.7.0
 pipdeptree==0.13.0
-pipenv==2018.6.25
+pipenv==2018.7.1
 pytest-cov==2.5.1
 pytest-randomly==1.2.3
 pytest-runner==4.2
