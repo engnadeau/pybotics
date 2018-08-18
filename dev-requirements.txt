@@ -11,7 +11,7 @@ flake8==3.5.0
 hypothesis==3.68.0
 mccabe==0.6.1
 mypy==0.600
-pytest==3.6.3
+pytest==3.7.2
 pep8-naming==0.7.0
 pipdeptree==0.13.0
 pipenv==2018.7.1
