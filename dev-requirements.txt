@@ -1,5 +1,5 @@
 attrs==18.1.0
-bandit==1.5.0
+bandit==1.5.1
 check-manifest==0.37
 coveralls==1.5.0
 codecov==2.0.15
