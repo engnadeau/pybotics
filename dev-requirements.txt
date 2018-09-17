@@ -18,7 +18,7 @@ pipenv==2018.7.1
 pytest-cov==2.5.1
 pytest-randomly==1.2.3
 pytest-runner==4.2
-readme_renderer==20.0
+readme_renderer==21.0
 scipy==1.1.0
 setuptools==40.3.0
 twine==1.11.0
