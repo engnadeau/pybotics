@@ -10,7 +10,7 @@ pycodestyle==2.3.1
 flake8==3.5.0
 hypothesis==3.73.2
 mccabe==0.6.1
-mypy==0.600
+mypy==0.641
 pytest==3.8.1
 pep8-naming==0.7.0
 pipdeptree==0.13.0
