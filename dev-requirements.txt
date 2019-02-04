@@ -12,7 +12,7 @@ hypothesis==4.5.0
 mccabe==0.6.1
 mypy==0.600
 pytest==3.8.1
-pep8-naming==0.8.0
+pep8-naming==0.8.2
 pipdeptree==0.13.0
 pipenv==2018.10.13
 pytest-cov==2.5.1
