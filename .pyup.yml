@@ -1,8 +1,0 @@
-# default values: https://pyup.io/docs/bot/config/
-
-# add a label to pull requests
-label_prs: update
-
-# assign users to pull requests
-assignees:
-- nnadeau
