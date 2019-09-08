@@ -5,7 +5,7 @@ description = ""
 authors = ["Nicholas Nadeau <nicholas.nadeau@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.4"
+python = ">=3.6"
 numpy = ">=1.9"
 scipy = ">=1.0"
 attrs = ">=19.0"
