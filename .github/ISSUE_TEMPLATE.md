@@ -7,7 +7,7 @@ Please explain what was expected from the code (e.g., result, speed).
 ## Actual Behavior
 <!--
 Please explain what actually occurred in contrast to expectations.
- 
+
 Tracebacks (formatted in code blocks) are appreciated.
 -->
 -
@@ -17,11 +17,3 @@ Tracebacks (formatted in code blocks) are appreciated.
 Please explain how to reproduce the problem.
 -->
 1.
-
-## Specifications
-<!--
-Please run `utilities/print_system_specs.py` and paste the output in the code block below.
--->
-```
-
-```
