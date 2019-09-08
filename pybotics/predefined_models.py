@@ -2,8 +2,9 @@
 from copy import deepcopy
 from typing import Any
 
-import numpy as np  # type: ignore
 import attr
+import numpy as np  # type: ignore
+
 from pybotics import Robot
 from pybotics.kinematic_chain import MDHKinematicChain
 

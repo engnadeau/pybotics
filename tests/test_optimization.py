@@ -8,11 +8,8 @@ from pytest import raises
 
 from pybotics.constants import TRANSFORM_VECTOR_LENGTH
 from pybotics.errors import PyboticsError
-from pybotics.optimization import (
-    OptimizationHandler,
-    compute_absolute_errors,
-    optimize_accuracy,
-)
+from pybotics.optimization import (OptimizationHandler,
+                                   compute_absolute_errors, optimize_accuracy)
 from pybotics.predefined_models import UR10
 
 

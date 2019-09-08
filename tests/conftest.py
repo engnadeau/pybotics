@@ -1,8 +1,8 @@
 """Pytest config."""
 from pathlib import Path
 
-from pytest import fixture
 import numpy as np
+from pytest import fixture
 
 from pybotics.kinematic_chain import MDHKinematicChain
 from pybotics.robot import Robot

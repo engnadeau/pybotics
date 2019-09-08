@@ -1,9 +1,11 @@
 """Kinematic chain module."""
 import logging
-from typing import Dict, Optional, Sequence, Sized, Union, Iterable
 from abc import abstractmethod
-import numpy as np  # type: ignore
+from typing import Dict, Iterable, Optional, Sequence, Sized, Union
+
 import attr
+import numpy as np  # type: ignore
+
 from pybotics.errors import PyboticsError
 from pybotics.json_encoder import JSONEncoder
 from pybotics.link import Link, MDHLink, RevoluteMDHLink

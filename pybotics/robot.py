@@ -1,9 +1,10 @@
 """Robot module."""
-from typing import Optional, Sequence, Sized, Union, Any
+from typing import Any, Optional, Sequence, Sized, Union
 
+import attr
 import numpy as np  # type: ignore
 import scipy.optimize  # type: ignore
-import attr
+
 from pybotics.errors import PyboticsError
 from pybotics.json_encoder import JSONEncoder
 from pybotics.kinematic_chain import KinematicChain, MDHKinematicChain
