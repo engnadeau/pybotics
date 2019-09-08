@@ -14,4 +14,7 @@ check: check-package check-typing lint
 test:
 	python setup.py test
 
-.PHONY: static check-package check-typing lint check test
+clean:
+	pipenv run python setup.py clean --all
+
+.PHONY: static check-package check-typing lint check test clean
