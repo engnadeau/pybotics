@@ -64,7 +64,6 @@ script:
 - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./utilities/run-static-tests.sh; fi
 
 after_success:
-- coveralls
 - codecov
 
 deploy:
