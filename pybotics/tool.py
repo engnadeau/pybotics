@@ -1,12 +1,10 @@
 """Tool module."""
-from typing import Optional, Sequence, Union
+from typing import Sequence, Union
 
 import attr
 import numpy as np  # type: ignore
 
-from pybotics.errors import PyboticsError
-from pybotics.geometry import (matrix_2_vector, position_from_matrix,
-                               vector_2_matrix)
+from pybotics.geometry import matrix_2_vector, position_from_matrix, vector_2_matrix
 
 
 @attr.s

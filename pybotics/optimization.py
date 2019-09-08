@@ -1,15 +1,14 @@
 """Optimization module."""
 from copy import deepcopy
-from itertools import combinations, repeat
-from typing import Sequence, Tuple, Union
+from itertools import repeat
+from typing import Sequence, Union
 
 import attr
 import numpy as np  # type: ignore
 
 from pybotics import Robot
 from pybotics.errors import PyboticsError
-from pybotics.geometry import (matrix_2_vector, position_from_matrix,
-                               vector_2_matrix)
+from pybotics.geometry import matrix_2_vector, position_from_matrix, vector_2_matrix
 
 
 def _validate_transform_mask(
@@ -101,6 +100,7 @@ def optimize_accuracy(
 
 
 def compute_absolute_error(q: np.ndarray, position: np.ndarray, robot: Robot) -> float:
+    """Compute the absolute error of a given position."""
     pose = robot.fk(q)
     actual_position = position_from_matrix(pose)
     error = position - actual_position
@@ -123,6 +123,7 @@ def compute_absolute_errors(
 def compute_relative_error(
     q_a: np.ndarray, q_b: np.ndarray, distance: float, robot: Robot
 ) -> float:
+    """Compute the relative error of a given position combination."""
     pose_a = robot.fk(q_a)
     pose_b = robot.fk(q_b)
 
@@ -139,7 +140,5 @@ def compute_relative_error(
 def compute_relative_errors(
     qs_a: np.ndarray, qs_b: np.ndarray, distances: np.ndarray, robot: Robot
 ) -> np.array:
-    """
-    Compute the relative errors of a given set of position combinations.
-    """
+    """Compute the relative errors of a given set of position combinations."""
     return map(compute_relative_error, qs_a, qs_b, distances, repeat(robot))
