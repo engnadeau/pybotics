@@ -7,6 +7,7 @@ check-typing:
 
 check-format:
 	pipenv run black --check .
+	pipenv run isort -rc -c .
 
 lint:
 	pipenv run flake8
