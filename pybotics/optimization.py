@@ -1,4 +1,7 @@
-"""Optimization module."""
+"""Optimization module.
+
+isort:skip_file
+"""
 from copy import deepcopy
 from itertools import repeat
 from typing import Sequence, Union

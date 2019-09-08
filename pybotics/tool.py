@@ -1,4 +1,7 @@
-"""Tool module."""
+"""Tool module.
+
+isort:skip_file
+"""
 from typing import Sequence, Union
 
 import attr
