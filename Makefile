@@ -14,10 +14,14 @@ lint:
 
 check: check-format check-package check-typing lint
 
+format:
+	pipenv run black .
+	pipenv run isort -rc .
+
 test:
 	python setup.py test
 
 clean:
 	pipenv run python setup.py clean --all
 
-.PHONY: static check-package check-typing lint check test clean
+.PHONY: static check-package check-typing lint check test clean check-format format
