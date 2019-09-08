@@ -29,6 +29,7 @@ readme_renderer = "==24.0"
 black = "==19.3b0"
 rope = "*"
 pydocstyle = "<4.0.0"
+isort = "*"
 
 [packages]
 numpy = ">=1.9.0"
