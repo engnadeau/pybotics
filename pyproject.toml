@@ -13,7 +13,6 @@ attrs = ">=19.0"
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
 bandit = "^1.6"
-check-manifest = "^0.39.0"
 codecov = "^2.0"
 flake8-bugbear = "^19.8"
 flake8-docstrings = "^1.4"

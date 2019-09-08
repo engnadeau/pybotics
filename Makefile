@@ -1,6 +1,6 @@
 check-package:
 	poetry run python setup.py check --strict --metadata
-	poetry run check-manifest -v
+	poetry check -v
 
 check-typing:
 	poetry run mypy --strict .
