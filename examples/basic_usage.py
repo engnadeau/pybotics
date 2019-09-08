@@ -6,7 +6,7 @@ from pybotics.predefined_models import UR10
 
 def main():
     """
-    Simple function to test pybotics usage.
+    Demonstrate pybotics usage.
 
     View source for more info.
     """
