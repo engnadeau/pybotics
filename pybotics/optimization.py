@@ -22,7 +22,7 @@ def _validate_transform_mask(
     if isinstance(mask, bool):
         return [mask] * size
     elif len(mask) != size:
-        raise PyboticsError("{} must be of length {}".format(name, size))
+        raise PyboticsError(f"{name} must be of length {size}")
     else:
         return mask
 

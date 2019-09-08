@@ -105,7 +105,7 @@ def _validate_links(value: Union[Sequence[MDHLink], np.ndarray]) -> Sequence[MDH
         except ValueError as e:
             logger.error(str(e))
             raise PyboticsError(
-                "MDH links have {} parameters per link.".format(MDHLink.size)
+                f"MDH links have {MDHLink.size} parameters per link."
             )
 
         # FIXME: only assumes revolute joints

@@ -132,7 +132,7 @@ class Robot(Sized):
         """Set joint limits."""
         if value.shape[0] != 2 or value.shape[1] != len(self):
             raise PyboticsError(
-                "position_limits must have shape=(2,{})".format(len(self))
+                f"position_limits must have shape=(2,{len(self)})"
             )
         self._joint_limits = value
 

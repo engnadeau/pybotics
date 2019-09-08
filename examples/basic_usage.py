@@ -23,8 +23,8 @@ def main():
     robot.world_frame = world_frame
 
     # print debug info
-    print("Robot: {}".format(robot))
-    print("Kinematic Chain: {}".format(robot.kinematic_chain.to_dict()))
+    print(f"Robot: {robot}")
+    print(f"Kinematic Chain: {robot.kinematic_chain.to_dict()}")
 
 
 if __name__ == "__main__":

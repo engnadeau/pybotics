@@ -64,7 +64,7 @@ def vector_2_matrix(
     # build rotation matrix
     transform_matrix = np.eye(4)
     for axis, value in zip(convention, rotation_component):  # type: ignore
-        current_rotation = globals()["rotation_matrix_{}".format(axis)](value)
+        current_rotation = globals()[f"rotation_matrix_{axis}"](value)
         transform_matrix = np.dot(transform_matrix, current_rotation)
 
     # add translation component
@@ -85,7 +85,7 @@ def matrix_2_vector(
     """Convert 4x4 matrix to a vector."""
     # call function
     try:
-        return globals()["_matrix_2_{}".format(convention.name.lower())](matrix)
+        return globals()[f"_matrix_2_{convention.name.lower()}"](matrix)
     except KeyError:  # pragma: no cover
         raise NotImplementedError
 
