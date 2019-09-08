@@ -10,6 +10,7 @@ from pybotics import Robot
 from pybotics.errors import PyboticsError
 from pybotics.geometry import matrix_2_vector, vector_2_matrix, position_from_matrix
 
+
 def _validate_transform_mask(
     mask: Union[bool, Sequence[bool]], name: str, size: int
 ) -> Sequence[bool]:
@@ -21,6 +22,7 @@ def _validate_transform_mask(
         raise PyboticsError("{} must be of length {}".format(name, size))
     else:
         return mask
+
 
 @attr.s
 class OptimizationHandler:

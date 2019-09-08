@@ -15,7 +15,7 @@ from .kinematic_chain import KinematicChain
 from .robot import Robot
 from .tool import Tool
 
-__all__ = ['KinematicChain', 'Robot', 'Tool']
+__all__ = ["KinematicChain", "Robot", "Tool"]
 
 # set logging
 logging.getLogger(__name__).addHandler(logging.NullHandler())

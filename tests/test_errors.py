@@ -14,4 +14,4 @@ def test_errors():
         raise PyboticsError()
 
     assert str(PyboticsError()) is PyboticsError._default_message
-    assert str(PyboticsError('test')) is 'test'
+    assert str(PyboticsError("test")) is "test"

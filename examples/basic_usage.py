@@ -3,6 +3,7 @@ from pybotics import Tool
 from pybotics.geometry import vector_2_matrix
 from pybotics.predefined_models import UR10
 
+
 def main():
     """
     Simple function to test pybotics usage.
@@ -22,9 +23,9 @@ def main():
     robot.world_frame = world_frame
 
     # print debug info
-    print('Robot: {}'.format(robot))
-    print('Kinematic Chain: {}'.format(robot.kinematic_chain.to_dict()))
+    print("Robot: {}".format(robot))
+    print("Kinematic Chain: {}".format(robot.kinematic_chain.to_dict()))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
