@@ -131,9 +131,7 @@ class Robot(Sized):
     def joint_limits(self, value: np.ndarray) -> None:
         """Set joint limits."""
         if value.shape[0] != 2 or value.shape[1] != len(self):
-            raise PyboticsError(
-                f"position_limits must have shape=(2,{len(self)})"
-            )
+            raise PyboticsError(f"position_limits must have shape=(2,{len(self)})")
         self._joint_limits = value
 
     def jacobian_world(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
