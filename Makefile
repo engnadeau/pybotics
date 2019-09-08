@@ -5,11 +5,14 @@ check-package:
 check-typing:
 	pipenv run mypy --strict .
 
+check-format:
+	pipenv run black --check .
+
 lint:
 	pipenv run flake8
 	pipenv run vulture --min-confidence 80 --exclude=docs,build,.eggs --sort-by-size .
 
-check: check-package check-typing lint
+check: check-format check-package check-typing lint
 
 test:
 	python setup.py test
