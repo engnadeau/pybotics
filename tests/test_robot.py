@@ -28,12 +28,13 @@ def test_fk(resources_path: Path):
         data = np.expand_dims(data, axis=0)
 
     # load robot
-    robot = UR10()
+    robot = Robot.from_parameters(UR10)
 
     # test
     for d in data:
-        joints = np.deg2rad(d[: robot.ndof])
-        desired_pose = d[robot.ndof :].reshape(TRANSFORM_MATRIX_SHAPE)
+        n = robot.ndof
+        joints = np.deg2rad(d[:n])
+        desired_pose = d[n:].reshape(TRANSFORM_MATRIX_SHAPE)
 
         atol = 1e-3
 

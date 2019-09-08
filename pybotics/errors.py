@@ -1,5 +1,4 @@
 """Pybotics errors."""
-from typing import Optional
 import attr
 
 

@@ -244,6 +244,7 @@ class Robot(Sized):
 
     @classmethod
     def from_parameters(cls, parameters: Sequence[float]) -> Sized:
+        """Construct Robot from Kinematic Chain parameters."""
         # FIXME: assumes MDH revolute robot
         kc = MDHKinematicChain.from_parameters(parameters)
         return cls(kinematic_chain=kc)

@@ -1,7 +1,7 @@
 """Link module."""
 from abc import abstractmethod
 from collections import Sized
-from typing import Dict, Sequence, Union
+from typing import Sequence, Union
 
 import attr
 import numpy as np  # type: ignore

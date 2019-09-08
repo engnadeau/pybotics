@@ -1,7 +1,7 @@
 """Kinematic chain module."""
 import logging
 from abc import abstractmethod
-from typing import Dict, Iterable, Optional, Sequence, Sized, Union
+from typing import Optional, Sequence, Sized, Union
 
 import attr
 import numpy as np  # type: ignore
@@ -127,6 +127,7 @@ class MDHKinematicChain(KinematicChain):
     def from_parameters(
         cls: KinematicChain, parameters: Sequence[float]
     ) -> KinematicChain:
+        """Construct Kinematic Chain from parameters."""
         kc = cls(parameters)
         return kc
 

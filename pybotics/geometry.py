@@ -74,6 +74,7 @@ def vector_2_matrix(
 
 
 def position_from_matrix(matrix: np.ndarray) -> np.ndarray:
+    """Get the position values from a 4x4 transform matrix."""
     return matrix[:-1, -1]
 
 
