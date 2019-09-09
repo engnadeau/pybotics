@@ -1,5 +1,6 @@
 """Basic usage of the pybotics package."""
-from pybotics import Tool
+from pybotics.robot import Robot
+from pybotics.tool import Tool
 from pybotics.geometry import vector_2_matrix
 from pybotics.predefined_models import UR10
 
@@ -11,7 +12,7 @@ def main():
     View source for more info.
     """
     # init robot
-    robot = UR10()
+    robot = Robot.from_parameters(UR10)
 
     # add tool
     tool = Tool()
@@ -22,9 +23,8 @@ def main():
     world_frame = vector_2_matrix([100, 200, 300, 0, 0, 0])
     robot.world_frame = world_frame
 
-    # print debug info
     print(f"Robot: {robot}")
-    print(f"Kinematic Chain: {robot.kinematic_chain.to_dict()}")
+    print(f"Kinematic Chain: {robot.kinematic_chain}")
 
 
 if __name__ == "__main__":
