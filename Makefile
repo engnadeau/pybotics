@@ -1,5 +1,4 @@
 check-package:
-	poetry run python setup.py check --strict --metadata
 	poetry check -v
 
 check-typing:
@@ -22,7 +21,4 @@ format:
 test:
 	poetry run python setup.py test
 
-clean:
-	poetry run python setup.py clean --all
-
-.PHONY: static check-package check-typing lint check test clean check-format format
+.PHONY: static check-package check-typing lint check test check-format format
