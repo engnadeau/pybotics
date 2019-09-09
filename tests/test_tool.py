@@ -1,9 +1,7 @@
 """Test."""
 import numpy as np
-from pytest import raises
 
-from pybotics import Tool
-from pybotics.errors import PyboticsError
+from pybotics.tool import Tool
 from pybotics.geometry import matrix_2_vector
 
 
@@ -14,12 +12,6 @@ def test_tool():
     cg = [1, 2, 3]
     tool.cg = cg
     np.testing.assert_allclose(tool.cg, cg)
-
-    with raises(PyboticsError):
-        tool.cg = [1, 2, 3, 4]
-
-    with raises(PyboticsError):
-        tool.matrix = np.eye(5)
 
     p = [1, 2, 3]
     tool.position = p

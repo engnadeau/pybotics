@@ -14,5 +14,5 @@ def test_errors():
     with raises(PyboticsError):
         raise PyboticsError()
 
-    assert str(PyboticsError()) == PyboticsError.message
+    assert str(PyboticsError()) == PyboticsError().message
     assert str(PyboticsError("test")) == "test"

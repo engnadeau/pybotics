@@ -23,10 +23,10 @@ def resources_path():
 
 
 @fixture()
-def vector_transforms():
+def vector_transforms(resources_path: Path):
     """Get resource data."""
     data = np.genfromtxt(
-        fname=resources_path() / "vector-transforms.csv", delimiter=",", dtype=str
+        fname=resources_path / "vector-transforms.csv", delimiter=",", dtype=str
     )
     return [
         {

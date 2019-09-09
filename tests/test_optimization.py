@@ -9,7 +9,6 @@ from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from pytest import raises
 
-from pybotics.constants import TRANSFORM_VECTOR_LENGTH
 from pybotics.errors import PyboticsError
 from pybotics.optimization import (
     OptimizationHandler,
@@ -21,7 +20,7 @@ from pybotics.predefined_models import UR10
 
 @given(
     q=arrays(
-        shape=(UR10.kinematic_chain.ndof,),
+        shape=(len(UR10),),
         dtype=float,
         elements=st.floats(allow_nan=False, allow_infinity=False),
     )

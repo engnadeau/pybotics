@@ -10,7 +10,6 @@ from hypothesis.extra.numpy import arrays
 from pytest import raises
 
 import pybotics.geometry
-from pybotics.constants import POSITION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
 from pybotics.geometry import OrientationConvention, matrix_2_vector
 
@@ -68,7 +67,7 @@ def test_rotation_matrix_xyz(angle, resources_path: Path):
             actual_matrix = rotation_functions[axis](d[0])
             np.testing.assert_allclose(
                 actual=actual_matrix,
-                desired=d[1:].reshape(TRANSFORM_MATRIX_SHAPE),
+                desired=d[1:].reshape((4,4)),
                 atol=1e-6,
             )
 
@@ -99,7 +98,7 @@ def test_rotation_matrix_xyz(angle, resources_path: Path):
 
 @given(
     arrays(
-        shape=(POSITION_VECTOR_LENGTH,),
+        shape=(3,),
         dtype=float,
         elements=st.floats(allow_nan=False, allow_infinity=False),
     )
@@ -138,7 +137,7 @@ def test_vector_2_matrix(vector_transforms: Sequence[dict]):
             actual = pybotics.geometry.vector_2_matrix(d["vector"], convention=c)
             np.testing.assert_allclose(
                 actual=actual,
-                desired=d["transform"].reshape(TRANSFORM_MATRIX_SHAPE),
+                desired=d["transform"].reshape((4,4)),
                 atol=1e-6,
             )
 
@@ -157,7 +156,7 @@ def test_matrix_2_vector(vector_transforms: Sequence[dict]):
         ]:
             try:
                 actual_vector = matrix_2_vector(
-                    d["transform"].reshape(TRANSFORM_MATRIX_SHAPE), c
+                    d["transform"].reshape((4,4)), c
                 )
             except NotImplementedError:
                 # TODO: implement other conversions

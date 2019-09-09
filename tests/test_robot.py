@@ -8,7 +8,6 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import raises
 
-from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
 from pybotics.predefined_models import UR10
 from pybotics.robot import Robot
@@ -34,7 +33,7 @@ def test_fk(resources_path: Path):
     for d in data:
         n = robot.ndof
         joints = np.deg2rad(d[:n])
-        desired_pose = d[n:].reshape(TRANSFORM_MATRIX_SHAPE)
+        desired_pose = d[n:].reshape((4,4))
 
         atol = 1e-3
 
@@ -192,14 +191,14 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
 
 @given(
     q=arrays(
-        shape=(UR10.kinematic_chain.ndof,),
+        shape=(len(UR10),),
         dtype=float,
         elements=floats(
             allow_nan=False, allow_infinity=False, max_value=np.pi, min_value=-np.pi
         ),
     ),
     q_offset=arrays(
-        shape=(UR10.kinematic_chain.ndof,),
+        shape=(len(UR10),),
         dtype=float,
         elements=floats(
             allow_nan=False,
