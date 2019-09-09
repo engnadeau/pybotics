@@ -21,4 +21,7 @@ format:
 test:
 	poetry run pytest
 
+build:
+	poetry build
+
 .PHONY: static check-package check-typing lint check test check-format format
