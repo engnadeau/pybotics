@@ -9,8 +9,8 @@ check-format:
 	poetry run isort -rc -c .
 
 lint:
-	poetry run flake8
-	poetry run vulture --min-confidence 80 --exclude=docs,build,.eggs --sort-by-size .
+	poetry run flake8 pybotics tests examples
+	poetry run vulture --min-confidence 80 --sort-by-size pybotics tests examples
 
 check: check-format check-package check-typing lint
 
