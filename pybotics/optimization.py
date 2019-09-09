@@ -9,7 +9,7 @@ from typing import Sequence, Union
 import attr
 import numpy as np  # type: ignore
 
-from pybotics import Robot
+from pybotics.robot import Robot
 from pybotics.errors import PyboticsError
 from pybotics.geometry import matrix_2_vector, position_from_matrix, vector_2_matrix
 

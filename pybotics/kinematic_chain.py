@@ -1,7 +1,7 @@
 """Kinematic chain module."""
 import logging
 from abc import abstractmethod
-from typing import Optional, Sequence, Sized, Union
+from typing import Any, Optional, Sequence, Sized, Union
 
 import attr
 import numpy as np  # type: ignore
@@ -122,9 +122,7 @@ class MDHKinematicChain(KinematicChain):
         self._links = _validate_links(self._links)
 
     @classmethod
-    def from_parameters(
-        cls: KinematicChain, parameters: Sequence[float]
-    ) -> KinematicChain:
+    def from_parameters(cls: Any, parameters: Sequence[float]) -> Any:
         """Construct Kinematic Chain from parameters."""
         kc = cls(parameters)
         return kc
@@ -174,9 +172,7 @@ class MDHKinematicChain(KinematicChain):
     def transforms(self, q: Optional[Sequence[float]] = None) -> Sequence[np.ndarray]:
         """Get sequence of 4x4 transforms."""
         q = np.zeros(len(self)) if q is None else q
-        transforms = [
-            link.transform(p) for link, p in zip(self._links, q)  # type: ignore
-        ]
+        transforms = [link.transform(p) for link, p in zip(self._links, q)]
         return transforms
 
     @property
