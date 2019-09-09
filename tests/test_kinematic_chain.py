@@ -31,15 +31,29 @@ def test_vector():
     np.testing.assert_allclose(kc.vector, link.vector)
 
 
-def test_to_dict():
-    """Test."""
-    link = RevoluteMDHLink()
-    kc = MDHKinematicChain([link])
-    kc.to_dict()
-
-
 def test_repr():
     """Test."""
     link = RevoluteMDHLink()
     kc = MDHKinematicChain([link])
     repr(kc)
+
+
+def test_to_json():
+    """Test."""
+    link = RevoluteMDHLink()
+    kc = MDHKinematicChain([link])
+    kc.to_json()
+
+
+def test_links_setter():
+    """Test."""
+    link = RevoluteMDHLink()
+    kc = MDHKinematicChain([link])
+    kc.links = link
+
+
+def test_ndof():
+    """Test."""
+    link = RevoluteMDHLink()
+    kc = MDHKinematicChain([link])
+    assert kc.ndof == 1

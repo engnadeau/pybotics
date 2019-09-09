@@ -120,7 +120,7 @@ def compute_absolute_errors(
     :param positions: Array of Cartesian positions, shape=(n-poses, 3)
     :param robot: Robot model
     """
-    return map(compute_absolute_error, qs, positions, repeat(robot))
+    return list(map(compute_absolute_error, qs, positions, repeat(robot)))
 
 
 def compute_relative_error(
@@ -134,14 +134,15 @@ def compute_relative_error(
     actual_position_b = position_from_matrix(pose_b)
 
     actual_distance = actual_position_a - actual_position_b
+    actual_distance = np.linalg.norm(actual_distance)
 
-    error = distance - actual_distance
+    error = float(np.linalg.norm(distance - actual_distance))
 
-    return float(np.linalg.norm(error))
+    return error
 
 
 def compute_relative_errors(
     qs_a: np.ndarray, qs_b: np.ndarray, distances: np.ndarray, robot: Robot
 ) -> np.array:
     """Compute the relative errors of a given set of position combinations."""
-    return map(compute_relative_error, qs_a, qs_b, distances, repeat(robot))
+    return list(map(compute_relative_error, qs_a, qs_b, distances, repeat(robot)))

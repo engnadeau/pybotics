@@ -33,7 +33,7 @@ def test_fk(resources_path: Path):
     for d in data:
         n = robot.ndof
         joints = np.deg2rad(d[:n])
-        desired_pose = d[n:].reshape((4,4))
+        desired_pose = d[n:].reshape((4, 4))
 
         atol = 1e-3
 
@@ -47,24 +47,9 @@ def test_fk(resources_path: Path):
         np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
 
 
-def test_repr():
-    """Test."""
-    repr(UR10())
-
-
-def test_len():
-    """Test."""
-    len(UR10())
-
-
-def test_str():
-    """Test."""
-    str(UR10())
-
-
 def test_home_position():
     """Test."""
-    robot = UR10()
+    robot = Robot.from_parameters(UR10)
     x = np.ones(len(robot))
     robot.home_position = x
     np.testing.assert_allclose(robot.home_position, x)
@@ -72,7 +57,7 @@ def test_home_position():
 
 def test_joint_limits():
     """Test."""
-    robot = UR10()
+    robot = Robot.from_parameters(UR10)
 
     # test setter
     robot.joint_limits = robot.joint_limits.copy()
@@ -211,7 +196,7 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
 @hypothesis.settings(deadline=None)
 def test_ik(q: np.ndarray, q_offset: np.ndarray):
     """Test."""
-    robot = UR10()
+    robot = Robot.from_parameters(UR10)
     pose = robot.fk(q)
 
     # IK is hard to solve without a decent seed
@@ -236,6 +221,12 @@ def test_ik(q: np.ndarray, q_offset: np.ndarray):
 
 def test_random_joints():
     """Test."""
-    robot = UR10()
+    robot = Robot.from_parameters(UR10)
     robot.random_joints()
     robot.random_joints(in_place=True)
+
+
+def test_to_json():
+    """Test."""
+    robot = Robot.from_parameters(UR10)
+    robot.to_json()
