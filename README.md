@@ -43,6 +43,25 @@ poetry add pybotics
   - [Slides](https://github.com/nnadeau/pycon-canada-2017)
 - [Montreal-Python 2017](https://www.youtube.com/watch?v=wgKoGA69YXQ)
 
+## Citing
+
+- Please cite the following articles if you use `pybotics` in your research:
+
+> Nadeau, Nicholas A., Ilian A. Bonev, and Ahmed Joubair. "Impedance Control Self-Calibration of a Collaborative Robot Using Kinematic Coupling." Robotics 8.2 (2019): 33.
+
+```
+@article{nadeau2019impedance,
+  title={Impedance Control Self-Calibration of a Collaborative Robot Using Kinematic Coupling},
+  author={Nadeau, Nicholas A and Bonev, Ilian A and Joubair, Ahmed},
+  journal={Robotics},
+  volume={8},
+  number={2},
+  pages={33},
+  year={2019},
+  publisher={Multidisciplinary Digital Publishing Institute}
+}
+```
+
 ## Development
 
 - Install dev virtual environment:
