@@ -1,8 +1,8 @@
 """Basic usage of the pybotics package."""
+from pybotics.geometry import vector_2_matrix
+from pybotics.predefined_models import ur10
 from pybotics.robot import Robot
 from pybotics.tool import Tool
-from pybotics.geometry import vector_2_matrix
-from pybotics.predefined_models import UR10
 
 
 def main():
@@ -12,7 +12,7 @@ def main():
     View source for more info.
     """
     # init robot
-    robot = Robot.from_parameters(UR10)
+    robot = Robot.from_parameters(ur10())
 
     # add tool
     tool = Tool()

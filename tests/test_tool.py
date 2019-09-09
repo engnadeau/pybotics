@@ -1,8 +1,8 @@
 """Test."""
 import numpy as np
 
-from pybotics.tool import Tool
 from pybotics.geometry import matrix_2_vector
+from pybotics.tool import Tool
 
 
 def test_tool():
@@ -16,5 +16,4 @@ def test_tool():
     p = [1, 2, 3]
     tool.position = p
     np.testing.assert_allclose(tool.position, p)
-
     np.testing.assert_allclose(tool.vector, matrix_2_vector(tool.matrix))

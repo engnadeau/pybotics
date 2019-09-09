@@ -18,20 +18,20 @@ from pybotics.optimization import (
     compute_relative_error,
     compute_relative_errors,
 )
-from pybotics.predefined_models import UR10
+from pybotics.predefined_models import ur10
 from pybotics.robot import Robot
 
 
 @given(
     q=arrays(
-        shape=(len(UR10),),
+        shape=(len(ur10()),),
         dtype=float,
         elements=st.floats(allow_nan=False, allow_infinity=False),
     )
 )
 def test_compute_absolute_errors(q: np.ndarray):
     """Test."""
-    robot = Robot.from_parameters(UR10)
+    robot = Robot.from_parameters(ur10())
     pose = robot.fk(q)
     p = pose[:-1, -1]
 
@@ -48,19 +48,19 @@ def test_compute_absolute_errors(q: np.ndarray):
 
 @given(
     q_a=arrays(
-        shape=(len(UR10),),
+        shape=(len(ur10()),),
         dtype=float,
         elements=st.floats(allow_nan=False, allow_infinity=False),
     ),
     q_b=arrays(
-        shape=(len(UR10),),
+        shape=(len(ur10()),),
         dtype=float,
         elements=st.floats(allow_nan=False, allow_infinity=False),
     ),
 )
 def test_compute_relative_errors(q_a: np.ndarray, q_b: np.ndarray):
     """Test."""
-    robot = Robot.from_parameters(UR10)
+    robot = Robot.from_parameters(ur10())
 
     p_a = robot.fk(q_a)[:-1, -1]
     p_b = robot.fk(q_b)[:-1, -1]
@@ -85,20 +85,20 @@ def test_compute_relative_errors(q_a: np.ndarray, q_b: np.ndarray):
 def test_optimization():
     """Test."""
     # init robot model and error wrt nominal
-    actual_robot = Robot.from_parameters(UR10)
+    actual_robot = Robot.from_parameters(ur10())
     actual_robot.tool.position = [0.1, 0, 0]
     actual_robot.kinematic_chain.links[0].a += 0.1
 
     # calculate fk
     qs = np.tile(
-        np.linspace(start=-np.pi, stop=np.pi, num=100), (len(UR10), 1)
+        np.linspace(start=-np.pi, stop=np.pi, num=100), (len(ur10()), 1)
     ).transpose()
 
     poses = np.array(list(map(actual_robot.fk, qs)))
     positions = poses[:, :-1, -1]
 
     # init handler
-    handler = OptimizationHandler(robot=Robot.from_parameters(UR10))
+    handler = OptimizationHandler(robot=Robot.from_parameters(ur10()))
     handler.kinematic_chain_mask[1] = True
     handler.tool_mask[0] = True
 
@@ -131,14 +131,10 @@ def test_optimization():
 def test_handler_validate_transform_mask():
     """Test."""
     # test predesigned mask sequence
-    OptimizationHandler(robot=Robot.from_parameters(UR10), tool_mask=[False] * 6)
+    OptimizationHandler(robot=Robot.from_parameters(ur10()), tool_mask=[False] * 6)
 
     # test error
     with raises(PyboticsError):
         OptimizationHandler(
-            robot=Robot.from_parameters(UR10), kinematic_chain_mask=[False]
+            robot=Robot.from_parameters(ur10()), kinematic_chain_mask=[False]
         )
-
-
-if __name__ == "__main__":
-    test_compute_relative_errors()

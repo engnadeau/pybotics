@@ -66,9 +66,7 @@ def test_rotation_matrix_xyz(angle, resources_path: Path):
         for d in data:
             actual_matrix = rotation_functions[axis](d[0])
             np.testing.assert_allclose(
-                actual=actual_matrix,
-                desired=d[1:].reshape((4,4)),
-                atol=1e-6,
+                actual=actual_matrix, desired=d[1:].reshape((4, 4)), atol=1e-6
             )
 
         # test hypothesis transforms
@@ -136,9 +134,7 @@ def test_vector_2_matrix(vector_transforms: Sequence[dict]):
         for c in [d["order"], OrientationConvention(d["order"])]:
             actual = pybotics.geometry.vector_2_matrix(d["vector"], convention=c)
             np.testing.assert_allclose(
-                actual=actual,
-                desired=d["transform"].reshape((4,4)),
-                atol=1e-6,
+                actual=actual, desired=d["transform"].reshape((4, 4)), atol=1e-6
             )
 
         # test exception
@@ -155,9 +151,7 @@ def test_matrix_2_vector(vector_transforms: Sequence[dict]):
             if d["order"] == e.value
         ]:
             try:
-                actual_vector = matrix_2_vector(
-                    d["transform"].reshape((4,4)), c
-                )
+                actual_vector = matrix_2_vector(d["transform"].reshape((4, 4)), c)
             except NotImplementedError:
                 # TODO: implement other conversions
                 # don't fail for NotImplementedError

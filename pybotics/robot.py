@@ -24,9 +24,12 @@ class Robot(Sized):
     """Robot manipulator class."""
 
     kinematic_chain = attr.ib(type=KinematicChain)
-    tool = attr.ib(Tool(), type=Tool)
-    world_frame = attr.ib(np.eye(4), type=np.ndarray)
-    random_state = attr.ib(np.random.RandomState(), type=np.random.RandomState)
+    tool = attr.ib(factory=lambda: Tool(), type=Tool)
+    world_frame = attr.ib(factory=lambda: np.eye(4), type=np.ndarray)  # type: ignore
+    random_state = attr.ib(
+        factory=lambda: np.random.RandomState(),  # type: ignore
+        type=np.random.RandomState,
+    )
     home_position = attr.ib(
         default=attr.Factory(factory=_ndof_zeros_factory, takes_self=True),
         type=np.ndarray,

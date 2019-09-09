@@ -9,7 +9,7 @@ from hypothesis.strategies import floats
 from pytest import raises
 
 from pybotics.errors import PyboticsError
-from pybotics.predefined_models import UR10
+from pybotics.predefined_models import ur10
 from pybotics.robot import Robot
 
 
@@ -23,11 +23,9 @@ def test_fk(resources_path: Path):
     # get resource
     path = resources_path / "ur10-joints-poses.csv"
     data = np.loadtxt(str(path), delimiter=",")
-    if data.ndim == 1:
-        data = np.expand_dims(data, axis=0)
 
     # load robot
-    robot = Robot.from_parameters(UR10)
+    robot = Robot.from_parameters(ur10())
 
     # test
     for d in data:
@@ -49,7 +47,7 @@ def test_fk(resources_path: Path):
 
 def test_home_position():
     """Test."""
-    robot = Robot.from_parameters(UR10)
+    robot = Robot.from_parameters(ur10())
     x = np.ones(len(robot))
     robot.home_position = x
     np.testing.assert_allclose(robot.home_position, x)
@@ -57,7 +55,7 @@ def test_home_position():
 
 def test_joint_limits():
     """Test."""
-    robot = Robot.from_parameters(UR10)
+    robot = Robot.from_parameters(ur10())
 
     # test setter
     robot.joint_limits = robot.joint_limits.copy()
@@ -176,14 +174,14 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
 
 @given(
     q=arrays(
-        shape=(len(UR10),),
+        shape=(len(ur10()),),
         dtype=float,
         elements=floats(
             allow_nan=False, allow_infinity=False, max_value=np.pi, min_value=-np.pi
         ),
     ),
     q_offset=arrays(
-        shape=(len(UR10),),
+        shape=(len(ur10()),),
         dtype=float,
         elements=floats(
             allow_nan=False,
@@ -196,7 +194,7 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
 @hypothesis.settings(deadline=None)
 def test_ik(q: np.ndarray, q_offset: np.ndarray):
     """Test."""
-    robot = Robot.from_parameters(UR10)
+    robot = Robot.from_parameters(ur10())
     pose = robot.fk(q)
 
     # IK is hard to solve without a decent seed
@@ -221,12 +219,12 @@ def test_ik(q: np.ndarray, q_offset: np.ndarray):
 
 def test_random_joints():
     """Test."""
-    robot = Robot.from_parameters(UR10)
+    robot = Robot.from_parameters(ur10())
     robot.random_joints()
     robot.random_joints(in_place=True)
 
 
 def test_to_json():
     """Test."""
-    robot = Robot.from_parameters(UR10)
+    robot = Robot.from_parameters(ur10())
     robot.to_json()

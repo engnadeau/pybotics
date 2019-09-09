@@ -20,6 +20,7 @@ def test_repr():
     link = RevoluteMDHLink()
     repr(link)
 
+
 def test_json():
     """Test."""
     link = RevoluteMDHLink()
