@@ -106,9 +106,9 @@ def _validate_links(value: Union[Sequence[MDHLink], np.ndarray]) -> Sequence[MDH
             logger.error(str(e))
             raise PyboticsError(f"MDH links have {MDHLink.size} parameters per link.")
 
-    # FIXME: only assumes revolute joints
-    links = [RevoluteMDHLink(*x) for x in value]
-    return links
+        # FIXME: only assumes revolute joints
+        value = [RevoluteMDHLink(*x) for x in value]
+    return value
 
 
 @attr.s
