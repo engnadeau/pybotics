@@ -19,6 +19,6 @@ format:
 	poetry run isort -rc .
 
 test:
-	poetry run python setup.py test
+	poetry run pytest
 
 .PHONY: static check-package check-typing lint check test check-format format
