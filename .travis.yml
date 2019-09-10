@@ -38,24 +38,21 @@ before_deploy:
   - poetry build
 
 deploy:
-- provider: pypi
-  distributions: sdist bdist_wheel
-  skip_cleanup: true
-  user: nnadeau
-  password:
-    secure: "xJKEKNbGAlBcC/d6Z+3pRTSLA1KMhtb8ayVbsuyDa0tbmoZij7n6e3xbFx7matI0eB38YXrdP0gVO60T7EruLPlkyJSWlJMF4citdv/v5wnxZjzXTfYHY+4ym9uA+jHpZEyBiQY6Nfoj3FhqMUxXxwG0OI44wrMHFa8wLTHkCNJxRTRh63JyiGddqfwtgrsqiNRS60gVvYf+xjg09YjY4039TuaFf/HMJkJuivpgQBl2IbPxKYiGphNvDwxz2V6h0TrJCR/yK+3mV+2yaBVqSTaNQfmHf+VvUij7YX7POmrmMVif4Oxd1cFQoevnpZOOC7r0Bpg5Ts/bWPQKYn4+bPPm4e0e6Z1dmknLVInVLBGV4NzcbWsTuDqBvxZNOz+R7q9BKI7SVetYb0ZP1ceD5xORk3uNU5ROmPrXYC3+XCnHW8tmuewjFyzy7R62a7bfXBaWUptG0SFNn65KEVJvNE9d17hPpMO49Wmp5dHfp/Yqklr2KI+PZOmET0uvODUqB6F1bIYAShkUDS8Pq3fTu7uX5/wqoQ8kUHTi8xtnzjSnhrYTpbiSroz2rVeuHYlBdXYOoTUwJGN+6w/srijHKyAdUpiQMR7h46L4VIFqoUoq4W0ZiPwfsM3fWsTCtIwMZSH7rQDHWSIOnrAlv93c3kxwmkhsl1pRxHVQ7AwogUg="
-  on:
-    tags: true
-    branch: master
-    repo: nnadeau/pybotics
-    python: 3.6
-- provider: releases
-  file_glob: true
-  file: dist/*
-  api_key:
-    secure: "T22m7+XHswKDx1NmONF0S+DeUW9OmSt08yzQlVZNg2d9Y3M/RNGnAhri2zh2GuqLKXCCegBMVMqXwOhrgXgOAUiqu58Lc/mEL8FJvb6Dd32Y8qZE17OhY/rta4DFJc6otJSFZB+EZva8Y3o61UBq67OD93W+7JOxhB/sSYJeajVRqRC85j6g4j3cX3KQWQH2teLGNLQ1fTaDf3pfxoF8yt5J78yv6FrVsHtU/Ya7wkqEyciSvoIoccH3T+2OFaqSblaSrZ8lVb38F6IZssQ83zAFg8HwMr6bSSYXa++I41kwiaCaFPBUQrPnoQeU6I4HO+SXNYnmpprXfJZhl17S7RhcB70DHfgR4RqrT4g2XgiMqwShSzfpgujC8SRDG8+HUbETcsEuHpDAWdo/uvLSppl4ba5BnbHFbTd/ggzrz2yWuihGD1J81d5um+Pgiu3N216tZKGozszqyp0ZxwZw9BxFq81SBRw7lToPhZltex29jdDR+9x/JEVcZ0hs32N2K12N2a3FeCPzlikUysJfTo9vbHH4E9aIijx0Xr6nqp6kSsCgNBFFf2QLjaavES5TYSctupD/5Uaz3VGkTjXrTL8y8XGwN7YAwnrpuiApGX61OY0UdSwnm/XI3yNjnQkObvYyx7/xuV2koLsA1vO+bUg66fQ6hul3ll9uTg1vWJE="
-  on:
-    tags: true
-    branch: master
-    repo: nnadeau/pybotics
-    python: 3.6
+  - provider: script
+    script: poetry publish
+    skip_cleanup: true
+    on:
+      tags: true
+      branch: master
+      repo: nnadeau/pybotics
+      python: 3.6
+  - provider: releases
+    file_glob: true
+    file: dist/*
+    api_key:
+      secure: "T22m7+XHswKDx1NmONF0S+DeUW9OmSt08yzQlVZNg2d9Y3M/RNGnAhri2zh2GuqLKXCCegBMVMqXwOhrgXgOAUiqu58Lc/mEL8FJvb6Dd32Y8qZE17OhY/rta4DFJc6otJSFZB+EZva8Y3o61UBq67OD93W+7JOxhB/sSYJeajVRqRC85j6g4j3cX3KQWQH2teLGNLQ1fTaDf3pfxoF8yt5J78yv6FrVsHtU/Ya7wkqEyciSvoIoccH3T+2OFaqSblaSrZ8lVb38F6IZssQ83zAFg8HwMr6bSSYXa++I41kwiaCaFPBUQrPnoQeU6I4HO+SXNYnmpprXfJZhl17S7RhcB70DHfgR4RqrT4g2XgiMqwShSzfpgujC8SRDG8+HUbETcsEuHpDAWdo/uvLSppl4ba5BnbHFbTd/ggzrz2yWuihGD1J81d5um+Pgiu3N216tZKGozszqyp0ZxwZw9BxFq81SBRw7lToPhZltex29jdDR+9x/JEVcZ0hs32N2K12N2a3FeCPzlikUysJfTo9vbHH4E9aIijx0Xr6nqp6kSsCgNBFFf2QLjaavES5TYSctupD/5Uaz3VGkTjXrTL8y8XGwN7YAwnrpuiApGX61OY0UdSwnm/XI3yNjnQkObvYyx7/xuV2koLsA1vO+bUg66fQ6hul3ll9uTg1vWJE="
+    on:
+      tags: true
+      branch: master
+      repo: nnadeau/pybotics
+      python: 3.6
