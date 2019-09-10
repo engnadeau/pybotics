@@ -26,9 +26,9 @@ install:
   - poetry install
 
 script:
-- make check
-- make test
-- make build
+  - make check
+  - make test
+  - make build
 
 after_success:
 - codecov
