@@ -33,6 +33,10 @@ script:
 after_success:
   - codecov
 
+before_deploy:
+  - poetry config http-basic.pypi $PYPI_USER $PYPI_PASS
+  - poetry build
+
 deploy:
 - provider: pypi
   distributions: sdist bdist_wheel
