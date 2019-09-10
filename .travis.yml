@@ -44,6 +44,8 @@ deploy:
     repo: nnadeau/pybotics
     python: 3.6
 - provider: releases
+  file_glob: true
+  file: dist/*
   api_key:
     secure: "T22m7+XHswKDx1NmONF0S+DeUW9OmSt08yzQlVZNg2d9Y3M/RNGnAhri2zh2GuqLKXCCegBMVMqXwOhrgXgOAUiqu58Lc/mEL8FJvb6Dd32Y8qZE17OhY/rta4DFJc6otJSFZB+EZva8Y3o61UBq67OD93W+7JOxhB/sSYJeajVRqRC85j6g4j3cX3KQWQH2teLGNLQ1fTaDf3pfxoF8yt5J78yv6FrVsHtU/Ya7wkqEyciSvoIoccH3T+2OFaqSblaSrZ8lVb38F6IZssQ83zAFg8HwMr6bSSYXa++I41kwiaCaFPBUQrPnoQeU6I4HO+SXNYnmpprXfJZhl17S7RhcB70DHfgR4RqrT4g2XgiMqwShSzfpgujC8SRDG8+HUbETcsEuHpDAWdo/uvLSppl4ba5BnbHFbTd/ggzrz2yWuihGD1J81d5um+Pgiu3N216tZKGozszqyp0ZxwZw9BxFq81SBRw7lToPhZltex29jdDR+9x/JEVcZ0hs32N2K12N2a3FeCPzlikUysJfTo9vbHH4E9aIijx0Xr6nqp6kSsCgNBFFf2QLjaavES5TYSctupD/5Uaz3VGkTjXrTL8y8XGwN7YAwnrpuiApGX61OY0UdSwnm/XI3yNjnQkObvYyx7/xuV2koLsA1vO+bUg66fQ6hul3ll9uTg1vWJE="
   on:
