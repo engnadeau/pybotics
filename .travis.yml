@@ -31,7 +31,7 @@ script:
   - make build
 
 after_success:
-- codecov
+  - codecov
 
 deploy:
 - provider: pypi
