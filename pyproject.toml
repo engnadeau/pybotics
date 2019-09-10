@@ -1,0 +1,86 @@
+[tool.poetry]
+name = "pybotics"
+version = "0.7.0"
+description = "Python Toolbox for Robotics"
+authors = ["Nicholas Nadeau <nicholas.nadeau@gmail.com>"]
+readme = "README.md"
+homepage = "https://github.com/nnadeau/pybotics"
+repository = "https://github.com/nnadeau/pybotics"
+documentation = "https://github.com/nnadeau/pybotics"
+keywords = ["robot", "research", "automation", "kinematics", "geometry"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Manufacturing",
+    "Intended Audience :: Science/Research",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Utilities",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+numpy = ">=1.9"
+scipy = ">=1.0"
+attrs = ">=19.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.1"
+bandit = "^1.6"
+codecov = "^2.0"
+flake8-bugbear = "^19.8"
+flake8-docstrings = "^1.4"
+flake8-import-order = "^0.18.1"
+flake8 = "^3.7"
+hypothesis = "^4.35"
+mccabe = "^0.6.1"
+mypy = "^0.720.0"
+pep8-naming = "^0.8.2"
+pytest-cov = "^2.7"
+pytest-randomly = "^3.1"
+pytest-runner = "^5.1"
+vulture = "^1.0"
+rope = "^0.14.0"
+pydocstyle = "^4.0"
+isort = "^4.3"
+black = {version = "^18.3-alpha.0", allows-prereleases = true}
+
+[tool.black]
+line-length = 88
+target_version = ['py37']
+include = '\.pyi?$'
+exclude = '''
+
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | foo.py           # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

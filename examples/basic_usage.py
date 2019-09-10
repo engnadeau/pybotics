@@ -1,16 +1,18 @@
 """Basic usage of the pybotics package."""
-from pybotics import Tool
 from pybotics.geometry import vector_2_matrix
-from pybotics.predefined_models import UR10
+from pybotics.predefined_models import ur10
+from pybotics.robot import Robot
+from pybotics.tool import Tool
+
 
 def main():
     """
-    Simple function to test pybotics usage.
+    Demonstrate pybotics usage.
 
     View source for more info.
     """
     # init robot
-    robot = UR10()
+    robot = Robot.from_parameters(ur10())
 
     # add tool
     tool = Tool()
@@ -21,10 +23,9 @@ def main():
     world_frame = vector_2_matrix([100, 200, 300, 0, 0, 0])
     robot.world_frame = world_frame
 
-    # print debug info
-    print('Robot: {}'.format(robot))
-    print('Kinematic Chain: {}'.format(robot.kinematic_chain.to_dict()))
+    print(f"Robot: {robot}")
+    print(f"Kinematic Chain: {robot.kinematic_chain}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

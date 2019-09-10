@@ -8,9 +8,8 @@ from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import raises
 
-from pybotics.constants import TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
-from pybotics.predefined_models import UR10
+from pybotics.predefined_models import ur10
 from pybotics.robot import Robot
 
 
@@ -22,18 +21,17 @@ def test_fk(resources_path: Path):
     :return:
     """
     # get resource
-    path = resources_path / 'ur10-joints-poses.csv'
-    data = np.loadtxt(str(path), delimiter=',')
-    if data.ndim == 1:
-        data = np.expand_dims(data, axis=0)
+    path = resources_path / "ur10-joints-poses.csv"
+    data = np.loadtxt(str(path), delimiter=",")
 
     # load robot
-    robot = UR10()
+    robot = Robot.from_parameters(ur10())
 
     # test
     for d in data:
-        joints = np.deg2rad(d[:robot.ndof])
-        desired_pose = d[robot.ndof:].reshape(TRANSFORM_MATRIX_SHAPE)
+        n = robot.ndof
+        joints = np.deg2rad(d[:n])
+        desired_pose = d[n:].reshape((4, 4))
 
         atol = 1e-3
 
@@ -47,24 +45,9 @@ def test_fk(resources_path: Path):
         np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
 
 
-def test_repr():
-    """Test."""
-    repr(UR10())
-
-
-def test_len():
-    """Test."""
-    len(UR10())
-
-
-def test_str():
-    """Test."""
-    str(UR10())
-
-
 def test_home_position():
     """Test."""
-    robot = UR10()
+    robot = Robot.from_parameters(ur10())
     x = np.ones(len(robot))
     robot.home_position = x
     np.testing.assert_allclose(robot.home_position, x)
@@ -72,7 +55,7 @@ def test_home_position():
 
 def test_joint_limits():
     """Test."""
-    robot = UR10()
+    robot = Robot.from_parameters(ur10())
 
     # test setter
     robot.joint_limits = robot.joint_limits.copy()
@@ -103,21 +86,19 @@ def test_compute_joint_torques(planar_robot: Robot):
     # get link lengths
     lengths = [
         planar_robot.kinematic_chain.links[1].a,
-        planar_robot.kinematic_chain.links[2].a
+        planar_robot.kinematic_chain.links[2].a,
     ]
 
     # calculate expected torques
     expected_torques = [
-        lengths[0] * np.sin(joint_angles[1]) * force[0] +
-        (lengths[1] + lengths[0] *
-         np.cos(joint_angles[1])) * force[1],
+        lengths[0] * np.sin(joint_angles[1]) * force[0]
+        + (lengths[1] + lengths[0] * np.cos(joint_angles[1])) * force[1],
         lengths[1] * force[1],
-        0
+        0,
     ]
 
     # test
-    actual_torques = planar_robot.compute_joint_torques(q=joint_angles,
-                                                        wrench=wrench)
+    actual_torques = planar_robot.compute_joint_torques(q=joint_angles, wrench=wrench)
     np.testing.assert_allclose(actual_torques, expected_torques)
 
     planar_robot.joints = joint_angles
@@ -125,21 +106,21 @@ def test_compute_joint_torques(planar_robot: Robot):
     np.testing.assert_allclose(actual_torques, expected_torques)
 
 
-@given(q=arrays(shape=(3,),
-                dtype=float,
-                elements=floats(max_value=1e9,
-                                min_value=-1e9,
-                                allow_nan=False,
-                                allow_infinity=False
-                                )
-                )
-       )
+@given(
+    q=arrays(
+        shape=(3,),
+        dtype=float,
+        elements=floats(
+            max_value=1e9, min_value=-1e9, allow_nan=False, allow_infinity=False
+        ),
+    )
+)
 def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
     """Test."""
     # get link lengths
     lengths = [
         planar_robot.kinematic_chain.links[1].a,
-        planar_robot.kinematic_chain.links[2].a
+        planar_robot.kinematic_chain.links[2].a,
     ]
 
     # example from Craig has last joint set to 0
@@ -153,7 +134,7 @@ def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
 
     expected = np.zeros((6, 3))
     expected[0, 0] = -lengths[0] * s0 - lengths[1] * s01
-    expected[0, 1] = - lengths[1] * s01
+    expected[0, 1] = -lengths[1] * s01
     expected[1, 0] = lengths[0] * c0 + lengths[1] * c01
     expected[1, 1] = lengths[1] * c01
     expected[-1, :] = 1
@@ -162,14 +143,17 @@ def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
     np.testing.assert_allclose(actual, expected, atol=1e-3)
 
 
-@given(q=arrays(shape=(3,), dtype=float,
-                elements=floats(allow_nan=False, allow_infinity=False)))
+@given(
+    q=arrays(
+        shape=(3,), dtype=float, elements=floats(allow_nan=False, allow_infinity=False)
+    )
+)
 def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
     """Test."""
     # get link lengths
     lengths = [
         planar_robot.kinematic_chain.links[1].a,
-        planar_robot.kinematic_chain.links[2].a
+        planar_robot.kinematic_chain.links[2].a,
     ]
 
     # example from Craig has last joint set to 0
@@ -189,21 +173,28 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
 
 
 @given(
-    q=arrays(shape=(UR10.kinematic_chain.ndof,), dtype=float,
-             elements=floats(allow_nan=False,
-                             allow_infinity=False,
-                             max_value=np.pi,
-                             min_value=-np.pi)),
-    q_offset=arrays(shape=(UR10.kinematic_chain.ndof,), dtype=float,
-                    elements=floats(allow_nan=False,
-                                    allow_infinity=False,
-                                    max_value=np.deg2rad(1),
-                                    min_value=np.deg2rad(-1)))
+    q=arrays(
+        shape=(len(ur10()),),
+        dtype=float,
+        elements=floats(
+            allow_nan=False, allow_infinity=False, max_value=np.pi, min_value=-np.pi
+        ),
+    ),
+    q_offset=arrays(
+        shape=(len(ur10()),),
+        dtype=float,
+        elements=floats(
+            allow_nan=False,
+            allow_infinity=False,
+            max_value=np.deg2rad(1),
+            min_value=np.deg2rad(-1),
+        ),
+    ),
 )
 @hypothesis.settings(deadline=None)
 def test_ik(q: np.ndarray, q_offset: np.ndarray):
     """Test."""
-    robot = UR10()
+    robot = Robot.from_parameters(ur10())
     pose = robot.fk(q)
 
     # IK is hard to solve without a decent seed
@@ -228,6 +219,12 @@ def test_ik(q: np.ndarray, q_offset: np.ndarray):
 
 def test_random_joints():
     """Test."""
-    robot = UR10()
+    robot = Robot.from_parameters(ur10())
     robot.random_joints()
     robot.random_joints(in_place=True)
+
+
+def test_to_json():
+    """Test."""
+    robot = Robot.from_parameters(ur10())
+    robot.to_json()

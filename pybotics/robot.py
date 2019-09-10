@@ -1,46 +1,47 @@
 """Robot module."""
-from typing import Optional, Sequence, Sized, Union
+from typing import Any, Optional, Sequence, Sized, Union
 
+import attr
 import numpy as np  # type: ignore
 import scipy.optimize  # type: ignore
 
-from pybotics.constants import ROTATION_VECTOR_LENGTH, TRANSFORM_MATRIX_SHAPE
 from pybotics.errors import PyboticsError
 from pybotics.json_encoder import JSONEncoder
-from pybotics.kinematic_chain import KinematicChain
+from pybotics.kinematic_chain import KinematicChain, MDHKinematicChain
 from pybotics.tool import Tool
 
 
+def _ndof_zeros_factory(robot: Any) -> np.ndarray:
+    return np.zeros(len(robot.kinematic_chain))
+
+
+def _joint_limits_factory(robot: Any) -> np.ndarray:
+    return np.repeat((-np.pi, np.pi), len(robot.kinematic_chain)).reshape((2, -1))
+
+
+@attr.s
 class Robot(Sized):
     """Robot manipulator class."""
 
-    def __init__(self,
-                 kinematic_chain: KinematicChain,
-                 tool: Optional[Tool] = None,
-                 world_frame: Optional[np.ndarray] = None,
-                 random_state: Optional[
-                     Union[int, np.random.RandomState]] = None
-                 ) -> None:
-        """
-        Construct a robot instance.
-
-        :param kinematic_chain: kinematic chain of the manipulator
-        :param tool: attached tool
-        :param world_frame: transform of robot base with respect to the world
-        """
-        self._home_position = np.zeros(len(kinematic_chain))
-        self._joints = np.zeros(len(kinematic_chain))
-        self._joint_limits = np.repeat((-np.pi, np.pi),
-                                       len(kinematic_chain)
-                                       ).reshape((2, -1))
-        if not isinstance(random_state, np.random.RandomState):
-            random_state = np.random.RandomState(random_state)
-        self.random_state = random_state
-
-        self.kinematic_chain = kinematic_chain
-        self.world_frame = np.eye(TRANSFORM_MATRIX_SHAPE[0]) \
-            if world_frame is None else world_frame
-        self.tool = Tool() if tool is None else tool
+    kinematic_chain = attr.ib(type=KinematicChain)
+    tool = attr.ib(factory=lambda: Tool(), type=Tool)
+    world_frame = attr.ib(factory=lambda: np.eye(4), type=np.ndarray)  # type: ignore
+    random_state = attr.ib(
+        factory=lambda: np.random.RandomState(),  # type: ignore
+        type=np.random.RandomState,
+    )
+    home_position = attr.ib(
+        default=attr.Factory(factory=_ndof_zeros_factory, takes_self=True),
+        type=np.ndarray,
+    )
+    _joints = attr.ib(
+        default=attr.Factory(factory=_ndof_zeros_factory, takes_self=True),
+        type=np.ndarray,
+    )
+    _joint_limits = attr.ib(
+        default=attr.Factory(factory=_joint_limits_factory, takes_self=True),
+        type=np.ndarray,
+    )
 
     def __len__(self) -> int:
         """
@@ -50,26 +51,10 @@ class Robot(Sized):
         """
         return len(self.kinematic_chain)
 
-    def __repr__(self) -> str:
-        """
-        Get the debug representation of the robot model.
-
-        :return:
-        """
-        return self.to_json()
-
     def to_json(self) -> str:
         """Encode robot model as JSON."""
         encoder = JSONEncoder(sort_keys=True)
         return encoder.encode(self)
-
-    def __str__(self) -> str:
-        """
-        Get the string representation of the robot model.
-
-        :return:
-        """
-        return self.__repr__()
 
     def fk(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
         """
@@ -96,17 +81,13 @@ class Robot(Sized):
 
         return pose
 
-    def ik(self,
-           pose: np.ndarray,
-           q: Optional[Sequence[float]] = None,
-           ) -> Optional[np.ndarray]:
+    def ik(
+        self, pose: np.ndarray, q: Optional[Sequence[float]] = None
+    ) -> Optional[np.ndarray]:
         """Solve the inverse kinematics."""
         x0 = self.joints if q is None else q
         result = scipy.optimize.least_squares(
-            fun=_ik_cost_function,
-            x0=x0,
-            bounds=self.joint_limits,
-            args=(pose, self),
+            fun=_ik_cost_function, x0=x0, bounds=self.joint_limits, args=(pose, self)
         )  # type: scipy.optimize.OptimizeResult
 
         if result.success:  # pragma: no cover
@@ -136,25 +117,9 @@ class Robot(Sized):
     @joints.setter
     def joints(self, value: np.ndarray) -> None:
         """Set joints."""
-        if np.any(value < self.joint_limits[0]) or \
-                np.any(value > self.joint_limits[1]):
-            raise PyboticsError('Joint limits exceeded.')
+        if np.any(value < self.joint_limits[0]) or np.any(value > self.joint_limits[1]):
+            raise PyboticsError("Joint limits exceeded.")
         self._joints = value
-
-    @property
-    def home_position(self) -> Union[Sequence[float], np.ndarray]:
-        """
-        Get the robot configuration (e.g., joint positions for serial robot).
-
-        :return: robot position
-        """
-        return self._home_position
-
-    @home_position.setter
-    def home_position(self, value: np.ndarray) -> None:
-        """Set home position."""
-        # TODO: check if position is in limits
-        self._home_position = value
 
     @property
     def joint_limits(self) -> np.ndarray:
@@ -169,31 +134,23 @@ class Robot(Sized):
     def joint_limits(self, value: np.ndarray) -> None:
         """Set joint limits."""
         if value.shape[0] != 2 or value.shape[1] != len(self):
-            raise PyboticsError(
-                'position_limits must have shape=(2,{})'.format(len(self)))
+            raise PyboticsError(f"position_limits must have shape=(2,{len(self)})")
         self._joint_limits = value
 
-    def jacobian_world(self,
-                       q: Optional[Sequence[float]] = None) -> np.ndarray:
+    def jacobian_world(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
         """Calculate the Jacobian wrt the world frame."""
         q = self.joints if q is None else q
         j_fl = self.jacobian_flange(q)
         pose = self.fk(q)
         rotation = pose[:3, :3]
-        j_tr = np.zeros(
-            (ROTATION_VECTOR_LENGTH * 2, ROTATION_VECTOR_LENGTH * 2),
-            dtype=float
-        )
-        j_tr[:ROTATION_VECTOR_LENGTH, :ROTATION_VECTOR_LENGTH] = \
-            rotation
-        j_tr[ROTATION_VECTOR_LENGTH:, ROTATION_VECTOR_LENGTH:] = \
-            rotation
+        j_tr = np.zeros((6, 6), dtype=float)
+        j_tr[:3, :3] = rotation
+        j_tr[3:, 3:] = rotation
         j_w = np.dot(j_tr, j_fl)
 
         return j_w
 
-    def jacobian_flange(self,
-                        q: Optional[Sequence[float]] = None) -> np.ndarray:
+    def jacobian_flange(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
         """Calculate the Jacobian wrt the flange frame."""
         q = self.joints if q is None else q
 
@@ -202,14 +159,16 @@ class Robot(Sized):
         current_transform = self.tool.matrix.copy()
 
         for i in reversed(range(self.ndof)):
-            d = np.array([
-                -current_transform[0, 0] * current_transform[1, 3] +
-                current_transform[1, 0] * current_transform[0, 3],
-                - current_transform[0, 1] * current_transform[1, 3] +
-                current_transform[1, 1] * current_transform[0, 3],
-                - current_transform[0, 2] * current_transform[1, 3] +
-                current_transform[1, 2] * current_transform[0, 3],
-            ])
+            d = np.array(
+                [
+                    -current_transform[0, 0] * current_transform[1, 3]
+                    + current_transform[1, 0] * current_transform[0, 3],
+                    -current_transform[0, 1] * current_transform[1, 3]
+                    + current_transform[1, 1] * current_transform[0, 3],
+                    -current_transform[0, 2] * current_transform[1, 3]
+                    + current_transform[1, 2] * current_transform[0, 3],
+                ]
+            )
             delta = current_transform[2, 0:3]
 
             jacobian_flange[:, i] = np.hstack((d, delta))
@@ -217,15 +176,13 @@ class Robot(Sized):
             current_link = self.kinematic_chain.links[i]
             p = q[i]
             current_link_transform = current_link.transform(p)
-            current_transform = np.dot(current_link_transform,
-                                       current_transform)
+            current_transform = np.dot(current_link_transform, current_transform)
 
         return jacobian_flange
 
-    def compute_joint_torques(self,
-                              wrench: Sequence[float],
-                              q: Optional[Sequence[float]] = None,
-                              ) -> np.ndarray:
+    def compute_joint_torques(
+        self, wrench: Sequence[float], q: Optional[Sequence[float]] = None
+    ) -> np.ndarray:
         """
         Calculate the joint torques due to external flange force.
 
@@ -270,18 +227,15 @@ class Robot(Sized):
         # reverse torques into correct order
         return np.array(list(reversed(joint_torques)), dtype=float)
 
-    def clamp_joints(self,
-                     q: Sequence[float]
-                     ) -> Optional[np.ndarray]:
+    def clamp_joints(self, q: Sequence[float]) -> Optional[np.ndarray]:
         """Limit joints to joint limits."""
         return np.clip(q, self.joint_limits[0], self.joint_limits[1])
 
-    def random_joints(self,
-                      in_place: bool = False,
-                      ) -> Optional[np.ndarray]:
+    def random_joints(self, in_place: bool = False) -> Optional[np.ndarray]:
         """Generate random joints within limits."""
-        q = self.random_state.uniform(low=self.joint_limits[0],
-                                      high=self.joint_limits[1])
+        q = self.random_state.uniform(
+            low=self.joint_limits[0], high=self.joint_limits[1]
+        )
 
         if in_place:
             self.joints = q
@@ -289,11 +243,15 @@ class Robot(Sized):
         else:
             return q
 
+    @classmethod
+    def from_parameters(cls, parameters: Sequence[float]) -> Sized:
+        """Construct Robot from Kinematic Chain parameters."""
+        # FIXME: assumes MDH revolute robot
+        kc = MDHKinematicChain.from_parameters(parameters)
+        return cls(kinematic_chain=kc)
 
-def _ik_cost_function(q: np.ndarray,
-                      pose: np.ndarray,
-                      robot: Robot,
-                      ) -> np.ndarray:
+
+def _ik_cost_function(q: np.ndarray, pose: np.ndarray, robot: Robot) -> np.ndarray:
     actual_pose = robot.fk(q)
     diff = np.abs(actual_pose - pose)
     return diff.ravel()

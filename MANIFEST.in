@@ -2,24 +2,17 @@ include LICENSE
 include *.md
 include requirements.txt
 
-# stuff we need to include into the sdist is handled automatically by
-# setuptools_scm - it includes all git-committed files.
-# but we want to exclude some committed files/dirs not needed in the sdist:
-prune .circleci
 prune .github
-prune docs
 prune examples
 prune media
 prune tests
-prune utilities
+
 exclude .coveragerc
 exclude .flake8
 exclude .gitignore
-exclude .pyup.yml
-exclude .scrutinizer.yml
 exclude .travis.yml
-exclude appveyor.yml
 exclude codecov.yml
-exclude dependencyci.yml
-exclude dev-requirements.txt
 exclude pytest.ini
+exclude Makefile
+exclude Pipfile
+include Pipfile.lock

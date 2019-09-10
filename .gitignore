@@ -354,6 +354,7 @@ celerybeat-schedule
 
 # virtualenv
 venv/
+.venv/
 ENV/
 
 # Spyder project settings
@@ -368,3 +369,4 @@ ENV/
 README.rst
 doxygen/
 examples/*.html
+.pytest_cache/

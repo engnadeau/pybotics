@@ -1,28 +1,22 @@
 """Link module."""
 from abc import abstractmethod
 from collections import Sized
-from typing import Dict, Sequence, Union
+from typing import Sequence, Union
 
+import attr
 import numpy as np  # type: ignore
 
 from pybotics.json_encoder import JSONEncoder
 
 
+@attr.s
 class Link(Sized):
     """Links: connected joints allowing relative motion of neighboring link."""
-
-    def __repr__(self) -> str:
-        """Encode model as JSON."""
-        return self.to_json()
 
     def to_json(self) -> str:
         """Encode model as JSON."""
         encoder = JSONEncoder(sort_keys=True)
         return encoder.encode(self)
-
-    def to_dict(self) -> Dict[str, float]:
-        """Convert parameters to dict."""
-        raise NotImplementedError
 
     def __len__(self) -> int:
         """Get number of parameters."""
@@ -65,7 +59,7 @@ class Link(Sized):
         raise NotImplementedError
 
 
-# noinspection PyAbstractClass
+@attr.s
 class MDHLink(Link):
     """
     Link class that uses Modified DH parameters.
@@ -74,39 +68,15 @@ class MDHLink(Link):
     """
 
     _size = 4
-
-    def to_dict(self) -> Dict[str, float]:
-        """Convert parameters to dict."""
-        return {
-            'alpha': self.alpha,
-            'a': self.a,
-            'theta': self.theta,
-            'd': self.d
-        }
+    alpha = attr.ib(0, type=float)
+    a = attr.ib(0, type=float)
+    theta = attr.ib(0, type=float)
+    d = attr.ib(0, type=float)
 
     @property
     def size(self) -> int:
         """Get number of parameters."""
         return self._size
-
-    def __init__(self,
-                 alpha: float = 0,
-                 a: float = 0,
-                 theta: float = 0,
-                 d: float = 0
-                 ) -> None:
-        """
-        Construct a MDH link.
-
-        :param alpha:
-        :param a:
-        :param theta:
-        :param d:
-        """
-        self.alpha = alpha
-        self.a = a
-        self.theta = theta
-        self.d = d
 
     def transform(self, q: float = 0) -> np.ndarray:
         """
@@ -127,12 +97,15 @@ class MDHLink(Link):
         crz = np.cos(theta)
         srz = np.sin(theta)
 
-        transform = np.array([
-            [crz, -srz, 0, a],
-            [crx * srz, crx * crz, -srx, -d * srx],
-            [srx * srz, crz * srx, crx, d * crx],
-            [0, 0, 0, 1]
-        ], dtype=np.float64)
+        transform = np.array(
+            [
+                [crz, -srz, 0, a],
+                [crx * srz, crx * crz, -srx, -d * srx],
+                [srx * srz, crz * srx, crx, d * crx],
+                [0, 0, 0, 1],
+            ],
+            dtype=np.float64,
+        )
 
         return transform
 
@@ -143,12 +116,7 @@ class MDHLink(Link):
 
         :return: vectorized kinematic chain
         """
-        return np.array([
-            self.alpha,
-            self.a,
-            self.theta,
-            self.d
-        ], dtype=float)
+        return np.array([self.alpha, self.a, self.theta, self.d], dtype=float)
 
     # noinspection PyMethodOverriding
     @vector.setter
@@ -160,6 +128,7 @@ class MDHLink(Link):
         self.d = value[3]
 
 
+@attr.s
 class RevoluteMDHLink(MDHLink):
     """
     Link class that uses Modified DH parameters for a revolute joint.
@@ -179,6 +148,7 @@ class RevoluteMDHLink(MDHLink):
         return v
 
 
+@attr.s
 class PrismaticMDHLink(MDHLink):
     """
     Link class that uses Modified DH parameters for a revolute joint.

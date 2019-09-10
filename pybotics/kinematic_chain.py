@@ -1,15 +1,20 @@
 """Kinematic chain module."""
 import logging
 from abc import abstractmethod
-from typing import Dict, Optional, Sequence, Sized, Union
+from typing import Any, Optional, Sequence, Sized, Union
 
+import attr
 import numpy as np  # type: ignore
 
 from pybotics.errors import PyboticsError
 from pybotics.json_encoder import JSONEncoder
 from pybotics.link import Link, MDHLink, RevoluteMDHLink
 
+# set logging
+logger = logging.getLogger(__name__)
 
+
+@attr.s
 class KinematicChain(Sized):
     """
     An assembly of rigid bodies connected by joints.
@@ -18,16 +23,13 @@ class KinematicChain(Sized):
     mathematical model for a mechanical system.
     """
 
-    def __repr__(self) -> str:
-        """Encode model as JSON."""
-        return self.to_json()
-
     def to_json(self) -> str:
         """Encode model as JSON."""
         encoder = JSONEncoder(sort_keys=True)
         return encoder.encode(self)
 
-    @property
+    @property  # type: ignore
+    @abstractmethod
     def matrix(self) -> np.ndarray:
         """
         Convert chain to matrix of link parameters.
@@ -37,7 +39,8 @@ class KinematicChain(Sized):
         """
         raise NotImplementedError
 
-    @matrix.setter
+    @matrix.setter  # type: ignore
+    @abstractmethod
     def matrix(self, value: np.ndarray) -> None:
         """
         Set to matrix of link parameters.
@@ -46,12 +49,6 @@ class KinematicChain(Sized):
         Columns = parameters
         """
         raise NotImplementedError
-
-    def to_dict(self) -> Dict[str, Dict[str, float]]:
-        """Convert chain to dict."""
-        return {
-            'link_{}'.format(i): e.to_dict() for i, e in enumerate(self.links)
-        }
 
     @property
     @abstractmethod
@@ -69,18 +66,13 @@ class KinematicChain(Sized):
         return len(self)
 
     @property
-    @abstractmethod
     def num_parameters(self) -> int:
-        """
-        Get the number of kinematic parameters.
-
-        :return: number of degrees of freedom
-        """
+        """Get number of parameters of all links."""
+        # noinspection PyProtectedMember
         raise NotImplementedError
 
     @abstractmethod
-    def transforms(self, q: Optional[Sequence[float]] = None) -> \
-            Sequence[np.ndarray]:
+    def transforms(self, q: Optional[Sequence[float]] = None) -> Sequence[np.ndarray]:
         """
         Generate a sequence of spatial transforms.
 
@@ -106,8 +98,34 @@ class KinematicChain(Sized):
         raise NotImplementedError
 
 
+def _validate_links(value: Union[Sequence[MDHLink], np.ndarray]) -> Sequence[MDHLink]:
+    if isinstance(value, np.ndarray):
+        try:
+            value = value.reshape((-1, MDHLink._size))
+        except ValueError as e:
+            logger.error(str(e))
+            raise PyboticsError(f"MDH links have {MDHLink.size} parameters per link.")
+
+        # FIXME: only assumes revolute joints
+        value = [RevoluteMDHLink(*x) for x in value]
+    return value
+
+
+@attr.s
 class MDHKinematicChain(KinematicChain):
     """Kinematic Chain of MDH links."""
+
+    _links = attr.ib(type=Union[Sequence[MDHLink], np.ndarray])
+
+    def __attrs_post_init__(self) -> None:
+        """Post-attrs initialization."""
+        self._links = _validate_links(self._links)
+
+    @classmethod
+    def from_parameters(cls: Any, parameters: Sequence[float]) -> Any:
+        """Construct Kinematic Chain from parameters."""
+        kc = cls(parameters)
+        return kc
 
     @property
     def matrix(self) -> np.ndarray:
@@ -122,7 +140,7 @@ class MDHKinematicChain(KinematicChain):
     @matrix.setter
     def matrix(self, value: np.ndarray) -> None:
         """
-        Set to matrix of link parameters.
+        Set matrix of link parameters.
 
         Rows = links
         Columns = parameters
@@ -133,34 +151,13 @@ class MDHKinematicChain(KinematicChain):
     @property
     def links(self) -> Sequence[MDHLink]:
         """Get links."""
-        return self._links
+        x = self._links  # type: Sequence[MDHLink]
+        return x
 
-    def __init__(self,
-                 links: Union[Sequence[MDHLink], np.ndarray]
-                 ) -> None:
-        """Init chain."""
-        super().__init__()
-        # set links
-        if isinstance(links, np.ndarray):
-            # we have an array of parameters
-            # validate input
-            # should be 1D or 2D
-            try:
-                # noinspection PyProtectedMember
-                links = links.reshape((-1, MDHLink._size))
-            except ValueError as e:
-                logging.getLogger(__name__).error(str(e))
-                raise PyboticsError(
-                    'MDH links have {} parameters per link.'.format(
-                        MDHLink.size))
-
-            # build links
-            # assume revolute joints
-            self._links = [
-                RevoluteMDHLink(*x) for x in links
-            ]  # type: Sequence[MDHLink]
-        else:
-            self._links = links  # type: Sequence[MDHLink]
+    @links.setter
+    def links(self, value: Union[Sequence[MDHLink], np.ndarray]) -> None:
+        """Set links."""
+        self._links = _validate_links(value)
 
     def __len__(self) -> int:
         """Get ndof."""
@@ -172,13 +169,10 @@ class MDHKinematicChain(KinematicChain):
         # noinspection PyProtectedMember
         return len(self) * MDHLink._size
 
-    def transforms(self,
-                   q: Optional[Sequence[float]] = None
-                   ) -> Sequence[np.ndarray]:
-        """Get sequency of 4x4 transforms."""
+    def transforms(self, q: Optional[Sequence[float]] = None) -> Sequence[np.ndarray]:
+        """Get sequence of 4x4 transforms."""
         q = np.zeros(len(self)) if q is None else q
-        transforms = [link.transform(p) for link, p in
-                      zip(self._links, q)]  # type: ignore
+        transforms = [link.transform(p) for link, p in zip(self._links, q)]
         return transforms
 
     @property
