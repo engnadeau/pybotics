@@ -19,9 +19,11 @@ matrix:
     - python: "3.8-dev"
     - python: "nightly"
 
+before_install:
+  - pip install poetry
+
 install:
-- pip install --upgrade poetry
-- poetry install
+  - poetry install
 
 script:
 - make check
