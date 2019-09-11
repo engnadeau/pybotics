@@ -9,6 +9,12 @@ The Python Toolbox for Robotics
 | CI | [![Build Status](https://travis-ci.org/nnadeau/pybotics.svg?branch=master)](https://travis-ci.org/nnadeau/pybotics) |
 | Coverage | [![codecov](https://codecov.io/gh/nnadeau/pybotics/branch/master/graph/badge.svg)](https://codecov.io/gh/nnadeau/pybotics) |
 
+## Overview
+
+`Pybotics` is an open-source Python toolbox for robot kinematics and calibration.
+It was designed to provide a simple, clear, and concise interface to quickly simulate and evaluate common robot concepts, such as kinematics, dynamics, trajectory generations, and calibration.
+The toolbox is specifically design for use with the Modified Denavit–Hartenberg parameters convention which uses four geometric parameters to define reference frames to the links of a robot manipulator.
+
 ## Usage
 
 ### Installation
