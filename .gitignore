@@ -370,3 +370,4 @@ README.rst
 doxygen/
 examples/*.html
 .pytest_cache/
+*.pdf
