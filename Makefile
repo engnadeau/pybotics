@@ -25,7 +25,12 @@ build:
 	poetry build
 
 docs:
-	poetry run sphinx-apidoc -o docs --separate pybotics
 	poetry run sphinx-build -b html docs docs/_build
 
-.PHONY: static check-package check-typing lint check test check-format format docs
+docs-api:
+	poetry run sphinx-apidoc -o docs --separate pybotics
+
+docs-autobuild:
+	poetry run sphinx-autobuild docs docs/_build
+
+.PHONY: static check-package check-typing lint check test check-format format docs docs-autobuild docs-api
