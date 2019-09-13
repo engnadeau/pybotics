@@ -24,6 +24,9 @@ test:
 build:
 	poetry build
 
+paper:
+	cd paper && pandoc paper.md -o paper.pdf --bibliography=paper.bib
+
 docs:
 	poetry run sphinx-build -b html docs docs/_build
 
@@ -33,4 +36,4 @@ docs-api:
 docs-autobuild:
 	poetry run sphinx-autobuild docs docs/_build
 
-.PHONY: static check-package check-typing lint check test check-format format docs docs-autobuild docs-api
+.PHONY: static check-package check-typing lint check test check-format format docs docs-autobuild docs-api paper
