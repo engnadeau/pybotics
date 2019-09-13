@@ -56,6 +56,9 @@ rope = "^0.14.0"
 pydocstyle = "^4.0"
 isort = "^4.3"
 black = {version = "^18.3-alpha.0", allows-prereleases = true}
+sphinxcontrib-apidoc = "^0.3.0"
+sphinx = "^2.2"
+sphinx-rtd-theme = "^0.4.3"
 
 [tool.black]
 line-length = 88
