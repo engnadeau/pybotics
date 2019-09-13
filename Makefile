@@ -24,4 +24,7 @@ test:
 build:
 	poetry build
 
-.PHONY: static check-package check-typing lint check test check-format format
+paper:
+	cd paper && pandoc paper.md -o paper.pdf --bibliography=paper.bib
+
+.PHONY: static check-package check-typing lint check test check-format format paper
