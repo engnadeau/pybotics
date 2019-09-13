@@ -27,4 +27,13 @@ build:
 paper:
 	cd paper && pandoc paper.md -o paper.pdf --bibliography=paper.bib
 
-.PHONY: static check-package check-typing lint check test check-format format paper
+docs:
+	poetry run sphinx-build -b html docs docs/_build
+
+docs-api:
+	poetry run sphinx-apidoc -o docs --separate pybotics
+
+docs-autobuild:
+	poetry run sphinx-autobuild docs docs/_build
+
+.PHONY: static check-package check-typing lint check test check-format format docs docs-autobuild docs-api paper
