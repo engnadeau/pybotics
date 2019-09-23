@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- Added issue templates (https://github.com/nnadeau/pybotics/commit/7d53e8f31756c316a0c84662a094a644bb376e3a)
+- Updated README.md with additional community info, direct links to the relevant docs/issues, and extended the testing how-to (https://github.com/nnadeau/pybotics/commit/2fe8b2127d560c676666c1a041d903716d3b18f8)
+
 ## [0.7.1]
 
 ### Added
