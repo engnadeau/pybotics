@@ -72,16 +72,41 @@ poetry add pybotics
 }
 ```
 
-## Development
+## Development and Community Guidelines
 
-- Install dev virtual environment:
+### Local Development
+
+- Install the dev virtual environment:
 
 ```bash
 poetry install
 ```
 
-- Make changes
-- Submit a PR
+### Submit an Issue
+
+- Navigate to the repository's [issue tab](https://github.com/nnadeau/pybotics/issues)
+- Search for related existing issues
+- If necessary, create a new issue using the provided templates
+
+### Contributing
+
+- Please see [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) for how to contribute to the project
+
+### Testing
+
+- Please review the [`Makefile`](Makefile) for an overview of all available tests
+- The most important tests and `make` commands are highlighted below:
+
+```bash
+# auto-format code 
+make format
+
+# perform all static tests
+make check
+
+# run all python tests
+make test
+```
 
 ---
 
