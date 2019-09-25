@@ -91,7 +91,7 @@ poetry install
 
 ### Contributing
 
-- Please see [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) for how to contribute to the project
+- Please see [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) for how to contribute to the project
 
 ### Testing
 
