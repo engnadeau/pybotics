@@ -42,8 +42,9 @@ poetry add pybotics
 - [Basic Usage](examples/basic_usage.py)
 - [Kinematics](examples/kinematics.ipynb)
 - [Calibration](examples/calibration.ipynb)
-- Trajectory and path planning
-- Machine learning
+- [Trajectory and Path Planning](examples/trajectory_generation.ipynb)
+- [Machine Learning](examples/machine_learning.ipynb)
+- [Dynamics](examples/dynamics.ipynb)
 
 ## Featured In
 
@@ -98,7 +99,7 @@ poetry install
 - The most important tests and `make` commands are highlighted below:
 
 ```bash
-# auto-format code 
+# auto-format code
 make format
 
 # perform all static tests
