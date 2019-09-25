@@ -42,8 +42,9 @@ poetry add pybotics
 - [Basic Usage](examples/basic_usage.py)
 - [Kinematics](examples/kinematics.ipynb)
 - [Calibration](examples/calibration.ipynb)
-- [Trajectory and path planning](examples/trajectory_generation.ipynb)
-- [Machine learning](examples/machine_learning.ipynb)
+- [Trajectory and Path Planning](examples/trajectory_generation.ipynb)
+- [Machine Learning](examples/machine_learning.ipynb)
+- [Dynamics](examples/dynamics.ipynb)
 
 ## Featured In
 
