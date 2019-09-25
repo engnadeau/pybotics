@@ -43,7 +43,7 @@ poetry add pybotics
 - [Kinematics](examples/kinematics.ipynb)
 - [Calibration](examples/calibration.ipynb)
 - [Trajectory and path planning](examples/trajectory_generation.ipynb)
-- Machine learning
+- [Machine learning](examples/machine_learning.ipynb)
 
 ## Featured In
 
