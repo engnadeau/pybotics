@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.7.3]
+
+### Fixed
+
+- Set poetry version to git tag (https://github.com/nnadeau/pybotics/commit/9f3be62b66c8c1a8fb541f9522f5e9ebe3a74c9c)
+
 ## [0.7.2]
 
 ### Added
