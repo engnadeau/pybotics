@@ -35,6 +35,7 @@ after_success:
 
 before_deploy:
   - poetry config http-basic.pypi $PYPI_USER $PYPI_PASS
+  - poetry version $TRAVIS_TAG
   - poetry build
 
 deploy:
