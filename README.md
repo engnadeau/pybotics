@@ -62,6 +62,22 @@ poetry add pybotics
 
 > Nadeau, (2019). Pybotics: Python Toolbox for Robotics. Journal of Open Source Software, 4(41), 1738, https://doi.org/10.21105/joss.01738
 
+```
+@article{nadeau2019pybotics,
+  doi = {10.21105/joss.01738},
+  url = {https://doi.org/10.21105/joss.01738},
+  year = {2019},
+  month = sep,
+  publisher = {The Open Journal},
+  volume = {4},
+  number = {41},
+  pages = {1738},
+  author = {Nicholas Nadeau},
+  title = {Pybotics: Python Toolbox for Robotics},
+  journal = {Journal of Open Source Software}
+}
+```
+
 > Nadeau, Nicholas A., Ilian A. Bonev, and Ahmed Joubair. "Impedance Control Self-Calibration of a Collaborative Robot Using Kinematic Coupling." Robotics 8.2 (2019): 33.
 
 ```
