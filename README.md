@@ -9,7 +9,7 @@ The Python Toolbox for Robotics
 | CI | [![Build Status](https://travis-ci.org/nnadeau/pybotics.svg?branch=master)](https://travis-ci.org/nnadeau/pybotics) |
 | Coverage | [![codecov](https://codecov.io/gh/nnadeau/pybotics/branch/master/graph/badge.svg)](https://codecov.io/gh/nnadeau/pybotics) |
 | Docs | [![Documentation Status](https://readthedocs.org/projects/pybotics/badge/?version=latest)](https://pybotics.readthedocs.io/en/latest/?badge=latest) |
-| DOI | [![DOI](https://zenodo.org/badge/66797360.svg)](https://zenodo.org/badge/latestdoi/66797360) |
+| DOI | [![DOI](https://joss.theoj.org/papers/10.21105/joss.01738/status.svg)](https://doi.org/10.21105/joss.01738) [![DOI](https://zenodo.org/badge/66797360.svg)](https://zenodo.org/badge/latestdoi/66797360) |
 
 ## Overview
 
@@ -60,18 +60,40 @@ poetry add pybotics
 
 - Please cite the following articles if you use `pybotics` in your research:
 
+> Nadeau, (2019). Pybotics: Python Toolbox for Robotics. Journal of Open Source Software, 4(41), 1738, https://doi.org/10.21105/joss.01738
+
+```
+@article{nadeau2019pybotics,
+  doi = {10.21105/joss.01738},
+  url = {https://doi.org/10.21105/joss.01738},
+  year = {2019},
+  month = sep,
+  publisher = {The Open Journal},
+  volume = {4},
+  number = {41},
+  pages = {1738},
+  author = {Nicholas Nadeau},
+  title = {Pybotics: Python Toolbox for Robotics},
+  journal = {Journal of Open Source Software}
+}
+```
+
 > Nadeau, Nicholas A., Ilian A. Bonev, and Ahmed Joubair. "Impedance Control Self-Calibration of a Collaborative Robot Using Kinematic Coupling." Robotics 8.2 (2019): 33.
 
 ```
 @article{nadeau2019impedance,
-  title={Impedance Control Self-Calibration of a Collaborative Robot Using Kinematic Coupling},
-  author={Nadeau, Nicholas A and Bonev, Ilian A and Joubair, Ahmed},
-  journal={Robotics},
-  volume={8},
-  number={2},
-  pages={33},
-  year={2019},
-  publisher={Multidisciplinary Digital Publishing Institute}
+  title={Impedance Control Self-Calibration of a Collaborative Robot Using Kinematic Coupling}, 
+  volume={8}, 
+  ISSN={2218-6581}, 
+  url={http://dx.doi.org/10.3390/robotics8020033}, 
+  DOI={10.3390/robotics8020033}, 
+  number={2}, 
+  journal={Robotics}, 
+  publisher={MDPI AG}, 
+  author={Nadeau, Nicholas A. and Bonev, Ilian A. and Joubair, Ahmed}, 
+  year={2019}, 
+  month={Apr}, 
+  pages={33}
 }
 ```
 
