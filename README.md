@@ -9,7 +9,7 @@ The Python Toolbox for Robotics
 | CI | [![Build Status](https://travis-ci.org/nnadeau/pybotics.svg?branch=master)](https://travis-ci.org/nnadeau/pybotics) |
 | Coverage | [![codecov](https://codecov.io/gh/nnadeau/pybotics/branch/master/graph/badge.svg)](https://codecov.io/gh/nnadeau/pybotics) |
 | Docs | [![Documentation Status](https://readthedocs.org/projects/pybotics/badge/?version=latest)](https://pybotics.readthedocs.io/en/latest/?badge=latest) |
-| DOI | [![DOI](https://zenodo.org/badge/66797360.svg)](https://zenodo.org/badge/latestdoi/66797360) |
+| DOI | [![DOI](https://joss.theoj.org/papers/10.21105/joss.01738/status.svg)](https://doi.org/10.21105/joss.01738) [![DOI](https://zenodo.org/badge/66797360.svg)](https://zenodo.org/badge/latestdoi/66797360) |
 
 ## Overview
 
@@ -59,6 +59,8 @@ poetry add pybotics
 ## Citing
 
 - Please cite the following articles if you use `pybotics` in your research:
+
+> Nadeau, (2019). Pybotics: Python Toolbox for Robotics. Journal of Open Source Software, 4(41), 1738, https://doi.org/10.21105/joss.01738
 
 > Nadeau, Nicholas A., Ilian A. Bonev, and Ahmed Joubair. "Impedance Control Self-Calibration of a Collaborative Robot Using Kinematic Coupling." Robotics 8.2 (2019): 33.
 
