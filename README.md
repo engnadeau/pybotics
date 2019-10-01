@@ -82,14 +82,18 @@ poetry add pybotics
 
 ```
 @article{nadeau2019impedance,
-  title={Impedance Control Self-Calibration of a Collaborative Robot Using Kinematic Coupling},
-  author={Nadeau, Nicholas A and Bonev, Ilian A and Joubair, Ahmed},
-  journal={Robotics},
-  volume={8},
-  number={2},
-  pages={33},
-  year={2019},
-  publisher={Multidisciplinary Digital Publishing Institute}
+  title={Impedance Control Self-Calibration of a Collaborative Robot Using Kinematic Coupling}, 
+  volume={8}, 
+  ISSN={2218-6581}, 
+  url={http://dx.doi.org/10.3390/robotics8020033}, 
+  DOI={10.3390/robotics8020033}, 
+  number={2}, 
+  journal={Robotics}, 
+  publisher={MDPI AG}, 
+  author={Nadeau, Nicholas A. and Bonev, Ilian A. and Joubair, Ahmed}, 
+  year={2019}, 
+  month={Apr}, 
+  pages={33}
 }
 ```
 
