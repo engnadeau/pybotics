@@ -57,3 +57,15 @@ def ur10() -> np.ndarray:  # pragma: no cover
             [np.pi / 2, 0, np.pi, 92.2],
         ]
     )
+def ur11() -> np.ndarray:  # pragma: no cover
+    """Get UR10 MDH model."""
+    return np.array(
+        [
+            [0         , 0   , 0         , 396. ],
+            [np.pi / 2 , 170., np.pi / 2 , 0    ],
+            [0         , 650., 0         , 0    ],
+            [np.pi / 2 , 156., 0         , 650. ],
+            [np.pi / 2 , 0   , np.pi / 2 , 0    ],
+            [np.pi / 2 , 0   , 0         , 109.  ],
+        ]
+    )
