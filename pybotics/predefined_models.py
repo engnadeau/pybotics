@@ -57,13 +57,14 @@ def ur10() -> np.ndarray:  # pragma: no cover
             [np.pi / 2, 0, np.pi, 92.2],
         ]
     )
-    
+
+
 def abb_irb120() -> np.ndarray:  # pragma: no cover
     """Get ABB irb120 MDH model."""
     return np.array(
         [
             [0, 0, 0, 290],
-            [-np.pi / 2, 0, -np.pi/2, 0],
+            [-np.pi / 2, 0, -np.pi / 2, 0],
             [0, 270, 0, 0],
             [-np.pi / 2, 70, 0, 302],
             [np.pi / 2, 0, 0, 0],
