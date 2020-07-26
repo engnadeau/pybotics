@@ -26,7 +26,7 @@ format:
 
 .PHONY: test
 test:
-	PYTHONPATH=. poetry run pytest
+	PYTHONPATH=. poetry run pytest --cov=pybotics --cov-report term-missing --cov-config .coveragerc --verbose
 
 .PHONY: build
 build:
