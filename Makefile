@@ -26,7 +26,7 @@ format:
 
 .PHONY: test
 test:
-	poetry run pytest
+	PYTHONPATH=. poetry run pytest
 
 .PHONY: build
 build:
