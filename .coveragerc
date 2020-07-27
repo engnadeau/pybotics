@@ -2,7 +2,8 @@
 branch = True
 
 [report]
-fail_under = 100
+# FIXME: https://github.com/nnadeau/pybotics/issues/746
+fail_under = 60
 exclude_lines =
     # Have to re-enable the standard pragma
     pragma: no cover
