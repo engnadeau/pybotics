@@ -1,8 +1,26 @@
-# ![](https://raw.githubusercontent.com/nnadeau/pybotics/master/media/robotic-arm.png) pybotics
+<br />
+<p align="center">
+  <a href="https://github.com/nnadeau/pybotics">
+    <img src="https://raw.githubusercontent.com/nnadeau/pybotics/master/media/robotic-arm.png" alt="Logo" width="80" height="80">
+  </a>
 
-The Python Toolbox for Robotics
+  <h3 align="center">pybotics</h3>
 
-|Component|Badges|
+  <p align="center">
+    The Python Toolbox for Robotics
+    <br />
+    <a href="https://pybotics.readthedocs.io/"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/nnadeau/pybotics/tree/master/examples">View Demo</a>
+    ·
+    <a href="https://github.com/nnadeau/pybotics/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/nnadeau/pybotics/issues">Request Feature</a>
+  </p>
+</p>
+
+| | |
 |---|---|
 | GitHub | [![GitHub issues](https://img.shields.io/github/issues/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/issues) [![GitHub forks](https://img.shields.io/github/forks/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/network) [![GitHub stars](https://img.shields.io/github/stars/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/stargazers) [![GitHub tag](https://img.shields.io/github/tag/nnadeau/pybotics.svg?maxAge=2592000?style=flat-square)](https://github.com/nnadeau/pybotics/releases) |
 | PyPI | [![PyPI Version](https://img.shields.io/pypi/v/pybotics.svg)](https://pypi.python.org/pypi/pybotics) [![PyPI License](https://img.shields.io/pypi/l/pybotics.svg)](https://pypi.python.org/pypi/pybotics) [![PyPI Wheel](https://img.shields.io/pypi/wheel/pybotics.svg)](https://pypi.python.org/pypi/pybotics) [![PyPI Format](https://img.shields.io/pypi/format/pybotics.svg)](https://pypi.python.org/pypi/pybotics) [![PyPI Pythons](https://img.shields.io/pypi/pyversions/pybotics.svg)](https://pypi.python.org/pypi/pybotics) [![PyPI Implementation](https://img.shields.io/pypi/implementation/pybotics.svg)](https://pypi.python.org/pypi/pybotics) |
@@ -10,6 +28,22 @@ The Python Toolbox for Robotics
 | Coverage | [![codecov](https://codecov.io/gh/nnadeau/pybotics/branch/master/graph/badge.svg)](https://codecov.io/gh/nnadeau/pybotics) |
 | Docs | [![Documentation Status](https://readthedocs.org/projects/pybotics/badge/?version=latest)](https://pybotics.readthedocs.io/en/latest/?badge=latest) |
 | DOI | [![DOI](https://joss.theoj.org/papers/10.21105/joss.01738/status.svg)](https://doi.org/10.21105/joss.01738) [![DOI](https://zenodo.org/badge/66797360.svg)](https://zenodo.org/badge/latestdoi/66797360) |
+
+## Contents
+
+- [Contents](#contents)
+- [Overview](#overview)
+- [Usage](#usage)
+  - [Documentation](#documentation)
+  - [Installation](#installation)
+  - [Applications & Examples](#applications--examples)
+- [Featured In](#featured-in)
+- [Citing](#citing)
+- [Development and Community Guidelines](#development-and-community-guidelines)
+  - [Local Development](#local-development)
+  - [Submit an Issue](#submit-an-issue)
+  - [Contributing](#contributing)
+  - [Testing](#testing)
 
 ## Overview
 
@@ -21,7 +55,7 @@ The toolbox is specifically designed for use with the [Modified Denavit–Harten
 
 ### Documentation
 
-- Please visit https://pybotics.readthedocs.io/
+Please visit https://pybotics.readthedocs.io/
 
 ### Installation
 
@@ -58,7 +92,7 @@ poetry add pybotics
 
 ## Citing
 
-- Please cite the following articles if you use `pybotics` in your research:
+Please cite the following articles if you use `pybotics` in your research:
 
 > Nadeau, (2019). Pybotics: Python Toolbox for Robotics. Journal of Open Source Software, 4(41), 1738, https://doi.org/10.21105/joss.01738
 
