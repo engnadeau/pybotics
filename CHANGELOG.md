@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.7.4]
+
+### Added
+
+- Added JOSS publication
+- Added `ABB IRB120` model
+
+### Fixed
+
+- Fixed `pyproject.toml` `allow-prereleases`
+
+### Changed
+
+- Reduced `fail_under` to 60% for unit testing
+- Switched to GitHub Actions from TravisCI
+- Cleaned `Makefile` `.PHONY` tags
+
 ## [0.7.3]
 
 ### Fixed
