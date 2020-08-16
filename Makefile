@@ -9,7 +9,7 @@ check-typing:
 .PHONY: check-format
 check-format:
 	poetry run black --check .
-	poetry run isort -rc -c .
+	poetry run isort -c .
 
 .PHONY: lint
 lint:
@@ -22,7 +22,7 @@ check: check-format check-package check-typing lint
 .PHONY: format
 format:
 	poetry run black .
-	poetry run isort -rc .
+	poetry run isort .
 
 .PHONY: test
 test:
