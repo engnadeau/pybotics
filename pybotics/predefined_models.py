@@ -1,8 +1,7 @@
 """Predefined robot models.
 
-These models correspond to the 
-Modified Denavit–Hartenberg parameters 
-(https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters#Modified_DH_parameters)
+These models correspond to the Modified Denavit–Hartenberg parameters:
+https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
 """
 import numpy as np  # type: ignore
 
