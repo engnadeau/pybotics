@@ -1,3 +1,6 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# checks and linting
+
 .PHONY: check-package
 check-package:
 	poetry check -v
@@ -19,18 +22,30 @@ lint:
 .PHONY: check
 check: check-format check-package check-typing lint
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# formatting
+
 .PHONY: format
 format:
 	poetry run black .
 	poetry run isort .
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# testing
+
 .PHONY: test
 test:
 	PYTHONPATH=. poetry run pytest --cov=pybotics --cov-report term-missing --cov-config .coveragerc --verbose
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# packaging
+
 .PHONY: build
 build:
 	poetry build
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# documentation
 
 .PHONY: paper
 paper:
