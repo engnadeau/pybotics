@@ -26,6 +26,6 @@
     "@semantic-release/release-notes-generator",
     "@semantic-release/github"
   ],
-  "repositoryUrl": "https://github.com/nnadeau/pybotics.git",
+  "repositoryUrl": "git@github.com:nnadeau/pybotics.git",
   "tagFormat": "${version}"
 }
