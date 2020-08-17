@@ -3,12 +3,11 @@
     "master"
   ],
   "plugins": [
-    ["@semantic-release/commit-analyzer", {
-      "preset": "angular"
-    }],
+    "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/github"
   ],
+  "preset": "angular",
   "repositoryUrl": "git@github.com:nnadeau/pybotics.git",
   "tagFormat": "${version}"
 }
