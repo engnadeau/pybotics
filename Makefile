@@ -37,6 +37,10 @@ format:
 test:
 	PYTHONPATH=. poetry run pytest --cov=pybotics --cov-report term-missing --cov-config .coveragerc --verbose
 
+.PHONY: test-notebooks
+test-notebooks:
+	poetry run jupyter nbconvert --execute examples/*.ipynb
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # packaging
 
