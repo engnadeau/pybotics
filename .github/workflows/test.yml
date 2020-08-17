@@ -40,3 +40,6 @@ jobs:
     - name: Run unit tests
       run: |
         make test
+    - name: Run unit tests
+      run: |
+        make test-notebooks
