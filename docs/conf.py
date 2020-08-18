@@ -1,6 +1,6 @@
+import datetime
 import sys
 from pathlib import Path
-import datetime
 
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
