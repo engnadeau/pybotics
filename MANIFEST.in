@@ -10,9 +10,6 @@ prune tests
 exclude .coveragerc
 exclude .flake8
 exclude .gitignore
-exclude .travis.yml
-exclude codecov.yml
-exclude pytest.ini
 exclude Makefile
 exclude Pipfile
 include Pipfile.lock
