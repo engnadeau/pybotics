@@ -60,13 +60,13 @@ paper:
 	cd paper && pandoc paper.md -o paper.pdf --bibliography=paper.bib
 
 .PHONY: docs
-docs:
+docs: docs-api
 	poetry run sphinx-build -b html docs docs/_build
 
 .PHONY: docs-api
 docs-api:
 	poetry run sphinx-apidoc -o docs --separate pybotics
 
-.PHONY: docs-autobuild
+.PHONY: serve-docs
 docs-autobuild:
 	poetry run sphinx-autobuild docs docs/_build
