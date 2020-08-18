@@ -28,6 +28,7 @@ class Link(Sized):
         Generate a vector of the new link state given a displacement.
 
         :param q: given displacement
+
         :return vector of new displacement state
         """
         raise NotImplementedError
@@ -38,6 +39,7 @@ class Link(Sized):
         Generate a 4x4 transform matrix given a displacement.
 
         :param q: given displacement
+
         :return vector of new displacement state
         """
         raise NotImplementedError
@@ -83,6 +85,7 @@ class MDHLink(Link):
         Generate a 4x4 transform matrix with a displacement.
 
         :param q: given displacement
+
         :return vector of new displacement state
         """
         vector = self.displace(q)
@@ -141,6 +144,7 @@ class RevoluteMDHLink(MDHLink):
         Generate a vector of the new link state given a displacement.
 
         :param q: given displacement
+
         :return vector of new displacement state
         """
         v = np.copy(self.vector)
@@ -161,6 +165,7 @@ class PrismaticMDHLink(MDHLink):
         Generate a vector of the new link state given a displacement.
 
         :param q: given displacement
+
         :return vector of new displacement state
         """
         v = np.copy(self.vector)
