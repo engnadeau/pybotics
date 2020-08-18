@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+import datetime
 
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
@@ -12,9 +13,10 @@ sys.path.insert(0, str(ROOT_DIR.resolve()))
 
 # -- Project information -----------------------------------------------------
 
+year = datetime.date.today().year
 project = "pybotics"
 author = "Nicholas Nadeau"
-copyright = f"2019, {author}"
+copyright = f"{year}, {author}"
 
 
 # -- General configuration ---------------------------------------------------
