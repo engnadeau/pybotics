@@ -48,6 +48,10 @@ test-notebooks:
 build:
 	poetry build
 
+.PHONY: update-dev-dependencies
+update-dev-dependencies:
+	poetry run python scripts/update_dev_dependencies.py
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # documentation
 
