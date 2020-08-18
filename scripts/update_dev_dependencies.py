@@ -1,7 +1,8 @@
-import toml
-from pathlib import Path
 import logging
 import subprocess
+from pathlib import Path
+
+import toml
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
