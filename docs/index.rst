@@ -32,7 +32,7 @@ Installation
     :maxdepth: 4
     :caption: Contents
 
-    pybotics
+    modules
 
 Indices
 =======

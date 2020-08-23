@@ -1,3 +1,4 @@
+import datetime
 import sys
 from pathlib import Path
 
@@ -12,9 +13,10 @@ sys.path.insert(0, str(ROOT_DIR.resolve()))
 
 # -- Project information -----------------------------------------------------
 
+year = datetime.date.today().year
 project = "pybotics"
 author = "Nicholas Nadeau"
-copyright = f"2019, {author}"
+copyright = f"{year}, {author}"
 
 
 # -- General configuration ---------------------------------------------------
@@ -25,13 +27,13 @@ master_doc = "index"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.viewcode",
-    "sphinx.ext.todo",
     "sphinx_rtd_theme",
+    "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
+    "sphinx.ext.autosummary",
     "sphinx.ext.graphviz",
     "sphinx.ext.inheritance_diagram",
+    "sphinx.ext.viewcode",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -69,8 +71,8 @@ html_theme_options = {"canonical_url": "https://pybotics.readthedocs.io"}
 
 # -- Extension configuration -------------------------------------------------
 
-
-# -- Options for todo extension ----------------------------------------------
-
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+autosectionlabel_prefix_document = True
+autoclass_content = "class"
+autosummary_generate = True
+autosummary_imported_members = True
+autodoc_default_options = {"show-inheritance": True, "inherited-members": True}
