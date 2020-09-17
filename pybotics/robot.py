@@ -1,9 +1,12 @@
 """Robot module."""
 from typing import Any, Optional, Sequence, Sized, Union
 
+import math
 import attr
 import numpy as np  # type: ignore
 import scipy.optimize  # type: ignore
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 from pybotics.errors import PyboticsError
 from pybotics.json_encoder import JSONEncoder
@@ -94,6 +97,61 @@ class Robot(Sized):
             actual_pose = self.fk(result.x)
             if np.allclose(actual_pose, pose, atol=1e-3):
                 return result.x
+        return None
+
+    def ws(self, n = 15000, vmax = [180, 180, 180, 180, 180, 180], vmin = [-180, -180, -180, -180, -180, -180]):
+        """
+        Plot the workspace of the robot as a point clound.
+        n is the number of points of the point clound (default 15000),
+        vmax and vmin are the joints limits (default 180 and -180 for all joints).
+
+
+        :param n:
+        :param vmax:
+        :param vmin:
+        :return: None
+        """
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        t = []
+
+        for i in range(self.__len__()):
+            temp = (vmax[i] - vmin[i])*np.random.rand(n) + vmin[i]
+            t.append(temp)
+
+        joints = [[0 for x in range(self.__len__())] for y in range(n)]
+
+        for i in range(n):
+            for j in range(self.__len__()):
+                joints[i][j] = np.deg2rad(t[j][i])
+
+        points_x = []
+        points_y = []
+        points_z = []
+        points = []
+
+        for i in range(len(joints)):
+            pose = self.fk(joints[i])
+            dist = math.dist([pose[0, 3], pose[1, 3]], [0, 0])
+            point = [pose[0, 3], pose[1, 3], pose[2, 3], dist]
+            points.append(point)
+
+        points = np.array(points)
+        sorted_points = points[np.argsort(points[:, 3])]
+
+        for i in range(len(sorted_points)):
+            points_x.append(sorted_points[i][0])
+            points_y.append(sorted_points[i][1])
+            points_z.append(sorted_points[i][2])
+
+        color = np.arange(len(points_x))
+        ax.scatter(points_x, points_y, points_z, s=0.1, marker='.', c=color, cmap='jet_r')
+
+        ax.set_xlabel('X Label')
+        ax.set_ylabel('Y Label')
+        ax.set_zlabel('Z Label')
+
+        plt.show()
         return None
 
     @property
