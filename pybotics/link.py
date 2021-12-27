@@ -1,6 +1,6 @@
 """Link module."""
 from abc import abstractmethod
-from collections import Sized
+from collections.abc import Sized
 from typing import Sequence, Union
 
 import attr
