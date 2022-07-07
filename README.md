@@ -181,6 +181,11 @@ make check
 make test
 ```
 
+### GitHub Actions
+
+- This repo uses [`semantic-releases`](https://github.com/semantic-release/) to generate releases and release notes automatically from commits
+  - A [`PERSONAL_TOKEN` Actions secret](https://github.com/nnadeau/pybotics/settings/secrets/actions) from a [Personal Token](https://github.com/settings/tokens) with a [`public_repo` scope](https://github.com/semantic-release/github#github-authentication) is needed for CI releases
+
 ---
 
 Icons made by <a href="https://icon54.com/" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
