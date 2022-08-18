@@ -16,11 +16,9 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: "3.x"
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
           pip install poetry
-      - name: Install package dependencies
-        run: |
           poetry install
       - name: Run linting checks
         run: |
@@ -63,11 +61,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
           pip install poetry
-      - name: Install package + dev dependencies
-        run: |
           poetry install
       - name: Unit testing
         run: |
@@ -81,12 +77,10 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.x"
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
           pip install poetry
-      - name: Install package + notebook dependencies
-        run: |
-          poetry install
+          poetry install -E notebooks
       - name: Test notebooks
         run: |
           make test-notebooks
