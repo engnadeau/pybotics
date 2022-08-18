@@ -32,7 +32,7 @@ test-notebooks: examples/*.ipynb
 .PHONY: test-examples
 test-examples: examples/*.py
 	for file in $^; do \
-		poetry run python $${file}; \
+		python $${file}; \
 	done
 
 .PHONY: build
