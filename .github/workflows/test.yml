@@ -31,9 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-<<<<<<< HEAD
-        python-version: [3.7, 3.8]
-=======
         python-version:
           - 3.7
           - 3.8
@@ -54,8 +51,7 @@ jobs:
           poetry install --no-dev
       - name: Test example
         run: |
-          poetry run python examples/basic_usage.py
->>>>>>> ci: cleaned test workflow
+          make test-examples
 
   test-unit:
     runs-on: ubuntu-latest
