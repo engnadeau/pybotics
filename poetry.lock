@@ -1203,7 +1203,7 @@ notebooks = ["notebook"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "722443bda6cea65f926bdfe4f4434e4c3e6b7aca3ab4e44a4b0c85fd0b145781"
+content-hash = "3326bc80c119beff33b69163e49c7e84be895800dc88fa9ad8200da976014f45"
 
 [metadata.files]
 appdirs = [
