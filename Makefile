@@ -29,8 +29,16 @@ test:
 		--verbose
 
 .PHONY: test-notebooks
-test-notebooks:
-	poetry run jupyter nbconvert --execute examples/*.ipynb
+test-notebooks: examples/*.ipynb
+	for file in $^; do \
+		poetry run jupyter nbconvert --execute $${file}; \
+	done
+
+.PHONY: test-examples
+test-examples: examples/*.py
+	for file in $^; do \
+		poetry run python $${file}; \
+	done
 
 .PHONY: build
 build:
