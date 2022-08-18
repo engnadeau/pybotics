@@ -51,7 +51,7 @@ jobs:
           poetry install --no-dev
       - name: Test example
         run: |
-          poetry run python examples/basic_usage.py
+          make test-examples
 
   test-unit:
     runs-on: ubuntu-latest
