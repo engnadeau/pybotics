@@ -1,63 +1,42 @@
-<br />
-<p align="center">
-  <a href="https://github.com/nnadeau/pybotics">
-    <img src="https://raw.githubusercontent.com/nnadeau/pybotics/master/media/robotic-arm.png" alt="Logo" width="80" height="80">
-  </a>
+# Pybotics
 
-  <h3 align="center">pybotics</h3>
+![Robot arm logo](media/robotic-arm.png)
 
-  <p align="center">
-    The Python Toolbox for Robotics
-    <br />
-    <a href="https://pybotics.readthedocs.io/"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/nnadeau/pybotics/tree/master/examples">View Demo</a>
-    ·
-    <a href="https://github.com/nnadeau/pybotics/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/nnadeau/pybotics/issues">Request Feature</a>
-  </p>
-</p>
+The Python Toolbox for Robotics
 
-[![GitHub issues](https://img.shields.io/github/issues/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/issues)
-[![GitHub forks](https://img.shields.io/github/forks/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/network)
-[![GitHub stars](https://img.shields.io/github/stars/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/stargazers)
-[![GitHub tag](https://img.shields.io/github/tag/nnadeau/pybotics.svg?maxAge=2592000?style=flat-square)](https://github.com/nnadeau/pybotics/releases)
+- [Explore the docs](https://pybotics.readthedocs.io)
+- [View demos and examples](https://github.com/nnadeau/pybotics/tree/master/examples)
+- [Report a bug](https://github.com/nnadeau/pybotics/issues)
+- [Request a feature](https://github.com/nnadeau/pybotics/issues)
 
-[![PyPI Version](https://img.shields.io/pypi/v/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
-[![PyPI License](https://img.shields.io/pypi/l/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
-[![PyPI Wheel](https://img.shields.io/pypi/wheel/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
-[![PyPI Format](https://img.shields.io/pypi/format/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
-[![PyPI Pythons](https://img.shields.io/pypi/pyversions/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
-[![PyPI Implementation](https://img.shields.io/pypi/implementation/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
-
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![Test](https://github.com/nnadeau/pybotics/workflows/Test/badge.svg)](https://github.com/nnadeau/pybotics/actions)
-[![Release](https://github.com/nnadeau/pybotics/workflows/Release/badge.svg)](https://github.com/nnadeau/pybotics/actions)
-[![Publish](https://github.com/nnadeau/pybotics/workflows/Publish/badge.svg)](https://github.com/nnadeau/pybotics/actions)
-
-[![Documentation Status](https://readthedocs.org/projects/pybotics/badge/?version=latest)](https://pybotics.readthedocs.io/en/latest/?badge=latest)
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.01738/status.svg)](https://doi.org/10.21105/joss.01738)
-[![DOI](https://zenodo.org/badge/66797360.svg)](https://zenodo.org/badge/latestdoi/66797360)
-
-[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fnnadeau%2Fpybotics)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fnnadeau%2Fpybotics)
+Item | Badges
+---|---
+Repo | [![GitHub issues](https://img.shields.io/github/issues/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/issues) [![GitHub forks](https://img.shields.io/github/forks/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/network) [![GitHub stars](https://img.shields.io/github/stars/nnadeau/pybotics.svg)](https://github.com/nnadeau/pybotics/stargazers) ![GitHub repo size](https://img.shields.io/github/repo-size/engnadeau/pybotics)
+Releases | [![GitHub tag](https://img.shields.io/github/tag/nnadeau/pybotics.svg?maxAge=2592000?style=flat-square)](https://github.com/nnadeau/pybotics/releases) [![PyPI Version](https://img.shields.io/pypi/v/pybotics.svg)](https://pypi.python.org/pypi/pybotics) [![PyPI Wheel](https://img.shields.io/pypi/wheel/pybotics.svg)](https://pypi.python.org/pypi/pybotics) [![PyPI Format](https://img.shields.io/pypi/format/pybotics.svg)](https://pypi.python.org/pypi/pybotics) [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) ![PyPI - Downloads](https://img.shields.io/pypi/dm/pybotics)
+Compatibility | [![PyPI Pythons](https://img.shields.io/pypi/pyversions/pybotics.svg)](https://pypi.python.org/pypi/pybotics) [![PyPI Implementation](https://img.shields.io/pypi/implementation/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
+Workflows | [![Test](https://github.com/nnadeau/pybotics/workflows/Test/badge.svg)](https://github.com/nnadeau/pybotics/actions) [![Release](https://github.com/nnadeau/pybotics/workflows/Release/badge.svg)](https://github.com/nnadeau/pybotics/actions) [![Publish](https://github.com/nnadeau/pybotics/workflows/Publish/badge.svg)](https://github.com/nnadeau/pybotics/actions)
+Documentation | [![Documentation Status](https://readthedocs.org/projects/pybotics/badge/?version=latest)](https://pybotics.readthedocs.io/en/latest/?badge=latest)
+Citations | [![DOI](https://joss.theoj.org/papers/10.21105/joss.01738/status.svg)](https://doi.org/10.21105/joss.01738) [![DOI](https://zenodo.org/badge/66797360.svg)](https://zenodo.org/badge/latestdoi/66797360)
+License | [![PyPI License](https://img.shields.io/pypi/l/pybotics.svg)](https://pypi.python.org/pypi/pybotics)
+Social | ![Twitter Follow](https://img.shields.io/twitter/follow/engnadeau?style=social) [![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fnnadeau%2Fpybotics)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fnnadeau%2Fpybotics)
 
 ## Contents
 
-- [Contents](#contents)
-- [Overview](#overview)
-- [Usage](#usage)
-  - [Documentation](#documentation)
-  - [Installation](#installation)
-  - [Applications & Examples](#applications--examples)
-- [Featured In](#featured-in)
-- [Citing](#citing)
-- [Development and Community Guidelines](#development-and-community-guidelines)
-  - [Local Development](#local-development)
-  - [Submit an Issue](#submit-an-issue)
-  - [Contributing](#contributing)
-  - [Testing](#testing)
+- [Pybotics](#pybotics)
+  - [Contents](#contents)
+  - [Overview](#overview)
+  - [Usage](#usage)
+    - [Documentation](#documentation)
+    - [Installation](#installation)
+    - [Applications & Examples](#applications--examples)
+  - [Featured In](#featured-in)
+  - [Citing](#citing)
+  - [Development and Community Guidelines](#development-and-community-guidelines)
+    - [Local Development](#local-development)
+    - [Submit an Issue](#submit-an-issue)
+    - [Contributing](#contributing)
+    - [Testing](#testing)
+    - [GitHub Actions](#github-actions)
 
 ## Overview
 
@@ -149,7 +128,7 @@ Please cite the following articles if you use `pybotics` in your research:
 
 ### Local Development
 
-- Install the dev virtual environment:
+- Use [poetry](https://python-poetry.org/) to install the dev virtual environment:
 
 ```bash
 poetry install
@@ -175,7 +154,7 @@ poetry install
 make format
 
 # perform all static tests
-make check
+make lint
 
 # run all python tests
 make test
