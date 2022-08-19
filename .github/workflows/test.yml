@@ -16,7 +16,6 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: "3.x"
-          cache: "poetry"
       - name: Install dependencies
         run: |
           pip install poetry
@@ -40,7 +39,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
       - name: Install package
         run: |
           pip install .
@@ -63,7 +61,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
       - name: Install dependencies
         run: |
           pip install poetry
@@ -80,7 +77,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.x"
-          cache: "poetry"
       - name: Install dependencies
         run: |
           pip install poetry
