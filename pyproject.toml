@@ -4,9 +4,9 @@ version = "0.0.0"
 description = "Python Toolbox for Robotics"
 authors = ["Nicholas Nadeau <nicholas.nadeau@gmail.com>"]
 readme = "README.md"
-homepage = "https://github.com/nnadeau/pybotics"
-repository = "https://github.com/nnadeau/pybotics"
-documentation = "https://github.com/nnadeau/pybotics"
+homepage = "https://github.com/engnadeau/pybotics"
+repository = "https://github.com/engnadeau/pybotics"
+documentation = "https://github.com/engnadeau/pybotics"
 keywords = ["robot", "research", "automation", "kinematics", "geometry"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
