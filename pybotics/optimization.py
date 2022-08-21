@@ -52,7 +52,7 @@ class OptimizationHandler:
             size=self.robot.kinematic_chain.num_parameters,
         )
 
-    def apply_optimization_vector(self, vector: np.ndarray) -> None:
+    def apply_optimization_vector(self, vector: npt.NDArray[np.float64]) -> None:
         """Apply vector."""
         # get number of parameters
         num_kc_parameters = np.sum(self.kinematic_chain_mask)
@@ -92,7 +92,7 @@ class OptimizationHandler:
 
 
 def optimize_accuracy(
-    optimization_vector: np.ndarray,
+    optimization_vector: npt.NDArray[np.float64],
     handler: OptimizationHandler,
     qs: Sequence[Sequence[float]],
     positions: Sequence[Sequence[float]],
@@ -103,7 +103,9 @@ def optimize_accuracy(
     return errors
 
 
-def compute_absolute_error(q: np.ndarray, position: np.ndarray, robot: Robot) -> float:
+def compute_absolute_error(
+    q: npt.NDArray[np.float64], position: npt.NDArray[np.float64], robot: Robot
+) -> float:
     """Compute the absolute error of a given position."""
     pose = robot.fk(q)
     actual_position = position_from_matrix(pose)
@@ -112,7 +114,7 @@ def compute_absolute_error(q: np.ndarray, position: np.ndarray, robot: Robot) ->
 
 
 def compute_absolute_errors(
-    qs: np.ndarray, positions: np.ndarray, robot: Robot
+    qs: npt.NDArray[np.float64], positions: npt.NDArray[np.float64], robot: Robot
 ) -> npt.NDArray[np.float64]:
     """
     Compute the absolute errors of a given set of positions.
@@ -125,7 +127,10 @@ def compute_absolute_errors(
 
 
 def compute_relative_error(
-    q_a: np.ndarray, q_b: np.ndarray, distance: float, robot: Robot
+    q_a: npt.NDArray[np.float64],
+    q_b: npt.NDArray[np.float64],
+    distance: float,
+    robot: Robot,
 ) -> float:
     """Compute the relative error of a given position combination."""
     pose_a = robot.fk(q_a)
@@ -143,7 +148,10 @@ def compute_relative_error(
 
 
 def compute_relative_errors(
-    qs_a: np.ndarray, qs_b: np.ndarray, distances: np.ndarray, robot: Robot
+    qs_a: npt.NDArray[np.float64],
+    qs_b: npt.NDArray[np.float64],
+    distances: npt.NDArray[np.float64],
+    robot: Robot,
 ) -> npt.NDArray[np.float64]:
     """Compute the relative errors of a given set of position combinations."""
     return list(map(compute_relative_error, qs_a, qs_b, distances, repeat(robot)))
