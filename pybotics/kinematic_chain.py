@@ -4,7 +4,7 @@ from abc import abstractmethod
 from typing import Any, Optional, Sequence, Sized, Union
 
 import attr
-import numpy as np  # type: ignore
+import numpy as np
 import numpy.typing as npt
 
 from pybotics.errors import PyboticsError

@@ -7,7 +7,7 @@ from itertools import repeat
 from typing import Sequence, Union, MutableSequence
 
 import attr
-import numpy as np  # type: ignore
+import numpy as np
 import numpy.typing as npt
 
 from pybotics.robot import Robot

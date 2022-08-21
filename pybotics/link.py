@@ -4,7 +4,7 @@ from collections.abc import Sized
 from typing import Sequence, Union
 
 import attr
-import numpy as np  # type: ignore
+import numpy as np
 import numpy.typing as npt
 
 from pybotics.json_encoder import JSONEncoder
