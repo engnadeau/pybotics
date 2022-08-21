@@ -154,4 +154,4 @@ def compute_relative_errors(
     robot: Robot,
 ) -> npt.NDArray[np.float64]:
     """Compute the relative errors of a given set of position combinations."""
-    return list(map(compute_relative_error, qs_a, qs_b, distances, repeat(robot)))
+    return np.array(map(compute_relative_error, qs_a, qs_b, distances, repeat(robot)))
