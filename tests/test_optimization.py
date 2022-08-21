@@ -4,6 +4,7 @@ isort:skip_file
 """
 import hypothesis.strategies as st
 import numpy as np
+import numpy.typing as npt
 import scipy.optimize  # type: ignore
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
@@ -29,7 +30,7 @@ from pybotics.robot import Robot
         elements=st.floats(allow_nan=False, allow_infinity=False),
     )
 )
-def test_compute_absolute_errors(q: np.ndarray) -> None:
+def test_compute_absolute_errors(q: npt.NDArray[np.float64]) -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
     pose = robot.fk(q)
@@ -60,7 +61,7 @@ def test_compute_absolute_errors(q: np.ndarray) -> None:
         elements=st.floats(allow_nan=False, allow_infinity=False),
     ),
 )
-def test_compute_relative_errors(q_a: np.ndarray, q_b: np.ndarray) -> None:
+def test_compute_relative_errors(q_a: npt.NDArray[np.float64], q_b: npt.NDArray[np.float64]) -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
 

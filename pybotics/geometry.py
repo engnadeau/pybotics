@@ -66,7 +66,7 @@ def vector_2_matrix(
     transform_matrix = np.eye(4)
     for axis, value in zip(convention, rotation_component):
         current_rotation = globals()[f"rotation_matrix_{axis}"](value)
-        transform_matrix = np.dot(transform_matrix, current_rotation) # type: ignore
+        transform_matrix = np.dot(transform_matrix, current_rotation)  # type: ignore
 
     # add translation component
     transform_matrix[:-1, -1] = translation_component
@@ -74,13 +74,13 @@ def vector_2_matrix(
     return transform_matrix
 
 
-def position_from_matrix(matrix: np.ndarray) -> npt.NDArray[np.float64]:
+def position_from_matrix(matrix: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """Get the position values from a 4x4 transform matrix."""
     return matrix[:-1, -1]
 
 
 def matrix_2_vector(
-    matrix: np.ndarray,
+    matrix: npt.NDArray[np.float64],
     convention: OrientationConvention = OrientationConvention.EULER_ZYX,
 ) -> npt.NDArray[np.float64]:
     """Convert 4x4 matrix to a vector."""
@@ -91,7 +91,7 @@ def matrix_2_vector(
         raise NotImplementedError
 
 
-def _matrix_2_euler_zyx(matrix: np.ndarray) -> npt.NDArray[np.float64]:
+def _matrix_2_euler_zyx(matrix: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """
     Calculate the equivalent position and euler angles of the given pose.
 
