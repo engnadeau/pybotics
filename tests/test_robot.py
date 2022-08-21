@@ -84,9 +84,11 @@ def test_compute_joint_torques(planar_robot: Robot):
     joint_angles = np.deg2rad([30, 60, 0])
 
     # get link lengths
+    # FIXME: "Link" has no attribute "a"
+    # TODO: review abstract inheritance
     lengths = [
-        planar_robot.kinematic_chain.links[1].a,
-        planar_robot.kinematic_chain.links[2].a,
+        planar_robot.kinematic_chain.links[1].a,  # type: ignore
+        planar_robot.kinematic_chain.links[2].a,  # type: ignore
     ]
 
     # calculate expected torques
@@ -118,9 +120,11 @@ def test_compute_joint_torques(planar_robot: Robot):
 def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
     """Test."""
     # get link lengths
+    # FIXME: "Link" has no attribute "a"
+    # TODO: review abstract inheritance
     lengths = [
-        planar_robot.kinematic_chain.links[1].a,
-        planar_robot.kinematic_chain.links[2].a,
+        planar_robot.kinematic_chain.links[1].a,  # type: ignore
+        planar_robot.kinematic_chain.links[2].a,  # type: ignore
     ]
 
     # example from Craig has last joint set to 0
@@ -151,9 +155,11 @@ def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
 def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
     """Test."""
     # get link lengths
+    # FIXME: "Link" has no attribute "a"
+    # TODO: review abstract inheritance
     lengths = [
-        planar_robot.kinematic_chain.links[1].a,
-        planar_robot.kinematic_chain.links[2].a,
+        planar_robot.kinematic_chain.links[1].a,  # type: ignore
+        planar_robot.kinematic_chain.links[2].a,  # type: ignore
     ]
 
     # example from Craig has last joint set to 0
