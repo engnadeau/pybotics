@@ -5,6 +5,8 @@ from typing import Sequence, Union
 
 import attr
 import numpy as np  # type: ignore
+import numpy.typing as npt
+
 
 from pybotics.json_encoder import JSONEncoder
 
@@ -34,7 +36,7 @@ class Link(Sized):
         raise NotImplementedError
 
     @abstractmethod
-    def transform(self, q: float = 0) -> np.ndarray:
+    def transform(self, q: float = 0) -> npt.NDArray[np.float64]:
         """
         Generate a 4x4 transform matrix given a displacement.
 
@@ -46,7 +48,7 @@ class Link(Sized):
 
     @property
     @abstractmethod
-    def vector(self) -> np.ndarray:
+    def vector(self) -> npt.NDArray[np.float64]:
         """
         Return the vector representation of the link.
 
@@ -80,7 +82,7 @@ class MDHLink(Link):
         """Get number of parameters."""
         return self._size
 
-    def transform(self, q: float = 0) -> np.ndarray:
+    def transform(self, q: float = 0) -> npt.NDArray[np.float64]:
         """
         Generate a 4x4 transform matrix with a displacement.
 
@@ -113,7 +115,7 @@ class MDHLink(Link):
         return transform
 
     @property
-    def vector(self) -> np.ndarray:
+    def vector(self) -> npt.NDArray[np.float64]:
         """
         Return the vector representation of the link.
 

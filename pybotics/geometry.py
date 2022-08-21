@@ -3,6 +3,8 @@ from enum import Enum
 from typing import Sequence, Union
 
 import numpy as np  # type: ignore
+import numpy.typing as npt
+
 
 from pybotics.errors import PyboticsError
 
@@ -40,7 +42,7 @@ class OrientationConvention(Enum):
 def vector_2_matrix(
     vector: Sequence[float],
     convention: Union[OrientationConvention, str] = OrientationConvention.EULER_ZYX,
-) -> np.ndarray:
+) -> npt.NDArray[np.float64]:
     """
     Calculate the pose from the position and euler angles.
 
@@ -73,7 +75,7 @@ def vector_2_matrix(
     return transform_matrix
 
 
-def position_from_matrix(matrix: np.ndarray) -> np.ndarray:
+def position_from_matrix(matrix: np.ndarray) -> npt.NDArray[np.float64]:
     """Get the position values from a 4x4 transform matrix."""
     return matrix[:-1, -1]
 
@@ -81,7 +83,7 @@ def position_from_matrix(matrix: np.ndarray) -> np.ndarray:
 def matrix_2_vector(
     matrix: np.ndarray,
     convention: OrientationConvention = OrientationConvention.EULER_ZYX,
-) -> np.ndarray:
+) -> npt.NDArray[np.float64]:
     """Convert 4x4 matrix to a vector."""
     # call function
     try:
@@ -90,7 +92,7 @@ def matrix_2_vector(
         raise NotImplementedError
 
 
-def _matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
+def _matrix_2_euler_zyx(matrix: np.ndarray) -> npt.NDArray[np.float64]:
     """
     Calculate the equivalent position and euler angles of the given pose.
 
@@ -136,7 +138,7 @@ def wrap_2_pi(angle: float) -> float:
     return result
 
 
-def rotation_matrix_x(angle: float) -> np.ndarray:
+def rotation_matrix_x(angle: float) -> npt.NDArray[np.float64]:
     """Generate a basic 4x4 rotation matrix about the X axis."""
     s = np.sin(angle)
     c = np.cos(angle)
@@ -146,7 +148,7 @@ def rotation_matrix_x(angle: float) -> np.ndarray:
     return matrix
 
 
-def rotation_matrix_y(angle: float) -> np.ndarray:
+def rotation_matrix_y(angle: float) -> npt.NDArray[np.float64]:
     """Generate a basic 4x4 rotation matrix about the Y axis."""
     s = np.sin(angle)
     c = np.cos(angle)
@@ -156,7 +158,7 @@ def rotation_matrix_y(angle: float) -> np.ndarray:
     return matrix
 
 
-def rotation_matrix_z(angle: float) -> np.ndarray:
+def rotation_matrix_z(angle: float) -> npt.NDArray[np.float64]:
     """Generate a basic 4x4 rotation matrix about the Z axis."""
     s = np.sin(angle)
     c = np.cos(angle)
@@ -166,7 +168,7 @@ def rotation_matrix_z(angle: float) -> np.ndarray:
     return matrix
 
 
-def translation_matrix(xyz: Sequence[float]) -> np.ndarray:
+def translation_matrix(xyz: Sequence[float]) -> npt.NDArray[np.float64]:
     """Generate a basic 4x4 translation matrix."""
     # validate
     if len(xyz) != 3:

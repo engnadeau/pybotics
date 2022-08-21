@@ -6,6 +6,8 @@ from typing import Sequence, Union
 
 import attr
 import numpy as np  # type: ignore
+import numpy.typing as npt
+
 
 from pybotics.geometry import matrix_2_vector, position_from_matrix, vector_2_matrix
 
@@ -32,7 +34,7 @@ class Tool:
         self.matrix[:-1, -1] = value
 
     @property
-    def vector(self) -> np.ndarray:
+    def vector(self) -> npt.NDArray[np.float64]:
         """
         Return the vector representation of the frame as EULER ZYX.
 
