@@ -7,6 +7,7 @@ from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import raises
+import numpy.typing as npt
 
 from pybotics.errors import PyboticsError
 from pybotics.predefined_models import ur10
@@ -117,7 +118,7 @@ def test_compute_joint_torques(planar_robot: Robot):
         ),
     )
 )
-def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
+def test_jacobian_world(q: npt.NDArray[np.float64], planar_robot: Robot):
     """Test."""
     # get link lengths
     # FIXME: "Link" has no attribute "a"
@@ -152,7 +153,7 @@ def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
         shape=(3,), dtype=float, elements=floats(allow_nan=False, allow_infinity=False)
     )
 )
-def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
+def test_jacobian_flange(q: npt.NDArray[np.float64], planar_robot: Robot):
     """Test."""
     # get link lengths
     # FIXME: "Link" has no attribute "a"
@@ -198,7 +199,7 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
     ),
 )
 @hypothesis.settings(deadline=None)
-def test_ik(q: np.ndarray, q_offset: np.ndarray):
+def test_ik(q: npt.NDArray[np.float64], q_offset: npt.NDArray[np.float64]):
     """Test."""
     robot = Robot.from_parameters(ur10())
     pose = robot.fk(q)

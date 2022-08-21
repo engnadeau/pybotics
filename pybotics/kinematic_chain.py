@@ -42,7 +42,7 @@ class KinematicChain(Sized):
 
     @matrix.setter  # type: ignore
     @abstractmethod
-    def matrix(self, value: np.ndarray) -> None:
+    def matrix(self, value: npt.NDArray[np.float64]) -> None:
         """
         Set to matrix of link parameters.
 
@@ -141,7 +141,7 @@ class MDHKinematicChain(KinematicChain):
         return np.array([l.vector for l in self._links])
 
     @matrix.setter
-    def matrix(self, value: np.ndarray) -> None:
+    def matrix(self, value: npt.NDArray[np.float64]) -> None:
         """
         Set matrix of link parameters.
 

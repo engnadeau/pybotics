@@ -85,7 +85,7 @@ class Robot(Sized):
         return pose
 
     def ik(
-        self, pose: np.ndarray, q: Optional[npt.NDArray[np.float64]] = None
+        self, pose: npt.NDArray[np.float64], q: Optional[npt.NDArray[np.float64]] = None
     ) -> Optional[np.ndarray]:
         """Solve the inverse kinematics."""
         x0 = self.joints if q is None else q
@@ -118,7 +118,7 @@ class Robot(Sized):
         return self._joints
 
     @joints.setter
-    def joints(self, value: np.ndarray) -> None:
+    def joints(self, value: npt.NDArray[np.float64]) -> None:
         """Set joints."""
         if np.any(value < self.joint_limits[0]) or np.any(value > self.joint_limits[1]):
             raise PyboticsError("Joint limits exceeded.")
@@ -134,7 +134,7 @@ class Robot(Sized):
         return self._joint_limits
 
     @joint_limits.setter
-    def joint_limits(self, value: np.ndarray) -> None:
+    def joint_limits(self, value: npt.NDArray[np.float64]) -> None:
         """Set joint limits."""
         if value.shape[0] != 2 or value.shape[1] != len(self):
             raise PyboticsError(f"position_limits must have shape=(2,{len(self)})")
@@ -261,7 +261,7 @@ class Robot(Sized):
 
 
 def _ik_cost_function(
-    q: np.ndarray, pose: np.ndarray, robot: Robot
+    q: npt.NDArray[np.float64], pose: npt.NDArray[np.float64], robot: Robot
 ) -> npt.NDArray[np.float64]:
     actual_pose = robot.fk(q)
     diff = np.abs(actual_pose - pose)
