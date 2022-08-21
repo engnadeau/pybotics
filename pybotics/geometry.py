@@ -5,7 +5,6 @@ from typing import Sequence, Union
 import numpy as np  # type: ignore
 import numpy.typing as npt
 
-
 from pybotics.errors import PyboticsError
 
 

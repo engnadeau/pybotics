@@ -138,7 +138,9 @@ class Robot(Sized):
             raise PyboticsError(f"position_limits must have shape=(2,{len(self)})")
         self._joint_limits = value
 
-    def jacobian_world(self, q: Optional[npt.NDArray[np.float64]] = None) -> npt.NDArray[np.float64]:
+    def jacobian_world(
+        self, q: Optional[npt.NDArray[np.float64]] = None
+    ) -> npt.NDArray[np.float64]:
         """Calculate the Jacobian wrt the world frame."""
         q = self.joints if q is None else q
         j_fl = self.jacobian_flange(q)
@@ -151,7 +153,9 @@ class Robot(Sized):
 
         return j_w
 
-    def jacobian_flange(self, q: Optional[npt.NDArray[np.float64]] = None) -> npt.NDArray[np.float64]:
+    def jacobian_flange(
+        self, q: Optional[npt.NDArray[np.float64]] = None
+    ) -> npt.NDArray[np.float64]:
         """Calculate the Jacobian wrt the flange frame."""
         q = self.joints if q is None else q
 
@@ -182,7 +186,9 @@ class Robot(Sized):
         return jacobian_flange
 
     def compute_joint_torques(
-        self, wrench: npt.NDArray[np.float64], q: Optional[npt.NDArray[np.float64]] = None
+        self,
+        wrench: npt.NDArray[np.float64],
+        q: Optional[npt.NDArray[np.float64]] = None,
     ) -> npt.NDArray[np.float64]:
         """
         Calculate the joint torques due to external flange force.
@@ -252,7 +258,9 @@ class Robot(Sized):
         return cls(kinematic_chain=kc)
 
 
-def _ik_cost_function(q: np.ndarray, pose: np.ndarray, robot: Robot) -> npt.NDArray[np.float64]:
+def _ik_cost_function(
+    q: np.ndarray, pose: np.ndarray, robot: Robot
+) -> npt.NDArray[np.float64]:
     actual_pose = robot.fk(q)
     diff = np.abs(actual_pose - pose)
     return diff.ravel()

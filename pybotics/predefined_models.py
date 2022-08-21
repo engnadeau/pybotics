@@ -7,7 +7,6 @@ import numpy as np  # type: ignore
 import numpy.typing as npt
 
 
-
 def kuka_lbr_iiwa_7() -> npt.NDArray[np.float64]:  # pragma: no cover
     """Get KUKA LBR iiwa 7 MDH model."""
     return np.array(
