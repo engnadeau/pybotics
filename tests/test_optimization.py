@@ -128,7 +128,7 @@ def test_optimization():
     )  # type: ignore
 
 
-def test_handler_validate_transform_mask():
+def test_handler_validate_transform_mask() -> None:
     """Test."""
     # test predesigned mask sequence
     OptimizationHandler(robot=Robot.from_parameters(ur10()), tool_mask=[False] * 6)
