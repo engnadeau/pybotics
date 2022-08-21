@@ -140,9 +140,9 @@ def compute_relative_error(
     actual_position_b = position_from_matrix(pose_b)
 
     actual_distance = actual_position_a - actual_position_b
-    actual_distance = np.linalg.norm(actual_distance)
+    actual_distance = np.linalg.norm(actual_distance)  # type: ignore
 
-    error = float(np.linalg.norm(distance - actual_distance))
+    error = float(np.linalg.norm(distance - actual_distance))  # type: ignore
 
     return error
 
