@@ -88,8 +88,9 @@ def test_optimization() -> None:
     """Test."""
     # init robot model and error wrt nominal
     actual_robot = Robot.from_parameters(ur10())
-    actual_robot.tool.position = [0.1, 0, 0]
-    actual_robot.kinematic_chain.links[0].a += 0.1
+    # FIXME: "Link" has no attribute "a"
+    # TODO: review abstract inheritance
+    actual_robot.kinematic_chain.links[0].a += 0.1  # type: ignore
 
     # calculate fk
     qs = np.tile(
