@@ -3,7 +3,7 @@
 These models correspond to the Modified Denavit–Hartenberg parameters:
 https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
 """
-import numpy as np  # type: ignore
+import numpy as np
 import numpy.typing as npt
 
 

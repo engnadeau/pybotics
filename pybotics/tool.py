@@ -5,7 +5,7 @@ isort:skip_file
 from typing import Sequence, Union
 
 import attr
-import numpy as np  # type: ignore
+import numpy as np
 import numpy.typing as npt
 
 
