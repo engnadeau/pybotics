@@ -41,7 +41,9 @@ def test_compute_absolute_errors(q: np.ndarray) -> None:
 
     # test 2D input
     actual_error = compute_absolute_errors(
-        qs=np.tile(q, (10, 1)), positions=np.tile(p, (10, 1)), robot=robot
+        qs=np.tile(q, (10, 1)),  # type: ignore
+        positions=np.tile(p, (10, 1)),  # type: ignore
+        robot=robot,
     )
     np.testing.assert_allclose(actual_error, 0)  # type: ignore
 
@@ -74,9 +76,9 @@ def test_compute_relative_errors(q_a: np.ndarray, q_b: np.ndarray) -> None:
 
     # test 2D input
     actual_error = compute_relative_errors(
-        qs_a=np.tile(q_a, (10, 1)),
-        qs_b=np.tile(q_b, (10, 1)),
-        distances=np.tile(distance, (10, 1)),
+        qs_a=np.tile(q_a, (10, 1)),  # type: ignore
+        qs_b=np.tile(q_b, (10, 1)),  # type: ignore
+        distances=np.tile(distance, (10, 1)),  # type: ignore
         robot=robot,
     )
     np.testing.assert_allclose(actual_error, 0)  # type: ignore
@@ -92,7 +94,7 @@ def test_optimization() -> None:
     # calculate fk
     qs = np.tile(
         np.linspace(start=-np.pi, stop=np.pi, num=100), (len(ur10()), 1)
-    ).transpose()
+    ).transpose()  # type: ignore
 
     poses = np.array(list(map(actual_robot.fk, qs)))
     positions = poses[:, :-1, -1]
