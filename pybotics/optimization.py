@@ -94,8 +94,8 @@ class OptimizationHandler:
 def optimize_accuracy(
     optimization_vector: npt.NDArray[np.float64],
     handler: OptimizationHandler,
-    qs: Sequence[Sequence[float]],
-    positions: Sequence[Sequence[float]],
+    qs: Sequence[npt.NDArray[np.float64]],
+    positions: Sequence[npt.NDArray[np.float64]],
 ) -> npt.NDArray[np.float64]:
     """Fitness function for accuracy optimization."""
     handler.apply_optimization_vector(optimization_vector)

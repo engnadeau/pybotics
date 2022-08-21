@@ -40,7 +40,7 @@ class OrientationConvention(Enum):
 
 
 def vector_2_matrix(
-    vector: Sequence[float],
+    vector: npt.NDArray[np.float64],
     convention: Union[OrientationConvention, str] = OrientationConvention.EULER_ZYX,
 ) -> npt.NDArray[np.float64]:
     """
@@ -168,7 +168,7 @@ def rotation_matrix_z(angle: float) -> npt.NDArray[np.float64]:
     return matrix
 
 
-def translation_matrix(xyz: Sequence[float]) -> npt.NDArray[np.float64]:
+def translation_matrix(xyz: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """Generate a basic 4x4 translation matrix."""
     # validate
     if len(xyz) != 3:

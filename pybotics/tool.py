@@ -21,7 +21,7 @@ class Tool:
     cg = attr.ib(factory=lambda: np.zeros(3), type=np.ndarray)  # type: ignore
 
     @property
-    def position(self) -> Union[Sequence[float], np.ndarray]:
+    def position(self) -> Union[npt.NDArray[np.float64], np.ndarray]:
         """
         Get the position XYZ of the frame.
 
@@ -30,7 +30,7 @@ class Tool:
         return position_from_matrix(self.matrix)
 
     @position.setter
-    def position(self, value: Sequence[float]) -> None:
+    def position(self, value: npt.NDArray[np.float64]) -> None:
         self.matrix[:-1, -1] = value
 
     @property
@@ -43,5 +43,5 @@ class Tool:
         return matrix_2_vector(self.matrix)
 
     @vector.setter
-    def vector(self, value: Sequence[float]) -> None:
+    def vector(self, value: npt.NDArray[np.float64]) -> None:
         self.matrix = vector_2_matrix(value)
