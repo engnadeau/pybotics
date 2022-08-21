@@ -37,13 +37,13 @@ def test_compute_absolute_errors(q: np.ndarray):
 
     # test 1D input
     actual_error = compute_absolute_error(q=q, position=p, robot=robot)
-    np.testing.assert_allclose(actual_error, 0)
+    np.testing.assert_allclose(actual_error, 0)  # type: ignore
 
     # test 2D input
     actual_error = compute_absolute_errors(
         qs=np.tile(q, (10, 1)), positions=np.tile(p, (10, 1)), robot=robot
     )
-    np.testing.assert_allclose(actual_error, 0)
+    np.testing.assert_allclose(actual_error, 0)  # type: ignore
 
 
 @given(
@@ -70,7 +70,7 @@ def test_compute_relative_errors(q_a: np.ndarray, q_b: np.ndarray):
     actual_error = compute_relative_error(
         q_a=q_a, q_b=q_b, distance=distance, robot=robot
     )
-    np.testing.assert_allclose(actual_error, 0)
+    np.testing.assert_allclose(actual_error, 0)  # type: ignore
 
     # test 2D input
     actual_error = compute_relative_errors(
@@ -79,7 +79,7 @@ def test_compute_relative_errors(q_a: np.ndarray, q_b: np.ndarray):
         distances=np.tile(distance, (10, 1)),
         robot=robot,
     )
-    np.testing.assert_allclose(actual_error, 0)
+    np.testing.assert_allclose(actual_error, 0)  # type: ignore
 
 
 def test_optimization():
@@ -114,18 +114,18 @@ def test_optimization():
     atol = 1e-2
     np.testing.assert_allclose(
         actual=result.x, desired=handler.generate_optimization_vector(), atol=atol
-    )
+    )  # type: ignore
     np.testing.assert_allclose(
         actual=handler.robot.kinematic_chain.vector,
         desired=actual_robot.kinematic_chain.vector,
         atol=atol,
-    )
+    )  # type: ignore
     np.testing.assert_allclose(
         actual=handler.robot.tool.vector, desired=actual_robot.tool.vector, atol=atol
-    )
+    )  # type: ignore
     np.testing.assert_allclose(
         actual=handler.robot.world_frame, desired=actual_robot.world_frame, atol=atol
-    )
+    )  # type: ignore
 
 
 def test_handler_validate_transform_mask():
