@@ -64,7 +64,7 @@ def vector_2_matrix(
     # iterate through rotation order
     # build rotation matrix
     transform_matrix = np.eye(4)
-    for axis, value in zip(convention, rotation_component):  # type: ignore
+    for axis, value in zip(convention, rotation_component):
         current_rotation = globals()[f"rotation_matrix_{axis}"](value)
         transform_matrix = np.dot(transform_matrix, current_rotation)
 
