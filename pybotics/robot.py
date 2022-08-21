@@ -80,7 +80,7 @@ class Robot(Sized):
         # matrix multiply through transforms
         pose = np.eye(4, dtype=float)
         for t in transforms:
-            pose = np.dot(pose, t)
+            pose = np.dot(pose, t)  # type: ignore
 
         return pose
 
@@ -151,7 +151,7 @@ class Robot(Sized):
         j_tr = np.zeros((6, 6), dtype=float)
         j_tr[:3, :3] = rotation
         j_tr[3:, 3:] = rotation
-        j_w = np.dot(j_tr, j_fl)
+        j_w = np.dot(j_tr, j_fl)  # type: ignore
 
         return j_w
 
@@ -183,7 +183,7 @@ class Robot(Sized):
             current_link = self.kinematic_chain.links[i]
             p = q[i]
             current_link_transform = current_link.transform(p)
-            current_transform = np.dot(current_link_transform, current_transform)
+            current_transform = np.dot(current_link_transform, current_transform)  # type: ignore
 
         return jacobian_flange
 
@@ -224,11 +224,11 @@ class Robot(Sized):
 
             # calculate force applied to current link
             rotation = transform[:3, :3]
-            force = np.dot(rotation, force)
+            force = np.dot(rotation, force)  # type: ignore
 
             # calculate moment applied to current link
             q = transform[:3, -1]
-            moment = np.dot(rotation, moment) + np.cross(q, force)
+            moment = np.dot(rotation, moment) + np.cross(q, force)  # type: ignore
 
             # append z-component as joint torque
             joint_torques.append(moment[-1])
