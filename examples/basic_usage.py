@@ -5,7 +5,7 @@ from pybotics.robot import Robot
 from pybotics.tool import Tool
 
 
-def main():
+def main() -> None:
     """
     Demonstrate pybotics usage.
 

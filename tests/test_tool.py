@@ -5,7 +5,7 @@ from pybotics.geometry import matrix_2_vector
 from pybotics.tool import Tool
 
 
-def test_tool():
+def test_tool() -> None:
     """Test."""
     tool = Tool()
 
