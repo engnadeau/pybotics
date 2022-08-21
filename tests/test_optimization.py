@@ -4,7 +4,7 @@ isort:skip_file
 """
 import hypothesis.strategies as st
 import numpy as np
-import scipy.optimize
+import scipy.optimize  # type: ignore
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from pytest import raises
