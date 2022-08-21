@@ -74,7 +74,7 @@ class KinematicChain(Sized):
         raise NotImplementedError
 
     @abstractmethod
-    def transforms(self, q: Optional[Sequence[float]] = None) -> Sequence[np.ndarray]:
+    def transforms(self, q: Optional[npt.NDArray[np.float64]] = None) -> Sequence[np.ndarray]:
         """
         Generate a sequence of spatial transforms.
 
@@ -95,7 +95,7 @@ class KinematicChain(Sized):
         raise NotImplementedError
 
     @vector.setter
-    def vector(self, value: Sequence[float]) -> None:
+    def vector(self, value: npt.NDArray[np.float64]) -> None:
         """Set parameters of all links."""
         raise NotImplementedError
 
@@ -124,7 +124,7 @@ class MDHKinematicChain(KinematicChain):
         self._links = _validate_links(self._links)
 
     @classmethod
-    def from_parameters(cls: Any, parameters: Sequence[float]) -> Any:
+    def from_parameters(cls: Any, parameters: npt.NDArray[np.float64]) -> Any:
         """Construct Kinematic Chain from parameters."""
         kc = cls(parameters)
         return kc
@@ -171,7 +171,7 @@ class MDHKinematicChain(KinematicChain):
         # noinspection PyProtectedMember
         return len(self) * MDHLink._size
 
-    def transforms(self, q: Optional[Sequence[float]] = None) -> Sequence[np.ndarray]:
+    def transforms(self, q: Optional[npt.NDArray[np.float64]] = None) -> Sequence[np.ndarray]:
         """Get sequence of 4x4 transforms."""
         q = np.zeros(len(self)) if q is None else q
         transforms = [link.transform(p) for link, p in zip(self._links, q)]
@@ -184,7 +184,7 @@ class MDHKinematicChain(KinematicChain):
 
     # noinspection PyMethodOverriding
     @vector.setter
-    def vector(self, value: Sequence[float]) -> None:
+    def vector(self, value: npt.NDArray[np.float64]) -> None:
         """Set parameters of all links."""
         # noinspection PyProtectedMember
         value = np.array(value).reshape((-1, MDHLink._size))

@@ -83,7 +83,7 @@ class Robot(Sized):
         return pose
 
     def ik(
-        self, pose: np.ndarray, q: Optional[Sequence[float]] = None
+        self, pose: np.ndarray, q: Optional[npt.NDArray[np.float64]] = None
     ) -> Optional[np.ndarray]:
         """Solve the inverse kinematics."""
         x0 = self.joints if q is None else q
@@ -107,7 +107,7 @@ class Robot(Sized):
         return len(self)
 
     @property
-    def joints(self) -> Union[Sequence[float], np.ndarray]:
+    def joints(self) -> Union[npt.NDArray[np.float64], np.ndarray]:
         """
         Get the robot configuration (e.g., joint positions for serial robot).
 
@@ -138,7 +138,7 @@ class Robot(Sized):
             raise PyboticsError(f"position_limits must have shape=(2,{len(self)})")
         self._joint_limits = value
 
-    def jacobian_world(self, q: Optional[Sequence[float]] = None) -> npt.NDArray[np.float64]:
+    def jacobian_world(self, q: Optional[npt.NDArray[np.float64]] = None) -> npt.NDArray[np.float64]:
         """Calculate the Jacobian wrt the world frame."""
         q = self.joints if q is None else q
         j_fl = self.jacobian_flange(q)
@@ -151,7 +151,7 @@ class Robot(Sized):
 
         return j_w
 
-    def jacobian_flange(self, q: Optional[Sequence[float]] = None) -> npt.NDArray[np.float64]:
+    def jacobian_flange(self, q: Optional[npt.NDArray[np.float64]] = None) -> npt.NDArray[np.float64]:
         """Calculate the Jacobian wrt the flange frame."""
         q = self.joints if q is None else q
 
@@ -182,7 +182,7 @@ class Robot(Sized):
         return jacobian_flange
 
     def compute_joint_torques(
-        self, wrench: Sequence[float], q: Optional[Sequence[float]] = None
+        self, wrench: npt.NDArray[np.float64], q: Optional[npt.NDArray[np.float64]] = None
     ) -> npt.NDArray[np.float64]:
         """
         Calculate the joint torques due to external flange force.
@@ -228,7 +228,7 @@ class Robot(Sized):
         # reverse torques into correct order
         return np.array(list(reversed(joint_torques)), dtype=float)
 
-    def clamp_joints(self, q: Sequence[float]) -> Optional[np.ndarray]:
+    def clamp_joints(self, q: npt.NDArray[np.float64]) -> Optional[np.ndarray]:
         """Limit joints to joint limits."""
         return np.clip(q, self.joint_limits[0], self.joint_limits[1])
 
@@ -245,7 +245,7 @@ class Robot(Sized):
             return q
 
     @classmethod
-    def from_parameters(cls, parameters: Sequence[float]) -> Sized:
+    def from_parameters(cls, parameters: npt.NDArray[np.float64]) -> Sized:
         """Construct Robot from Kinematic Chain parameters."""
         # FIXME: assumes MDH revolute robot
         kc = MDHKinematicChain.from_parameters(parameters)
