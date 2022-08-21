@@ -7,7 +7,6 @@ import attr
 import numpy as np  # type: ignore
 import numpy.typing as npt
 
-
 from pybotics.json_encoder import JSONEncoder
 
 

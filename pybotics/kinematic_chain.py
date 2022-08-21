@@ -7,7 +7,6 @@ import attr
 import numpy as np  # type: ignore
 import numpy.typing as npt
 
-
 from pybotics.errors import PyboticsError
 from pybotics.json_encoder import JSONEncoder
 from pybotics.link import Link, MDHLink, RevoluteMDHLink
@@ -74,7 +73,9 @@ class KinematicChain(Sized):
         raise NotImplementedError
 
     @abstractmethod
-    def transforms(self, q: Optional[npt.NDArray[np.float64]] = None) -> Sequence[np.ndarray]:
+    def transforms(
+        self, q: Optional[npt.NDArray[np.float64]] = None
+    ) -> Sequence[np.ndarray]:
         """
         Generate a sequence of spatial transforms.
 
@@ -171,7 +172,9 @@ class MDHKinematicChain(KinematicChain):
         # noinspection PyProtectedMember
         return len(self) * MDHLink._size
 
-    def transforms(self, q: Optional[npt.NDArray[np.float64]] = None) -> Sequence[np.ndarray]:
+    def transforms(
+        self, q: Optional[npt.NDArray[np.float64]] = None
+    ) -> Sequence[np.ndarray]:
         """Get sequence of 4x4 transforms."""
         q = np.zeros(len(self)) if q is None else q
         transforms = [link.transform(p) for link, p in zip(self._links, q)]
