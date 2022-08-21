@@ -4,7 +4,7 @@ isort:skip_file
 """
 from copy import deepcopy
 from itertools import repeat
-from typing import Sequence, Union
+from typing import Sequence, Union, MutableSequence
 
 import attr
 import numpy as np  # type: ignore
@@ -16,8 +16,8 @@ from pybotics.geometry import matrix_2_vector, position_from_matrix, vector_2_ma
 
 
 def _validate_transform_mask(
-    mask: Union[bool, Sequence[bool]], name: str, size: int
-) -> Sequence[bool]:
+    mask: MutableSequence[bool], name: str, size: int
+) -> MutableSequence[bool]:
     """Validate mask arguments."""
     # validate input
     if isinstance(mask, bool):
@@ -33,9 +33,9 @@ class OptimizationHandler:
     """Handler for optimization tasks."""
 
     robot = attr.ib(type=Robot)
-    kinematic_chain_mask = attr.ib(False, type=Union[bool, Sequence[bool]])
-    tool_mask = attr.ib(False, type=Union[bool, Sequence[bool]])
-    world_mask = attr.ib(False, type=Union[bool, Sequence[bool]])
+    kinematic_chain_mask = attr.ib(False, type=MutableSequence[bool])
+    tool_mask = attr.ib(False, type=MutableSequence[bool])
+    world_mask = attr.ib(False, type=MutableSequence[bool])
 
     def __attrs_post_init__(self) -> None:
         """Post-init handler."""
