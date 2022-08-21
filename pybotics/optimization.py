@@ -8,6 +8,7 @@ from typing import Sequence, Union
 
 import attr
 import numpy as np  # type: ignore
+import numpy.typing as npt
 
 from pybotics.robot import Robot
 from pybotics.errors import PyboticsError
@@ -78,7 +79,7 @@ class OptimizationHandler:
         world_vector[self.world_mask] = world_segment
         self.robot.world_frame = vector_2_matrix(world_vector)
 
-    def generate_optimization_vector(self) -> np.ndarray:
+    def generate_optimization_vector(self) -> npt.NDArray[np.float64]:
         """Generate vector."""
         kc_vector = np.compress(
             self.kinematic_chain_mask, self.robot.kinematic_chain.vector
@@ -95,7 +96,7 @@ def optimize_accuracy(
     handler: OptimizationHandler,
     qs: Sequence[Sequence[float]],
     positions: Sequence[Sequence[float]],
-) -> np.ndarray:
+) -> npt.NDArray[np.float64]:
     """Fitness function for accuracy optimization."""
     handler.apply_optimization_vector(optimization_vector)
     errors = compute_absolute_errors(qs=qs, positions=positions, robot=handler.robot)
@@ -112,7 +113,7 @@ def compute_absolute_error(q: np.ndarray, position: np.ndarray, robot: Robot) ->
 
 def compute_absolute_errors(
     qs: np.ndarray, positions: np.ndarray, robot: Robot
-) -> np.ndarray:
+) -> npt.NDArray[np.float64]:
     """
     Compute the absolute errors of a given set of positions.
 
@@ -143,6 +144,6 @@ def compute_relative_error(
 
 def compute_relative_errors(
     qs_a: np.ndarray, qs_b: np.ndarray, distances: np.ndarray, robot: Robot
-) -> np.array:
+) -> npt.NDArray[np.float64]:
     """Compute the relative errors of a given set of position combinations."""
     return list(map(compute_relative_error, qs_a, qs_b, distances, repeat(robot)))
