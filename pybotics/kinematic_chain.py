@@ -5,6 +5,8 @@ from typing import Any, Optional, Sequence, Sized, Union
 
 import attr
 import numpy as np  # type: ignore
+import numpy.typing as npt
+
 
 from pybotics.errors import PyboticsError
 from pybotics.json_encoder import JSONEncoder
@@ -30,7 +32,7 @@ class KinematicChain(Sized):
 
     @property  # type: ignore
     @abstractmethod
-    def matrix(self) -> np.ndarray:
+    def matrix(self) -> npt.NDArray[np.float64]:
         """
         Convert chain to matrix of link parameters.
 
@@ -84,7 +86,7 @@ class KinematicChain(Sized):
 
     @property
     @abstractmethod
-    def vector(self) -> np.ndarray:
+    def vector(self) -> npt.NDArray[np.float64]:
         """
         Get the vector representation of the kinematic chain.
 
@@ -128,7 +130,7 @@ class MDHKinematicChain(KinematicChain):
         return kc
 
     @property
-    def matrix(self) -> np.ndarray:
+    def matrix(self) -> npt.NDArray[np.float64]:
         """
         Convert chain to matrix of link parameters.
 
@@ -176,7 +178,7 @@ class MDHKinematicChain(KinematicChain):
         return transforms
 
     @property
-    def vector(self) -> np.ndarray:
+    def vector(self) -> npt.NDArray[np.float64]:
         """Get parameters of all links."""
         return self.matrix.ravel()
 

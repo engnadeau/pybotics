@@ -2,7 +2,8 @@
 from typing import Any, Optional, Sequence, Sized, Union
 
 import attr
-import numpy as np  # type: ignore
+import numpy as np
+import numpy.typing as npt
 import scipy.optimize  # type: ignore
 
 from pybotics.errors import PyboticsError
@@ -11,11 +12,11 @@ from pybotics.kinematic_chain import KinematicChain, MDHKinematicChain
 from pybotics.tool import Tool
 
 
-def _ndof_zeros_factory(robot: Any) -> np.ndarray:
+def _ndof_zeros_factory(robot: Any) -> npt.NDArray[np.float64]:
     return np.zeros(len(robot.kinematic_chain))
 
 
-def _joint_limits_factory(robot: Any) -> np.ndarray:
+def _joint_limits_factory(robot: Any) -> npt.NDArray[np.float64]:
     return np.repeat((-np.pi, np.pi), len(robot.kinematic_chain)).reshape((2, -1))
 
 
@@ -56,7 +57,7 @@ class Robot(Sized):
         encoder = JSONEncoder(sort_keys=True)
         return encoder.encode(self)
 
-    def fk(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
+    def fk(self, q: npt.NDArray[np.float64] = None) -> npt.NDArray[np.float64]:
         """
         Compute the forward kinematics of a given position.
 
@@ -122,7 +123,7 @@ class Robot(Sized):
         self._joints = value
 
     @property
-    def joint_limits(self) -> np.ndarray:
+    def joint_limits(self) -> npt.NDArray[np.float64]:
         """
         Limits of the robot position (e.g., joint limits).
 
@@ -137,7 +138,7 @@ class Robot(Sized):
             raise PyboticsError(f"position_limits must have shape=(2,{len(self)})")
         self._joint_limits = value
 
-    def jacobian_world(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
+    def jacobian_world(self, q: Optional[Sequence[float]] = None) -> npt.NDArray[np.float64]:
         """Calculate the Jacobian wrt the world frame."""
         q = self.joints if q is None else q
         j_fl = self.jacobian_flange(q)
@@ -150,7 +151,7 @@ class Robot(Sized):
 
         return j_w
 
-    def jacobian_flange(self, q: Optional[Sequence[float]] = None) -> np.ndarray:
+    def jacobian_flange(self, q: Optional[Sequence[float]] = None) -> npt.NDArray[np.float64]:
         """Calculate the Jacobian wrt the flange frame."""
         q = self.joints if q is None else q
 
@@ -182,7 +183,7 @@ class Robot(Sized):
 
     def compute_joint_torques(
         self, wrench: Sequence[float], q: Optional[Sequence[float]] = None
-    ) -> np.ndarray:
+    ) -> npt.NDArray[np.float64]:
         """
         Calculate the joint torques due to external flange force.
 
@@ -251,7 +252,7 @@ class Robot(Sized):
         return cls(kinematic_chain=kc)
 
 
-def _ik_cost_function(q: np.ndarray, pose: np.ndarray, robot: Robot) -> np.ndarray:
+def _ik_cost_function(q: np.ndarray, pose: np.ndarray, robot: Robot) -> npt.NDArray[np.float64]:
     actual_pose = robot.fk(q)
     diff = np.abs(actual_pose - pose)
     return diff.ravel()
