@@ -15,7 +15,7 @@ from pybotics.geometry import OrientationConvention, matrix_2_vector
 
 
 @given(st.floats(allow_nan=False, allow_infinity=False))
-def test_wrap_2_pi(angle):
+def test_wrap_2_pi(angle) -> None:
     """
     Test angle wrapping.
 
@@ -45,7 +45,7 @@ def test_wrap_2_pi(angle):
 
 @given(angle=st.floats(allow_nan=False, allow_infinity=False))
 @settings(deadline=None)
-def test_rotation_matrix_xyz(angle, resources_path: Path):
+def test_rotation_matrix_xyz(angle, resources_path: Path) -> None:
     """Test."""
     # define functions to test
     rotation_functions = {
@@ -101,7 +101,7 @@ def test_rotation_matrix_xyz(angle, resources_path: Path):
         elements=st.floats(allow_nan=False, allow_infinity=False),
     )
 )
-def test_translation_matrix(xyz):
+def test_translation_matrix(xyz) -> None:
     """Test."""
     matrix = pybotics.geometry.translation_matrix(xyz)
 
@@ -127,7 +127,7 @@ def test_translation_matrix(xyz):
         pybotics.geometry.translation_matrix(np.zeros(10))
 
 
-def test_vector_2_matrix(vector_transforms: Sequence[dict]):
+def test_vector_2_matrix(vector_transforms: Sequence[dict]) -> None:
     """Test."""
     # test regular usage
     for d in vector_transforms:
@@ -142,7 +142,7 @@ def test_vector_2_matrix(vector_transforms: Sequence[dict]):
             pybotics.geometry.vector_2_matrix(d["vector"], convention="foobar")
 
 
-def test_matrix_2_vector(vector_transforms: Sequence[dict]):
+def test_matrix_2_vector(vector_transforms: Sequence[dict]) -> None:
     """Test."""
     for d in vector_transforms:
         for c in [
@@ -161,7 +161,7 @@ def test_matrix_2_vector(vector_transforms: Sequence[dict]):
             )
 
 
-def test_orientation():
+def test_orientation() -> None:
     """Test."""
     # ensure order and name match
     for e in list(OrientationConvention.__members__.values()):

@@ -29,7 +29,7 @@ from pybotics.robot import Robot
         elements=st.floats(allow_nan=False, allow_infinity=False),
     )
 )
-def test_compute_absolute_errors(q: np.ndarray):
+def test_compute_absolute_errors(q: np.ndarray) -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
     pose = robot.fk(q)
@@ -58,7 +58,7 @@ def test_compute_absolute_errors(q: np.ndarray):
         elements=st.floats(allow_nan=False, allow_infinity=False),
     ),
 )
-def test_compute_relative_errors(q_a: np.ndarray, q_b: np.ndarray):
+def test_compute_relative_errors(q_a: np.ndarray, q_b: np.ndarray) -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
 
@@ -82,7 +82,7 @@ def test_compute_relative_errors(q_a: np.ndarray, q_b: np.ndarray):
     np.testing.assert_allclose(actual_error, 0)  # type: ignore
 
 
-def test_optimization():
+def test_optimization() -> None:
     """Test."""
     # init robot model and error wrt nominal
     actual_robot = Robot.from_parameters(ur10())
