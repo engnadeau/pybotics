@@ -1,4 +1,6 @@
 """Robot module."""
+from __future__ import annotations
+
 from typing import Any, Optional, Sequence, Sized, Union
 
 import attr
@@ -251,7 +253,7 @@ class Robot(Sized):
             return q
 
     @classmethod
-    def from_parameters(cls, parameters: npt.NDArray[np.float64]) -> Sized:
+    def from_parameters(cls, parameters: npt.NDArray[np.float64]) -> Robot:
         """Construct Robot from Kinematic Chain parameters."""
         # FIXME: assumes MDH revolute robot
         kc = MDHKinematicChain.from_parameters(parameters)
