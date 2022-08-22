@@ -58,7 +58,7 @@ numpy = "^1.20"
 scipy = "^1"
 
 [tool.poetry.dev-dependencies]
-black = ">=22.1"
+black = ">=22.3"
 coverage = ">=6"
 flake8 = ">=4"
 flake8-bugbear = "*"
