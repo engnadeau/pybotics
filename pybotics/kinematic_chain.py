@@ -75,7 +75,7 @@ class KinematicChain(Sized):
     @abstractmethod
     def transforms(
         self, q: Optional[npt.NDArray[np.float64]] = None
-    ) -> Sequence[np.ndarray]:
+    ) -> Sequence[npt.NDArray[np.float64]]:
         """
         Generate a sequence of spatial transforms.
 
@@ -101,7 +101,9 @@ class KinematicChain(Sized):
         raise NotImplementedError
 
 
-def _validate_links(value: Union[Sequence[MDHLink], np.ndarray]) -> Sequence[MDHLink]:
+def _validate_links(
+    value: Union[Sequence[MDHLink], npt.NDArray[np.float64]]
+) -> Sequence[MDHLink]:
     if isinstance(value, np.ndarray):
         try:
             value = value.reshape((-1, MDHLink._size))
@@ -118,7 +120,7 @@ def _validate_links(value: Union[Sequence[MDHLink], np.ndarray]) -> Sequence[MDH
 class MDHKinematicChain(KinematicChain):
     """Kinematic Chain of MDH links."""
 
-    _links = attr.ib(type=Union[Sequence[MDHLink], np.ndarray])
+    _links = attr.ib(type=Union[Sequence[MDHLink], npt.NDArray[np.float64]])
 
     def __attrs_post_init__(self) -> None:
         """Post-attrs initialization."""
@@ -158,7 +160,7 @@ class MDHKinematicChain(KinematicChain):
         return x
 
     @links.setter
-    def links(self, value: Union[Sequence[MDHLink], np.ndarray]) -> None:
+    def links(self, value: Union[Sequence[MDHLink], npt.NDArray[np.float64]]) -> None:
         """Set links."""
         self._links = _validate_links(value)
 
@@ -174,7 +176,7 @@ class MDHKinematicChain(KinematicChain):
 
     def transforms(
         self, q: Optional[npt.NDArray[np.float64]] = None
-    ) -> Sequence[np.ndarray]:
+    ) -> Sequence[npt.NDArray[np.float64]]:
         """Get sequence of 4x4 transforms."""
         q = np.zeros(len(self)) if q is None else q
         transforms = [link.transform(p) for link, p in zip(self._links, q)]

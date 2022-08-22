@@ -16,12 +16,12 @@ from pybotics.geometry import matrix_2_vector, position_from_matrix, vector_2_ma
 class Tool:
     """Tool class."""
 
-    matrix = attr.ib(factory=lambda: np.eye(4), type=np.ndarray)  # type: ignore
+    matrix = attr.ib(factory=lambda: np.eye(4), type=npt.NDArray[np.float64])  # type: ignore
     mass = attr.ib(0, type=float)
-    cg = attr.ib(factory=lambda: np.zeros(3), type=np.ndarray)  # type: ignore
+    cg = attr.ib(factory=lambda: np.zeros(3), type=npt.NDArray[np.float64])  # type: ignore
 
     @property
-    def position(self) -> Union[npt.NDArray[np.float64], np.ndarray]:
+    def position(self) -> npt.NDArray[np.float64]:
         """
         Get the position XYZ of the frame.
 
