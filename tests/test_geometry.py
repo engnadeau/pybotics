@@ -15,7 +15,7 @@ from pybotics.geometry import OrientationConvention, matrix_2_vector
 
 
 @given(st.floats(allow_nan=False, allow_infinity=False))
-def test_wrap_2_pi(angle) -> None:
+def test_wrap_2_pi(angle: float) -> None:
     """
     Test angle wrapping.
 
