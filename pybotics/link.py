@@ -24,7 +24,7 @@ class Link(Sized):
         return self.size
 
     @abstractmethod
-    def displace(self, q: float) -> Union[npt.NDArray[np.float64], np.ndarray]:
+    def displace(self, q: float) -> npt.NDArray[np.float64]:
         """
         Generate a vector of the new link state given a displacement.
 
@@ -140,7 +140,7 @@ class RevoluteMDHLink(MDHLink):
     https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
     """
 
-    def displace(self, q: float = 0) -> Union[npt.NDArray[np.float64], np.ndarray]:
+    def displace(self, q: float = 0) -> npt.NDArray[np.float64]:
         """
         Generate a vector of the new link state given a displacement.
 
@@ -161,7 +161,7 @@ class PrismaticMDHLink(MDHLink):
     https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
     """
 
-    def displace(self, q: float = 0) -> Union[npt.NDArray[np.float64], np.ndarray]:
+    def displace(self, q: float = 0) -> npt.NDArray[np.float64]:
         """
         Generate a vector of the new link state given a displacement.
 
