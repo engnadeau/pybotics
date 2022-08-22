@@ -2,9 +2,11 @@
 from collections import Counter
 from pathlib import Path
 from typing import Sequence
+import typing
 
 import hypothesis.strategies as st
 import numpy as np
+import numpy.typing as npt
 from hypothesis import given, settings
 from hypothesis.extra.numpy import arrays
 from pytest import raises
@@ -134,7 +136,7 @@ def test_vector_2_matrix(
     # test regular usage
     for d in vector_transforms:
         for c in [d["order"], OrientationConvention(d["order"])]:
-            actual = pybotics.geometry.vector_2_matrix(d["vector"], convention=c)
+            actual = pybotics.geometry.vector_2_matrix(d["vector"], convention=c)  # type: ignore
             np.testing.assert_allclose(
                 actual=actual, desired=d["transform"].reshape((4, 4)), atol=1e-6
             )  # type: ignore
@@ -179,6 +181,6 @@ def test_orientation() -> None:
 
     # ensure only x,y,z are used
     good_letters = set("xyz")
-    values = set([e.value for e in OrientationConvention.__members__.values()])
+    values = list(set([e.value for e in OrientationConvention.__members__.values()]))
     leftover_values = [x for x in values if set(x).difference(good_letters)]
     assert not leftover_values
