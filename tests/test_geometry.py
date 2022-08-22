@@ -45,7 +45,7 @@ def test_wrap_2_pi(angle: float) -> None:
 
 @given(angle=st.floats(allow_nan=False, allow_infinity=False))
 @settings(deadline=None)
-def test_rotation_matrix_xyz(angle, resources_path: Path) -> None:
+def test_rotation_matrix_xyz(angle: float, resources_path: Path) -> None:
     """Test."""
     # define functions to test
     rotation_functions = {
