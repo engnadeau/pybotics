@@ -101,7 +101,7 @@ def test_rotation_matrix_xyz(angle: float, resources_path: Path) -> None:
         elements=st.floats(allow_nan=False, allow_infinity=False),
     )
 )
-def test_translation_matrix(xyz) -> None:
+def test_translation_matrix(xyz: npt.NDArray[np.float64]) -> None:
     """Test."""
     matrix = pybotics.geometry.translation_matrix(xyz)
 
@@ -127,7 +127,9 @@ def test_translation_matrix(xyz) -> None:
         pybotics.geometry.translation_matrix(np.zeros(10))
 
 
-def test_vector_2_matrix(vector_transforms: Sequence[dict]) -> None:
+def test_vector_2_matrix(
+    vector_transforms: Sequence[typing.Dict[str, npt.NDArray[np.float64]]]
+) -> None:
     """Test."""
     # test regular usage
     for d in vector_transforms:
@@ -142,7 +144,9 @@ def test_vector_2_matrix(vector_transforms: Sequence[dict]) -> None:
             pybotics.geometry.vector_2_matrix(d["vector"], convention="foobar")
 
 
-def test_matrix_2_vector(vector_transforms: Sequence[dict]) -> None:
+def test_matrix_2_vector(
+    vector_transforms: Sequence[typing.Dict[str, npt.NDArray[np.float64]]]
+) -> None:
     """Test."""
     for d in vector_transforms:
         for c in [
