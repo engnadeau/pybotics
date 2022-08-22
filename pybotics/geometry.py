@@ -76,7 +76,8 @@ def vector_2_matrix(
 
 def position_from_matrix(matrix: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """Get the position values from a 4x4 transform matrix."""
-    return matrix[:-1, -1]
+    position = matrix[:-1, -1]  # type: npt.NDArray[np.float64]
+    return position
 
 
 def matrix_2_vector(
@@ -86,7 +87,10 @@ def matrix_2_vector(
     """Convert 4x4 matrix to a vector."""
     # call function
     try:
-        return globals()[f"_matrix_2_{convention.name.lower()}"](matrix)
+        vector = globals()[f"_matrix_2_{convention.name.lower()}"](
+            matrix
+        )  # type: npt.NDArray[np.float64]
+        return vector
     except KeyError:  # pragma: no cover
         raise NotImplementedError
 
