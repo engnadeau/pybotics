@@ -148,7 +148,7 @@ class RevoluteMDHLink(MDHLink):
 
         :return vector of new displacement state
         """
-        v = np.copy(self.vector)
+        v = np.copy(self.vector)  # type: ignore
         v[2] += q
         return v
 
