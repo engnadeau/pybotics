@@ -58,9 +58,9 @@ def test_rotation_matrix_xyz(angle: float, resources_path: Path) -> None:
     for i, axis in enumerate("xyz"):
         # get resource file
         path = resources_path / f"rot{axis}-transforms.csv"
-        data = np.loadtxt(str(path.resolve()), delimiter=",")
+        data = np.loadtxt(str(path.resolve()), delimiter=",")  # type: ignore
         if data.ndim == 1:
-            data = np.expand_dims(data, axis=0)
+            data = np.expand_dims(data, axis=0)  # type: ignore
 
         # test resource transforms
         for d in data:
