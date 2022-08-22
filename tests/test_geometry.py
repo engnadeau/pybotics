@@ -35,12 +35,12 @@ def test_wrap_2_pi(angle: float) -> None:
     actual_angles = np.array(list(map(pybotics.geometry.wrap_2_pi, test_angles)))
     assert len(test_angles) == len(expected_angles)
     assert len(actual_angles) == len(expected_angles)
-    np.testing.assert_allclose(actual_angles, expected_angles)
+    np.testing.assert_allclose(actual_angles, expected_angles)  # type: ignore
 
     # test single elements
     for i, _ in enumerate(expected_angles):
         actual_angle = pybotics.geometry.wrap_2_pi(test_angles[i])
-        np.testing.assert_allclose([actual_angle], expected_angles[i])
+        np.testing.assert_allclose([actual_angle], expected_angles[i])  # type: ignore
 
 
 @given(angle=st.floats(allow_nan=False, allow_infinity=False))
@@ -67,7 +67,7 @@ def test_rotation_matrix_xyz(angle, resources_path: Path) -> None:
             actual_matrix = rotation_functions[axis](d[0])
             np.testing.assert_allclose(
                 actual=actual_matrix, desired=d[1:].reshape((4, 4)), atol=1e-6
-            )
+            )  # type: ignore
 
         # test hypothesis transforms
         actual_matrix = rotation_functions[axis](angle)
@@ -75,23 +75,23 @@ def test_rotation_matrix_xyz(angle, resources_path: Path) -> None:
         # check orthogonality
         for row in actual_matrix:
             # noinspection PyTypeChecker
-            np.testing.assert_allclose(np.linalg.norm(row), 1)
+            np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
 
         for column in actual_matrix.T:
             # noinspection PyTypeChecker
-            np.testing.assert_allclose(np.linalg.norm(column), 1)
+            np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
 
         # check no translation
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(actual_matrix[:-1, -1], 0)
+        np.testing.assert_allclose(actual_matrix[:-1, -1], 0)  # type: ignore
 
         # check homogeneous matrix
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(actual_matrix[-1, :-1], 0)
+        np.testing.assert_allclose(actual_matrix[-1, :-1], 0)  # type: ignore
 
         # check unit vector location
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(actual_matrix[i, i], 1)
+        np.testing.assert_allclose(actual_matrix[i, i], 1)  # type: ignore
 
 
 @given(
@@ -108,19 +108,19 @@ def test_translation_matrix(xyz) -> None:
     # check orthogonality
     for row in matrix[:-1, :-1]:
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(np.linalg.norm(row), 1)
+        np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
 
     for column in matrix[:, :-1].T:
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(np.linalg.norm(column), 1)
+        np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
 
     # check translation
     # noinspection PyTypeChecker
-    np.testing.assert_allclose(matrix[:-1, -1], xyz)
+    np.testing.assert_allclose(matrix[:-1, -1], xyz)  # type: ignore
 
     # check homogeneous matrix
     # noinspection PyTypeChecker
-    np.testing.assert_allclose(matrix[-1, :-1], 0)
+    np.testing.assert_allclose(matrix[-1, :-1], 0)  # type: ignore
 
     # test exception
     with raises(PyboticsError):
@@ -135,7 +135,7 @@ def test_vector_2_matrix(vector_transforms: Sequence[dict]) -> None:
             actual = pybotics.geometry.vector_2_matrix(d["vector"], convention=c)
             np.testing.assert_allclose(
                 actual=actual, desired=d["transform"].reshape((4, 4)), atol=1e-6
-            )
+            )  # type: ignore
 
         # test exception
         with raises(PyboticsError):
@@ -158,7 +158,7 @@ def test_matrix_2_vector(vector_transforms: Sequence[dict]) -> None:
                 continue
             np.testing.assert_allclose(
                 actual=actual_vector, desired=d["vector"], atol=1e-6
-            )
+            )  # type: ignore
 
 
 def test_orientation() -> None:
