@@ -33,6 +33,7 @@ Social | ![Twitter Follow](https://img.shields.io/twitter/follow/engnadeau?style
   - [Citing](#citing)
   - [Development and Community Guidelines](#development-and-community-guidelines)
     - [Local Development](#local-development)
+    - [Dependency Management](#dependency-management)
     - [Submit an Issue](#submit-an-issue)
     - [Contributing](#contributing)
     - [Testing](#testing)
@@ -132,6 +133,13 @@ Please cite the following articles if you use `pybotics` in your research:
 
 ```bash
 poetry install
+```
+
+### Dependency Management
+
+```bash
+# refresh lock file
+poetry lock --no-update
 ```
 
 ### Submit an Issue
