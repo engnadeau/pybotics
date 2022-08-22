@@ -19,7 +19,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
-          poetry install
+          # TODO: use linting dev group? #798
+          poetry install --dev-only
       - name: Run linting checks
         run: |
           make lint
