@@ -18,7 +18,9 @@ jobs:
           pip install poetry
       - name: Build and publish
         run: |
+          # bump local package version to match git tag
           poetry version $(git describe --tags --abbrev=0)
+          # build and publish package
           poetry build
           poetry publish \
             --username ${{ secrets.PYPI_USERNAME }} \
