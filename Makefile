@@ -1,72 +1,52 @@
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# checks and linting
-
-.PHONY: check-package
-check-package:
-	poetry check -v
-
-.PHONY: check-typing
-check-typing:
-	poetry run mypy --strict --show-error-codes .
-
-.PHONY: check-format
-check-format:
-	poetry run black --check .
-	poetry run isort -c .
+.DEFAULT_GOAL := build
 
 .PHONY: lint
 lint:
+	poetry check -v
+	poetry run mypy --strict --show-error-codes .
+	poetry run black --check .
+	poetry run isort -c .
 	poetry run flake8 pybotics tests examples
 	poetry run vulture --min-confidence 80 --sort-by-size pybotics tests examples
-
-.PHONY: check
-check: check-format check-package check-typing lint
 
 .PHONY: debug
 debug:
 	@echo "Git version: $(shell git describe --tags)"
 	poetry debug
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# formatting
-
 .PHONY: format
 format:
 	poetry run black .
 	poetry run isort .
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# testing
-
 .PHONY: test
 test:
-	PYTHONPATH=. poetry run pytest --cov=pybotics --cov-report term-missing --cov-config .coveragerc --verbose
+	PYTHONPATH=. \
+		poetry run pytest \
+		--cov=pybotics \
+		--cov-report term-missing \
+		--cov-config .coveragerc \
+		--verbose
 
 .PHONY: test-notebooks
 test-notebooks:
 	poetry run jupyter nbconvert --execute examples/*.ipynb
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# packaging
-
 .PHONY: build
 build:
 	poetry build
 
-.PHONY: update-dev-dependencies
-update-dev-dependencies:
-	poetry run python scripts/update_dev_dependencies.py
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# documentation
-
 .PHONY: paper
 paper:
-	cd paper && pandoc paper.md -o paper.pdf --bibliography=paper.bib
+	cd paper && \
+		pandoc paper.md \
+		-o paper.pdf \
+		--bibliography=paper.bib
 
 .PHONY: docs
 docs: docs-api
-	poetry run sphinx-build -b html docs docs/_build
+	poetry run sphinx-build \
+		-b html docs docs/_build
 
 .PHONY: docs-api
 docs-api:
