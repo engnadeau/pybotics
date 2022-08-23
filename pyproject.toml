@@ -88,7 +88,6 @@ line-length = 88
 target_version = ['py37']
 include = '\.pyi?$'
 exclude = '''
-
 (
   /(
       \.eggs         # exclude a few common directories in the
@@ -106,6 +105,9 @@ exclude = '''
                      # the root of the project
 )
 '''
+
+[tool.isort]
+profile = "black"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
