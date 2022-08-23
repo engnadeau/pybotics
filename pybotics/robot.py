@@ -1,8 +1,8 @@
 """Robot module."""
 from __future__ import annotations
 
-from typing import Any, Optional, Sequence, Sized, Union
 import typing
+from typing import Any, Optional, Sequence, Sized, Union
 
 import attr
 import numpy as np

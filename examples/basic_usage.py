@@ -1,9 +1,10 @@
 """Basic usage of the pybotics package."""
+import numpy as np
+
 from pybotics.geometry import vector_2_matrix
 from pybotics.predefined_models import ur10
 from pybotics.robot import Robot
 from pybotics.tool import Tool
-import numpy as np
 
 
 def main() -> None:

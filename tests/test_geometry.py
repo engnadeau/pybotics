@@ -1,8 +1,8 @@
 """Test geometry."""
+import typing
 from collections import Counter
 from pathlib import Path
 from typing import Sequence
-import typing
 
 import hypothesis.strategies as st
 import numpy as np

@@ -1,15 +1,16 @@
 """Optimization module."""
 from copy import deepcopy
 from itertools import repeat
-from typing import Sequence, Union, MutableSequence
+from typing import MutableSequence, Sequence, Union
 
 import attr
 import numpy as np
 import numpy.typing as npt
 
-from pybotics.robot import Robot
 from pybotics.errors import PyboticsError
-from pybotics.geometry import matrix_2_vector, position_from_matrix, vector_2_matrix
+from pybotics.geometry import (matrix_2_vector, position_from_matrix,
+                               vector_2_matrix)
+from pybotics.robot import Robot
 
 
 def _validate_transform_mask(

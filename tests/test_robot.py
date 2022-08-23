@@ -8,7 +8,6 @@ from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
 from pytest import raises
-import numpy.typing as npt
 
 from pybotics.errors import PyboticsError
 from pybotics.predefined_models import ur10
