@@ -12,7 +12,7 @@ def test_len() -> None:
 def test_displace() -> None:
     """Test."""
     link = PrismaticMDHLink()
-    np.testing.assert_allclose(link.displace(), link.vector)
+    np.testing.assert_allclose(link.displace(), link.vector)  # type: ignore
 
 
 def test_repr() -> None:
