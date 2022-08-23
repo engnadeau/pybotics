@@ -11,7 +11,7 @@ def test_init() -> None:
     """Test."""
     # test error
     with raises(PyboticsError):
-        MDHKinematicChain(np.eye(5))
+        MDHKinematicChain(np.eye(5))  # type: ignore
 
     # test sequence of links
     MDHKinematicChain([RevoluteMDHLink()])
@@ -28,7 +28,7 @@ def test_vector() -> None:
     """Test."""
     link = RevoluteMDHLink()
     kc = MDHKinematicChain([link])
-    np.testing.assert_allclose(kc.vector, link.vector)
+    np.testing.assert_allclose(kc.vector, link.vector)# type: ignore
 
 
 def test_repr() -> None:
@@ -49,7 +49,7 @@ def test_links_setter() -> None:
     """Test."""
     link = RevoluteMDHLink()
     kc = MDHKinematicChain([link])
-    kc.links = link
+    kc.links = [link]
 
 
 def test_ndof() -> None:
