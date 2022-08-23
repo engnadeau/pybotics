@@ -8,8 +8,7 @@ import numpy as np
 import numpy.typing as npt
 
 from pybotics.errors import PyboticsError
-from pybotics.geometry import (matrix_2_vector, position_from_matrix,
-                               vector_2_matrix)
+from pybotics.geometry import matrix_2_vector, position_from_matrix, vector_2_matrix
 from pybotics.robot import Robot
 
 
