@@ -1,7 +1,4 @@
-"""Optimization module.
-
-isort:skip_file
-"""
+"""Optimization module."""
 from copy import deepcopy
 from itertools import repeat
 from typing import Sequence, Union, MutableSequence
@@ -61,7 +58,7 @@ class OptimizationHandler:
         # extract vector segments
         segments = np.split(
             vector, [num_kc_parameters, num_kc_parameters + num_tool_parameters]
-        )
+        )  # type: ignore
         kc_segment = segments[0]
         tool_segment = segments[1]
         world_segment = segments[2]
@@ -109,12 +106,15 @@ def compute_absolute_error(
     """Compute the absolute error of a given position."""
     pose = robot.fk(q)
     actual_position = position_from_matrix(pose)
-    error = position - actual_position
-    return float(np.linalg.norm(error))
+    error = position - actual_position  # type: npt.NDArray[np.float64]
+    result = float(np.linalg.norm(error))  # type: ignore
+    return result
 
 
 def compute_absolute_errors(
-    qs: npt.NDArray[np.float64], positions: npt.NDArray[np.float64], robot: Robot
+    qs: Sequence[npt.NDArray[np.float64]],
+    positions: Sequence[npt.NDArray[np.float64]],
+    robot: Robot,
 ) -> npt.NDArray[np.float64]:
     """
     Compute the absolute errors of a given set of positions.
@@ -123,7 +123,8 @@ def compute_absolute_errors(
     :param positions: Array of Cartesian positions, shape=(n-poses, 3)
     :param robot: Robot model
     """
-    return list(map(compute_absolute_error, qs, positions, repeat(robot)))
+    result = np.array(map(compute_absolute_error, qs, positions, repeat(robot)))
+    return result
 
 
 def compute_relative_error(
