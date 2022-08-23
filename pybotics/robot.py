@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from typing import Any, Optional, Sequence, Sized, Union
+import typing
 
 import attr
 import numpy as np
@@ -28,9 +29,9 @@ class Robot(Sized):
 
     kinematic_chain = attr.ib(type=KinematicChain)
     tool = attr.ib(factory=lambda: Tool(), type=Tool)
-    world_frame = attr.ib(factory=lambda: np.eye(4), type=npt.NDArray[np.float64])  # type: ignore
+    world_frame = attr.ib(factory=lambda: np.eye(4), type=npt.NDArray[np.float64])
     random_state = attr.ib(
-        factory=lambda: np.random.RandomState(),  # type: ignore
+        factory=lambda: np.random.RandomState(),
         type=np.random.RandomState,
     )
     home_position = attr.ib(
@@ -59,7 +60,9 @@ class Robot(Sized):
         encoder = JSONEncoder(sort_keys=True)
         return encoder.encode(self)
 
-    def fk(self, q: npt.NDArray[np.float64] = None) -> npt.NDArray[np.float64]:
+    def fk(
+        self, q: Optional[npt.NDArray[np.float64]] = None
+    ) -> npt.NDArray[np.float64]:
         """
         Compute the forward kinematics of a given position.
 
@@ -88,16 +91,22 @@ class Robot(Sized):
         self, pose: npt.NDArray[np.float64], q: Optional[npt.NDArray[np.float64]] = None
     ) -> Optional[npt.NDArray[np.float64]]:
         """Solve the inverse kinematics."""
+        # set initial value
         x0 = self.joints if q is None else q
-        result = scipy.optimize.least_squares(
+
+        # solve optimization
+        optimization_result = scipy.optimize.least_squares(
             fun=_ik_cost_function, x0=x0, bounds=self.joint_limits, args=(pose, self)
         )  # type: scipy.optimize.OptimizeResult
 
-        if result.success:  # pragma: no cover
-            actual_pose = self.fk(result.x)
+        # set return value
+        result = None  # type: Optional[npt.NDArray[np.float64]]
+        if optimization_result.success:  # pragma: no cover
+            actual_pose = self.fk(optimization_result.x)
             if np.allclose(actual_pose, pose, atol=1e-3):
-                return result.x
-        return None
+                result = optimization_result.x
+
+        return result
 
     @property
     def ndof(self) -> int:
@@ -153,7 +162,7 @@ class Robot(Sized):
         j_tr[3:, 3:] = rotation
         j_w = np.dot(j_tr, j_fl)  # type: ignore
 
-        return j_w
+        return typing.cast(npt.NDArray[np.float64], j_w)
 
     def jacobian_flange(
         self, q: Optional[npt.NDArray[np.float64]] = None
@@ -236,11 +245,12 @@ class Robot(Sized):
         # reverse torques into correct order
         return np.array(list(reversed(joint_torques)), dtype=float)
 
-    def clamp_joints(
-        self, q: npt.NDArray[np.float64]
-    ) -> Optional[npt.NDArray[np.float64]]:
+    def clamp_joints(self, q: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         """Limit joints to joint limits."""
-        return np.clip(q, self.joint_limits[0], self.joint_limits[1])
+        result = np.clip(
+            q, self.joint_limits[0], self.joint_limits[1]
+        )  # type: npt.NDArray[np.float64]
+        return result
 
     def random_joints(
         self, in_place: bool = False
@@ -250,11 +260,13 @@ class Robot(Sized):
             low=self.joint_limits[0], high=self.joint_limits[1]
         )
 
+        result = None
         if in_place:
             self.joints = q
-            return None
         else:
-            return q
+            result = q
+
+        return result
 
     @classmethod
     def from_parameters(cls, parameters: npt.NDArray[np.float64]) -> Robot:
@@ -269,4 +281,5 @@ def _ik_cost_function(
 ) -> npt.NDArray[np.float64]:
     actual_pose = robot.fk(q)
     diff = np.abs(actual_pose - pose)
-    return diff.ravel()
+    result = diff.ravel()  # type: npt.NDArray[np.float64]
+    return result
