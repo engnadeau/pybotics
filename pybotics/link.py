@@ -148,7 +148,7 @@ class RevoluteMDHLink(MDHLink):
 
         :return vector of new displacement state
         """
-        v = np.copy(self.vector)  # type: ignore
+        v = self.vector.copy()
         v[2] += q
         return v
 
@@ -169,6 +169,6 @@ class PrismaticMDHLink(MDHLink):
 
         :return vector of new displacement state
         """
-        v = np.copy(self.vector)
+        v = self.vector.copy()
         v[3] += q
         return v
