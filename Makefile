@@ -7,7 +7,7 @@ check-package:
 
 .PHONY: check-typing
 check-typing:
-	poetry run mypy --strict .
+	poetry run mypy --strict --show-error-codes .
 
 .PHONY: check-format
 check-format:
