@@ -61,13 +61,15 @@ def test_compute_absolute_errors(q: npt.NDArray[np.float64]) -> None:
         elements=st.floats(allow_nan=False, allow_infinity=False),
     ),
 )
-def test_compute_relative_errors(q_a: npt.NDArray[np.float64], q_b: npt.NDArray[np.float64]) -> None:
+def test_compute_relative_errors(
+    q_a: npt.NDArray[np.float64], q_b: npt.NDArray[np.float64]
+) -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
 
     p_a = robot.fk(q_a)[:-1, -1]
     p_b = robot.fk(q_b)[:-1, -1]
-    distance = np.linalg.norm(p_a - p_b)
+    distance = np.linalg.norm(p_a - p_b)  # type: ignore
 
     # test 1D input
     actual_error = compute_relative_error(
