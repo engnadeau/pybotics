@@ -28,7 +28,7 @@ def test_vector() -> None:
     """Test."""
     link = RevoluteMDHLink()
     kc = MDHKinematicChain([link])
-    np.testing.assert_allclose(kc.vector, link.vector)# type: ignore
+    np.testing.assert_allclose(kc.vector, link.vector)  # type: ignore
 
 
 def test_repr() -> None:
