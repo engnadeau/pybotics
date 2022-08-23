@@ -120,7 +120,7 @@ def _validate_links(
 class MDHKinematicChain(KinematicChain):
     """Kinematic Chain of MDH links."""
 
-    _links = attr.ib(type=Union[Sequence[MDHLink], npt.NDArray[np.float64]])
+    _links = attr.ib(type=Sequence[MDHLink])
 
     def __attrs_post_init__(self) -> None:
         """Post-attrs initialization."""
