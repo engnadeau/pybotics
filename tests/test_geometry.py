@@ -1,19 +1,22 @@
 """Test geometry."""
 import typing
 from collections import Counter
-from pathlib import Path
 from typing import Sequence
 
 import hypothesis.strategies as st
 import numpy as np
 import numpy.typing as npt
-from hypothesis import given, settings
+from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from pytest import raises
+from scipy.spatial.transform import Rotation as R
 
 import pybotics.geometry
 from pybotics.errors import PyboticsError
 from pybotics.geometry import OrientationConvention, matrix_2_vector
+
+MIN_FLOAT = -1e9
+MAX_FLOAT = 1e9
 
 
 @given(st.floats(allow_nan=False, allow_infinity=False))
@@ -45,55 +48,118 @@ def test_wrap_2_pi(angle: float) -> None:
         np.testing.assert_allclose([actual_angle], expected_angles[i])  # type: ignore
 
 
-@given(angle=st.floats(allow_nan=False, allow_infinity=False))
-@settings(deadline=None)
-def test_rotation_matrix_xyz(angle: float, resources_path: Path) -> None:
-    """Test."""
-    # define functions to test
-    rotation_functions = {
-        "x": pybotics.geometry.rotation_matrix_x,
-        "y": pybotics.geometry.rotation_matrix_y,
-        "z": pybotics.geometry.rotation_matrix_z,
-    }
+@given(
+    angle=st.floats(
+        allow_nan=False, allow_infinity=False, min_value=MIN_FLOAT, max_value=MAX_FLOAT
+    )
+)
+def test_rotation_matrix_x(angle: float) -> None:
+    # set axis-specific parameters
+    axis_idx = 0
+    axis_vector = np.zeros(3)
+    axis_vector[axis_idx] = 1
 
-    # iterate through rotation axes
-    for i, axis in enumerate("xyz"):
-        # get resource file
-        path = resources_path / f"rot{axis}-transforms.csv"
-        data = np.loadtxt(str(path.resolve()), delimiter=",")  # type: ignore
-        if data.ndim == 1:
-            data = np.expand_dims(data, axis=0)  # type: ignore
+    # test randomized hypothesis transforms
+    actual_matrix = pybotics.geometry.rotation_matrix_x(angle)
 
-        # test resource transforms
-        for d in data:
-            actual_matrix = rotation_functions[axis](d[0])
-            np.testing.assert_allclose(
-                actual=actual_matrix, desired=d[1:].reshape((4, 4)), atol=1e-6
-            )  # type: ignore
+    # check orthogonality
+    for row in actual_matrix:
+        np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
 
-        # test hypothesis transforms
-        actual_matrix = rotation_functions[axis](angle)
+    for column in actual_matrix.T:
+        np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
 
-        # check orthogonality
-        for row in actual_matrix:
-            # noinspection PyTypeChecker
-            np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
+    # check no translation
+    np.testing.assert_allclose(actual_matrix[:-1, -1], 0)  # type: ignore
 
-        for column in actual_matrix.T:
-            # noinspection PyTypeChecker
-            np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
+    # check homogeneous matrix
+    np.testing.assert_allclose(actual_matrix[-1, :-1], 0)  # type: ignore
 
-        # check no translation
-        # noinspection PyTypeChecker
-        np.testing.assert_allclose(actual_matrix[:-1, -1], 0)  # type: ignore
+    # check unit vector location
+    np.testing.assert_allclose(actual_matrix[axis_idx, axis_idx], 1)  # type: ignore
 
-        # check homogeneous matrix
-        # noinspection PyTypeChecker
-        np.testing.assert_allclose(actual_matrix[-1, :-1], 0)  # type: ignore
+    # check 3x3 rotation component
+    actual_rotation = actual_matrix[:3, :3]
+    expected_rotation = R.from_rotvec(angle * axis_vector).as_matrix()
+    np.testing.assert_allclose(
+        actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
+    )  # type: ignore
 
-        # check unit vector location
-        # noinspection PyTypeChecker
-        np.testing.assert_allclose(actual_matrix[i, i], 1)  # type: ignore
+
+@given(
+    angle=st.floats(
+        allow_nan=False, allow_infinity=False, min_value=MIN_FLOAT, max_value=MAX_FLOAT
+    )
+)
+def test_rotation_matrix_y(angle: float) -> None:
+    # set axis-specific parameters
+    axis_idx = 1
+    axis_vector = np.zeros(3)
+    axis_vector[axis_idx] = 1
+
+    # test randomized hypothesis transforms
+    actual_matrix = pybotics.geometry.rotation_matrix_y(angle)
+
+    # check orthogonality
+    for row in actual_matrix:
+        np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
+
+    for column in actual_matrix.T:
+        np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
+
+    # check no translation
+    np.testing.assert_allclose(actual_matrix[:-1, -1], 0)  # type: ignore
+
+    # check homogeneous matrix
+    np.testing.assert_allclose(actual_matrix[-1, :-1], 0)  # type: ignore
+
+    # check unit vector location
+    np.testing.assert_allclose(actual_matrix[axis_idx, axis_idx], 1)  # type: ignore
+
+    # check 3x3 rotation component
+    actual_rotation = actual_matrix[:3, :3]
+    expected_rotation = R.from_rotvec(angle * axis_vector).as_matrix()
+    np.testing.assert_allclose(
+        actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
+    )  # type: ignore
+
+
+@given(
+    angle=st.floats(
+        allow_nan=False, allow_infinity=False, min_value=MIN_FLOAT, max_value=MAX_FLOAT
+    )
+)
+def test_rotation_matrix_z(angle: float) -> None:
+    # set axis-specific parameters
+    axis_idx = 2
+    axis_vector = np.zeros(3)
+    axis_vector[axis_idx] = 1
+
+    # test randomized hypothesis transforms
+    actual_matrix = pybotics.geometry.rotation_matrix_z(angle)
+
+    # check orthogonality
+    for row in actual_matrix:
+        np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
+
+    for column in actual_matrix.T:
+        np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
+
+    # check no translation
+    np.testing.assert_allclose(actual_matrix[:-1, -1], 0)  # type: ignore
+
+    # check homogeneous matrix
+    np.testing.assert_allclose(actual_matrix[-1, :-1], 0)  # type: ignore
+
+    # check unit vector location
+    np.testing.assert_allclose(actual_matrix[axis_idx, axis_idx], 1)  # type: ignore
+
+    # check 3x3 rotation component
+    actual_rotation = actual_matrix[:3, :3]
+    expected_rotation = R.from_rotvec(angle * axis_vector).as_matrix()
+    np.testing.assert_allclose(
+        actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
+    )  # type: ignore
 
 
 @given(
