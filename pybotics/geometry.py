@@ -1,6 +1,6 @@
 """Geometry functions and utilities."""
 from enum import Enum
-from typing import Sequence, Union
+from typing import Union
 
 import numpy as np
 import numpy.typing as npt

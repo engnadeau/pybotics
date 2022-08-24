@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Optional, Sequence, Sized, Union
+from typing import Any, Optional, Sized
 
 import attr
 import numpy as np
