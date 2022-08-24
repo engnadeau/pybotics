@@ -22,6 +22,11 @@ lint:
 .PHONY: check
 check: check-format check-package check-typing lint
 
+.PHONY: debug
+debug:
+	@echo "Git version: $(shell git describe --tags)"
+	poetry debug
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # formatting
 
