@@ -34,16 +34,16 @@ def test_compute_absolute_errors(q: npt.NDArray[np.float64]) -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
     pose = robot.fk(q)
-    p = pose[:-1, -1]
+    position_vector = pose[:-1, -1]
 
-    # test 1D input
-    actual_error = compute_absolute_error(q=q, position=p, robot=robot)
+    # test 1D input; i.e., only one pose
+    actual_error = compute_absolute_error(q=q, position=position_vector, robot=robot)
     np.testing.assert_allclose(actual_error, 0)  # type: ignore
 
-    # test 2D input
+    # test 2D input; i.e., many poses
     actual_error = compute_absolute_errors(
         qs=np.tile(q, (10, 1)),  # type: ignore
-        positions=np.tile(p, (10, 1)),  # type: ignore
+        positions=np.tile(position_vector, (10, 1)),  # type: ignore
         robot=robot,
     )
     np.testing.assert_allclose(actual_error, 0)  # type: ignore
