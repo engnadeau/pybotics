@@ -136,7 +136,9 @@ def test_vector_2_matrix(
     # test regular usage
     for d in vector_transforms:
         for c in [d["order"], OrientationConvention(d["order"])]:
-            actual = pybotics.geometry.vector_2_matrix(d["vector"], convention=c)  # type: ignore
+            actual = pybotics.geometry.vector_2_matrix(
+                d["vector"], convention=c
+            )  # type: ignore
             np.testing.assert_allclose(
                 actual=actual, desired=d["transform"].reshape((4, 4)), atol=1e-6
             )  # type: ignore
