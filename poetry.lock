@@ -1354,7 +1354,7 @@ python-versions = ">=3.6"
 name = "typing-extensions"
 version = "4.3.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -1424,7 +1424,7 @@ docs = ["rst.linker (>=1.9)", "jaraco.packaging (>=3.2)", "sphinx"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "494e3eab1bd56f0a4748189853b1909534b972b17475ae9c36d79cdc9a7f5047"
+content-hash = "843fc9b6b16378437356bd7e739b22526e2f8a3c50b31df53c8886cee8b44771"
 
 [metadata.files]
 alabaster = [
