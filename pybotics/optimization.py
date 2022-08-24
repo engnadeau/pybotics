@@ -1,7 +1,7 @@
 """Optimization module."""
 from copy import deepcopy
 from itertools import repeat
-from typing import MutableSequence, Sequence, Union
+from typing import MutableSequence, Sequence
 
 import attr
 import numpy as np
