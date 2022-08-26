@@ -20,7 +20,8 @@ jobs:
         run: |
           pip install poetry
           # TODO: use linting dev group? #798
-          poetry install --dev-only
+          # TODO: use ` --dev-only` from next poetry release?
+          poetry install
       - name: Run linting checks
         run: |
           make lint
