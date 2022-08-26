@@ -1,11 +1,13 @@
 """Basic usage of the pybotics package."""
+import numpy as np
+
 from pybotics.geometry import vector_2_matrix
 from pybotics.predefined_models import ur10
 from pybotics.robot import Robot
 from pybotics.tool import Tool
 
 
-def main():
+def main() -> None:
     """
     Demonstrate pybotics usage.
 
@@ -16,11 +18,11 @@ def main():
 
     # add tool
     tool = Tool()
-    tool.position = [1, 2, 3]
+    tool.position = np.array([1, 2, 3])
     robot.tool = tool
 
     # set world frame
-    world_frame = vector_2_matrix([100, 200, 300, 0, 0, 0])
+    world_frame = vector_2_matrix(np.array([100, 200, 300, 0, 0, 0]))
     robot.world_frame = world_frame
 
     print(f"Robot: {robot}")

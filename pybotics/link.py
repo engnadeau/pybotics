@@ -1,10 +1,10 @@
 """Link module."""
 from abc import abstractmethod
 from collections.abc import Sized
-from typing import Sequence, Union
 
 import attr
-import numpy as np  # type: ignore
+import numpy as np
+import numpy.typing as npt
 
 from pybotics.json_encoder import JSONEncoder
 
@@ -23,7 +23,7 @@ class Link(Sized):
         return self.size
 
     @abstractmethod
-    def displace(self, q: float) -> Union[Sequence[float], np.ndarray]:
+    def displace(self, q: float) -> npt.NDArray[np.float64]:
         """
         Generate a vector of the new link state given a displacement.
 
@@ -34,7 +34,7 @@ class Link(Sized):
         raise NotImplementedError
 
     @abstractmethod
-    def transform(self, q: float = 0) -> np.ndarray:
+    def transform(self, q: float = 0) -> npt.NDArray[np.float64]:
         """
         Generate a 4x4 transform matrix given a displacement.
 
@@ -46,7 +46,7 @@ class Link(Sized):
 
     @property
     @abstractmethod
-    def vector(self) -> np.ndarray:
+    def vector(self) -> npt.NDArray[np.float64]:
         """
         Return the vector representation of the link.
 
@@ -80,7 +80,7 @@ class MDHLink(Link):
         """Get number of parameters."""
         return self._size
 
-    def transform(self, q: float = 0) -> np.ndarray:
+    def transform(self, q: float = 0) -> npt.NDArray[np.float64]:
         """
         Generate a 4x4 transform matrix with a displacement.
 
@@ -113,7 +113,7 @@ class MDHLink(Link):
         return transform
 
     @property
-    def vector(self) -> np.ndarray:
+    def vector(self) -> npt.NDArray[np.float64]:
         """
         Return the vector representation of the link.
 
@@ -123,7 +123,7 @@ class MDHLink(Link):
 
     # noinspection PyMethodOverriding
     @vector.setter
-    def vector(self, value: Sequence[float]) -> None:
+    def vector(self, value: npt.NDArray[np.float64]) -> None:
         """Set parameters."""
         self.alpha = value[0]
         self.a = value[1]
@@ -139,7 +139,7 @@ class RevoluteMDHLink(MDHLink):
     https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
     """
 
-    def displace(self, q: float = 0) -> Union[Sequence[float], np.ndarray]:
+    def displace(self, q: float = 0) -> npt.NDArray[np.float64]:
         """
         Generate a vector of the new link state given a displacement.
 
@@ -147,7 +147,7 @@ class RevoluteMDHLink(MDHLink):
 
         :return vector of new displacement state
         """
-        v = np.copy(self.vector)
+        v = self.vector.copy()
         v[2] += q
         return v
 
@@ -160,7 +160,7 @@ class PrismaticMDHLink(MDHLink):
     https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
     """
 
-    def displace(self, q: float = 0) -> Union[Sequence[float], np.ndarray]:
+    def displace(self, q: float = 0) -> npt.NDArray[np.float64]:
         """
         Generate a vector of the new link state given a displacement.
 
@@ -168,6 +168,6 @@ class PrismaticMDHLink(MDHLink):
 
         :return vector of new displacement state
         """
-        v = np.copy(self.vector)
+        v = self.vector.copy()
         v[3] += q
         return v

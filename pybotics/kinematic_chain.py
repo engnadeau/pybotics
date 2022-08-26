@@ -4,7 +4,8 @@ from abc import abstractmethod
 from typing import Any, Optional, Sequence, Sized, Union
 
 import attr
-import numpy as np  # type: ignore
+import numpy as np
+import numpy.typing as npt
 
 from pybotics.errors import PyboticsError
 from pybotics.json_encoder import JSONEncoder
@@ -30,7 +31,7 @@ class KinematicChain(Sized):
 
     @property  # type: ignore
     @abstractmethod
-    def matrix(self) -> np.ndarray:
+    def matrix(self) -> npt.NDArray[np.float64]:
         """
         Convert chain to matrix of link parameters.
 
@@ -41,7 +42,7 @@ class KinematicChain(Sized):
 
     @matrix.setter  # type: ignore
     @abstractmethod
-    def matrix(self, value: np.ndarray) -> None:
+    def matrix(self, value: npt.NDArray[np.float64]) -> None:
         """
         Set to matrix of link parameters.
 
@@ -72,7 +73,9 @@ class KinematicChain(Sized):
         raise NotImplementedError
 
     @abstractmethod
-    def transforms(self, q: Optional[Sequence[float]] = None) -> Sequence[np.ndarray]:
+    def transforms(
+        self, q: Optional[npt.NDArray[np.float64]] = None
+    ) -> Sequence[npt.NDArray[np.float64]]:
         """
         Generate a sequence of spatial transforms.
 
@@ -84,7 +87,7 @@ class KinematicChain(Sized):
 
     @property
     @abstractmethod
-    def vector(self) -> np.ndarray:
+    def vector(self) -> npt.NDArray[np.float64]:
         """
         Get the vector representation of the kinematic chain.
 
@@ -93,12 +96,14 @@ class KinematicChain(Sized):
         raise NotImplementedError
 
     @vector.setter
-    def vector(self, value: Sequence[float]) -> None:
+    def vector(self, value: npt.NDArray[np.float64]) -> None:
         """Set parameters of all links."""
         raise NotImplementedError
 
 
-def _validate_links(value: Union[Sequence[MDHLink], np.ndarray]) -> Sequence[MDHLink]:
+def _validate_links(
+    value: Union[Sequence[MDHLink], npt.NDArray[np.float64]]
+) -> Sequence[MDHLink]:
     if isinstance(value, np.ndarray):
         try:
             value = value.reshape((-1, MDHLink._size))
@@ -115,20 +120,20 @@ def _validate_links(value: Union[Sequence[MDHLink], np.ndarray]) -> Sequence[MDH
 class MDHKinematicChain(KinematicChain):
     """Kinematic Chain of MDH links."""
 
-    _links = attr.ib(type=Union[Sequence[MDHLink], np.ndarray])
+    _links = attr.ib(type=Sequence[MDHLink])
 
     def __attrs_post_init__(self) -> None:
         """Post-attrs initialization."""
         self._links = _validate_links(self._links)
 
     @classmethod
-    def from_parameters(cls: Any, parameters: Sequence[float]) -> Any:
+    def from_parameters(cls: Any, parameters: npt.NDArray[np.float64]) -> Any:
         """Construct Kinematic Chain from parameters."""
         kc = cls(parameters)
         return kc
 
     @property
-    def matrix(self) -> np.ndarray:
+    def matrix(self) -> npt.NDArray[np.float64]:
         """
         Convert chain to matrix of link parameters.
 
@@ -138,7 +143,7 @@ class MDHKinematicChain(KinematicChain):
         return np.array([l.vector for l in self._links])
 
     @matrix.setter
-    def matrix(self, value: np.ndarray) -> None:
+    def matrix(self, value: npt.NDArray[np.float64]) -> None:
         """
         Set matrix of link parameters.
 
@@ -155,7 +160,7 @@ class MDHKinematicChain(KinematicChain):
         return x
 
     @links.setter
-    def links(self, value: Union[Sequence[MDHLink], np.ndarray]) -> None:
+    def links(self, value: Union[Sequence[MDHLink], npt.NDArray[np.float64]]) -> None:
         """Set links."""
         self._links = _validate_links(value)
 
@@ -169,20 +174,22 @@ class MDHKinematicChain(KinematicChain):
         # noinspection PyProtectedMember
         return len(self) * MDHLink._size
 
-    def transforms(self, q: Optional[Sequence[float]] = None) -> Sequence[np.ndarray]:
+    def transforms(
+        self, q: Optional[npt.NDArray[np.float64]] = None
+    ) -> Sequence[npt.NDArray[np.float64]]:
         """Get sequence of 4x4 transforms."""
         q = np.zeros(len(self)) if q is None else q
         transforms = [link.transform(p) for link, p in zip(self._links, q)]
         return transforms
 
     @property
-    def vector(self) -> np.ndarray:
+    def vector(self) -> npt.NDArray[np.float64]:
         """Get parameters of all links."""
         return self.matrix.ravel()
 
     # noinspection PyMethodOverriding
     @vector.setter
-    def vector(self, value: Sequence[float]) -> None:
+    def vector(self, value: npt.NDArray[np.float64]) -> None:
         """Set parameters of all links."""
         # noinspection PyProtectedMember
         value = np.array(value).reshape((-1, MDHLink._size))

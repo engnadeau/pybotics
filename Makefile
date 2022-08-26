@@ -7,7 +7,7 @@ check-package:
 
 .PHONY: check-typing
 check-typing:
-	poetry run mypy --strict .
+	poetry run mypy --strict --show-error-codes .
 
 .PHONY: check-format
 check-format:
@@ -21,6 +21,11 @@ lint:
 
 .PHONY: check
 check: check-format check-package check-typing lint
+
+.PHONY: debug
+debug:
+	@echo "Git version: $(shell git describe --tags)"
+	poetry debug
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # formatting

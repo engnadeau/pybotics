@@ -5,7 +5,7 @@ from pytest import raises
 from pybotics.errors import PyboticsError
 
 
-def test_errors():
+def test_errors() -> None:
     """
     Test error.
 
