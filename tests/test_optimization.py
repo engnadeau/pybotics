@@ -42,7 +42,7 @@ def test_compute_absolute_errors(q: npt.NDArray[np.float64]) -> None:
 
     # test 2D input; i.e., many poses
     num_repeats = 10
-    actual_error = compute_absolute_errors(
+    actual_error = compute_absolute_errors(  # type: ignore
         qs=np.tile(q, (num_repeats, 1)),  # type: ignore
         positions=np.tile(position_vector, (num_repeats, 1)),  # type: ignore
         robot=robot,
@@ -80,7 +80,7 @@ def test_compute_relative_errors(
 
     # test 2D input; i.e., many poses
     num_repeats = 10
-    actual_error = compute_relative_errors(
+    actual_error = compute_relative_errors(  # type: ignore
         qs_a=np.tile(q_a, (num_repeats, 1)),  # type: ignore
         qs_b=np.tile(q_b, (num_repeats, 1)),  # type: ignore
         distances=np.tile(distance, (num_repeats, 1)),  # type: ignore
@@ -99,9 +99,9 @@ def test_optimization() -> None:
     actual_robot.kinematic_chain.links[0].a += 0.1  # type: ignore
 
     # calculate fk
-    qs = np.tile(
+    qs = np.tile(  # type: ignore
         np.linspace(start=-np.pi, stop=np.pi, num=100), (len(ur10()), 1)
-    ).transpose()  # type: ignore
+    ).transpose()
 
     poses = np.array(list(map(actual_robot.fk, qs)))
     positions = poses[:, :-1, -1]
@@ -121,20 +121,20 @@ def test_optimization() -> None:
 
     # validate
     atol = 1e-2
-    np.testing.assert_allclose(
+    np.testing.assert_allclose(  # type: ignore
         actual=result.x, desired=handler.generate_optimization_vector(), atol=atol
-    )  # type: ignore
-    np.testing.assert_allclose(
+    )
+    np.testing.assert_allclose(  # type: ignore
         actual=handler.robot.kinematic_chain.vector,
         desired=actual_robot.kinematic_chain.vector,
         atol=atol,
-    )  # type: ignore
-    np.testing.assert_allclose(
+    )
+    np.testing.assert_allclose(  # type: ignore
         actual=handler.robot.tool.vector, desired=actual_robot.tool.vector, atol=atol
-    )  # type: ignore
-    np.testing.assert_allclose(
+    )
+    np.testing.assert_allclose(  # type: ignore
         actual=handler.robot.world_frame, desired=actual_robot.world_frame, atol=atol
-    )  # type: ignore
+    )
 
 
 def test_handler_validate_transform_mask() -> None:

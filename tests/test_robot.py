@@ -234,9 +234,9 @@ def test_ik(q: npt.NDArray[np.float64], q_offset: npt.NDArray[np.float64]) -> No
     # test the position with higher accuracy
     desired_position = pose[:-1, -1]
     actual_position = actual_pose[:-1, -1]
-    np.testing.assert_allclose(
+    np.testing.assert_allclose(  # type: ignore
         actual_position, desired_position, atol=1e-1
-    )  # type: ignore
+    )
 
 
 def test_random_joints() -> None:

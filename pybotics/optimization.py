@@ -56,9 +56,9 @@ class OptimizationHandler:
         num_tool_parameters = np.sum(self.tool_mask)
 
         # extract vector segments
-        segments = np.split(
+        segments = np.split(  # type: ignore
             vector, [num_kc_parameters, num_kc_parameters + num_tool_parameters]
-        )  # type: ignore
+        )
         kc_segment = segments[0]
         tool_segment = segments[1]
         world_segment = segments[2]

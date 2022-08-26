@@ -103,9 +103,9 @@ def test_rotation_matrix_x(angle: float) -> None:
     # check 3x3 rotation component
     actual_rotation = actual_matrix[:3, :3]
     expected_rotation = Rotation.from_rotvec(angle * axis_vector).as_matrix()
-    np.testing.assert_allclose(
+    np.testing.assert_allclose(  # type: ignore
         actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
-    )  # type: ignore
+    )
 
 
 @given(
@@ -141,9 +141,9 @@ def test_rotation_matrix_y(angle: float) -> None:
     # check 3x3 rotation component
     actual_rotation = actual_matrix[:3, :3]
     expected_rotation = Rotation.from_rotvec(angle * axis_vector).as_matrix()
-    np.testing.assert_allclose(
+    np.testing.assert_allclose(  # type: ignore
         actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
-    )  # type: ignore
+    )
 
 
 @given(
@@ -179,9 +179,9 @@ def test_rotation_matrix_z(angle: float) -> None:
     # check 3x3 rotation component
     actual_rotation = actual_matrix[:3, :3]
     expected_rotation = Rotation.from_rotvec(angle * axis_vector).as_matrix()
-    np.testing.assert_allclose(
+    np.testing.assert_allclose(  # type: ignore
         actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
-    )  # type: ignore
+    )
 
 
 @given(
@@ -227,9 +227,9 @@ def test_vector_2_matrix(
             actual = pybotics.geometry.vector_2_matrix(
                 d["vector"], convention=c  # type: ignore
             )
-            np.testing.assert_allclose(
+            np.testing.assert_allclose(  # type: ignore
                 actual=actual, desired=d["transform"].reshape((4, 4)), atol=1e-6
-            )  # type: ignore
+            )
 
         # test exception
         with raises(PyboticsError):
@@ -252,9 +252,9 @@ def test_matrix_2_vector(
                 # TODO: implement other conversions
                 # don't fail for NotImplementedError
                 continue
-            np.testing.assert_allclose(
+            np.testing.assert_allclose(  # type: ignore
                 actual=actual_vector, desired=d["vector"], atol=1e-6
-            )  # type: ignore
+            )
 
 
 def test_orientation() -> None:

@@ -192,9 +192,9 @@ class Robot(Sized):
             current_link = self.kinematic_chain.links[i]
             p = q[i]
             current_link_transform = current_link.transform(p)
-            current_transform = np.dot(
+            current_transform = np.dot(  # type: ignore
                 current_link_transform, current_transform
-            )  # type: ignore
+            )
 
         return jacobian_flange
 
