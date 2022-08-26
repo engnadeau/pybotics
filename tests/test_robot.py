@@ -7,23 +7,36 @@ import numpy.typing as npt
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
-from pytest import raises
+from pytest import fixture, raises
 
 from pybotics.errors import PyboticsError
+from pybotics.kinematic_chain import MDHKinematicChain
 from pybotics.predefined_models import ur10
 from pybotics.robot import Robot
 
 
-def test_fk(resources_path: Path) -> None:
+@fixture(scope="session")
+def planar_robot() -> Robot:
+    """Generate planar robot."""
+    return Robot(
+        MDHKinematicChain.from_parameters(
+            np.array([[0, 0, 0, 0], [0, 10, 0, 0], [0, 20, 0, 0]])
+        )
+    )
+
+
+def test_fk() -> None:
     """
     Test robot.
 
     :param robot:
     :return:
     """
-    # get resource
-    path = resources_path / "ur10-joints-poses.csv"
-    data = np.loadtxt(str(path), delimiter=",")  # type: ignore
+    # load test data
+    data_path = (
+        Path(__file__).parent / "resources"
+    ).resolve() / "ur10-joints-poses.csv"
+    data = np.loadtxt(str(data_path), delimiter=",")  # type: ignore
 
     # load robot
     robot = Robot.from_parameters(ur10())
