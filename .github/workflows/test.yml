@@ -34,6 +34,36 @@ jobs:
         run: |
           make lint
 
+  test-build-and-installs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install poetry
+      - name: Run build
+        run: |
+          make build
+      - name: Run installs
+        run: |
+          # test local install
+          pip install --no-deps --force-reinstall .
+          # test wheel
+          pip install --no-deps --force-reinstall dist/*.whl
+          # test tarball
+          pip install --no-deps --force-reinstall dist/*.tar.gz
+
   test-examples:
     runs-on: ubuntu-latest
     strategy:
