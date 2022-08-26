@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pybotics"
-version = "0.0.0"
+version = "2.0.1"
 description = "Python Toolbox for Robotics"
 authors = ["Nicholas Nadeau <nicholas.nadeau@gmail.com>"]
 readme = "README.md"
