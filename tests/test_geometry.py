@@ -19,6 +19,27 @@ MIN_FLOAT = -1e9
 MAX_FLOAT = 1e9
 
 
+@fixture()
+def vector_transforms() -> List[Dict[str, Union[npt.NDArray[np.float64], str]]]:
+    """Get resource data."""
+
+    # load test data
+    data_path = (
+        Path(__file__).parent / "resources"
+    ).resolve() / "vector-transforms.csv"
+    data = np.genfromtxt(fname=data_path, delimiter=",", dtype=str)  # type: ignore
+
+    result = [
+        {
+            "vector": d[:6].astype(float),
+            "transform": d[6:-1].astype(float),
+            "order": d[-1],
+        }
+        for d in data
+    ]
+    return result
+
+
 @given(st.floats(allow_nan=False, allow_infinity=False))
 def test_wrap_2_pi(angle: float) -> None:
     """
