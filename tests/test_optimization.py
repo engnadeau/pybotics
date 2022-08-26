@@ -41,9 +41,10 @@ def test_compute_absolute_errors(q: npt.NDArray[np.float64]) -> None:
     np.testing.assert_allclose(actual_error, 0)  # type: ignore
 
     # test 2D input; i.e., many poses
+    num_repeats = 10
     actual_error = compute_absolute_errors(
-        qs=np.tile(q, (10, 1)),  # type: ignore
-        positions=np.tile(position_vector, (10, 1)),  # type: ignore
+        qs=np.tile(q, (num_repeats, 1)),  # type: ignore
+        positions=np.tile(position_vector, (num_repeats, 1)),  # type: ignore
         robot=robot,
     )
     np.testing.assert_allclose(actual_error, 0)  # type: ignore
@@ -71,17 +72,18 @@ def test_compute_relative_errors(
     p_b = robot.fk(q_b)[:-1, -1]
     distance = np.linalg.norm(p_a - p_b)  # type: ignore
 
-    # test 1D input
+    # test 1D input; i.e., only one pose
     actual_error = compute_relative_error(
         q_a=q_a, q_b=q_b, distance=distance, robot=robot
     )
     np.testing.assert_allclose(actual_error, 0)  # type: ignore
 
-    # test 2D input
+    # test 2D input; i.e., many poses
+    num_repeats = 10
     actual_error = compute_relative_errors(
-        qs_a=np.tile(q_a, (10, 1)),  # type: ignore
-        qs_b=np.tile(q_b, (10, 1)),  # type: ignore
-        distances=np.tile(distance, (10, 1)),  # type: ignore
+        qs_a=np.tile(q_a, (num_repeats, 1)),  # type: ignore
+        qs_b=np.tile(q_b, (num_repeats, 1)),  # type: ignore
+        distances=np.tile(distance, (num_repeats, 1)),  # type: ignore
         robot=robot,
     )
     np.testing.assert_allclose(actual_error, 0)  # type: ignore
