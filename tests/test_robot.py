@@ -3,26 +3,40 @@ from pathlib import Path
 
 import hypothesis
 import numpy as np
+import numpy.typing as npt
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from hypothesis.strategies import floats
-from pytest import raises
+from pytest import fixture, raises
 
 from pybotics.errors import PyboticsError
+from pybotics.kinematic_chain import MDHKinematicChain
 from pybotics.predefined_models import ur10
 from pybotics.robot import Robot
 
 
-def test_fk(resources_path: Path):
+@fixture(scope="session")
+def planar_robot() -> Robot:
+    """Generate planar robot."""
+    return Robot(
+        MDHKinematicChain.from_parameters(
+            np.array([[0, 0, 0, 0], [0, 10, 0, 0], [0, 20, 0, 0]])
+        )
+    )
+
+
+def test_fk() -> None:
     """
     Test robot.
 
     :param robot:
     :return:
     """
-    # get resource
-    path = resources_path / "ur10-joints-poses.csv"
-    data = np.loadtxt(str(path), delimiter=",")
+    # load test data
+    data_path = (
+        Path(__file__).parent / "resources"
+    ).resolve() / "ur10-joints-poses.csv"
+    data = np.loadtxt(str(data_path), delimiter=",")  # type: ignore
 
     # load robot
     robot = Robot.from_parameters(ur10())
@@ -37,23 +51,23 @@ def test_fk(resources_path: Path):
 
         # test with position argument
         actual_pose = robot.fk(q=joints)
-        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
+        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)  # type: ignore
 
         # test with internal position attribute
         robot.joints = joints
         actual_pose = robot.fk()
-        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
+        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)  # type: ignore
 
 
-def test_home_position():
+def test_home_position() -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
     x = np.ones(len(robot))
     robot.home_position = x
-    np.testing.assert_allclose(robot.home_position, x)
+    np.testing.assert_allclose(robot.home_position, x)  # type: ignore
 
 
-def test_joint_limits():
+def test_joint_limits() -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
 
@@ -68,7 +82,7 @@ def test_joint_limits():
         robot.joints = robot.joint_limits.copy()[1] + 10
 
 
-def test_compute_joint_torques(planar_robot: Robot):
+def test_compute_joint_torques(planar_robot: Robot) -> None:
     """
     Test.
 
@@ -78,15 +92,17 @@ def test_compute_joint_torques(planar_robot: Robot):
     :return:
     """
     # set test force and angles
-    force = [-100, -200, 0]
-    moment = [0] * 3
-    wrench = force + moment
+    force = np.array([-100, -200, 0])
+    moment = np.zeros(3)
+    wrench = force + moment  # type: npt.NDArray[np.float64]
     joint_angles = np.deg2rad([30, 60, 0])
 
     # get link lengths
+    # FIXME: "Link" has no attribute "a"
+    # TODO: review abstract inheritance
     lengths = [
-        planar_robot.kinematic_chain.links[1].a,
-        planar_robot.kinematic_chain.links[2].a,
+        planar_robot.kinematic_chain.links[1].a,  # type: ignore
+        planar_robot.kinematic_chain.links[2].a,  # type: ignore
     ]
 
     # calculate expected torques
@@ -99,11 +115,11 @@ def test_compute_joint_torques(planar_robot: Robot):
 
     # test
     actual_torques = planar_robot.compute_joint_torques(q=joint_angles, wrench=wrench)
-    np.testing.assert_allclose(actual_torques, expected_torques)
+    np.testing.assert_allclose(actual_torques, expected_torques)  # type: ignore
 
     planar_robot.joints = joint_angles
     actual_torques = planar_robot.compute_joint_torques(wrench=wrench)
-    np.testing.assert_allclose(actual_torques, expected_torques)
+    np.testing.assert_allclose(actual_torques, expected_torques)  # type: ignore
 
 
 @given(
@@ -115,12 +131,14 @@ def test_compute_joint_torques(planar_robot: Robot):
         ),
     )
 )
-def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
+def test_jacobian_world(q: npt.NDArray[np.float64], planar_robot: Robot) -> None:
     """Test."""
     # get link lengths
+    # FIXME: "Link" has no attribute "a"
+    # TODO: review abstract inheritance
     lengths = [
-        planar_robot.kinematic_chain.links[1].a,
-        planar_robot.kinematic_chain.links[2].a,
+        planar_robot.kinematic_chain.links[1].a,  # type: ignore
+        planar_robot.kinematic_chain.links[2].a,  # type: ignore
     ]
 
     # example from Craig has last joint set to 0
@@ -140,7 +158,7 @@ def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
     expected[-1, :] = 1
 
     actual = planar_robot.jacobian_world(q)
-    np.testing.assert_allclose(actual, expected, atol=1e-3)
+    np.testing.assert_allclose(actual, expected, atol=1e-3)  # type: ignore
 
 
 @given(
@@ -148,12 +166,14 @@ def test_jacobian_world(q: np.ndarray, planar_robot: Robot):
         shape=(3,), dtype=float, elements=floats(allow_nan=False, allow_infinity=False)
     )
 )
-def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
+def test_jacobian_flange(q: npt.NDArray[np.float64], planar_robot: Robot) -> None:
     """Test."""
     # get link lengths
+    # FIXME: "Link" has no attribute "a"
+    # TODO: review abstract inheritance
     lengths = [
-        planar_robot.kinematic_chain.links[1].a,
-        planar_robot.kinematic_chain.links[2].a,
+        planar_robot.kinematic_chain.links[1].a,  # type: ignore
+        planar_robot.kinematic_chain.links[2].a,  # type: ignore
     ]
 
     # example from Craig has last joint set to 0
@@ -169,7 +189,7 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
     expected[-1, :] = 1
 
     actual = planar_robot.jacobian_flange(q)
-    np.testing.assert_allclose(actual, expected, atol=1e-6)
+    np.testing.assert_allclose(actual, expected, atol=1e-6)  # type: ignore
 
 
 @given(
@@ -192,7 +212,7 @@ def test_jacobian_flange(q: np.ndarray, planar_robot: Robot):
     ),
 )
 @hypothesis.settings(deadline=None)
-def test_ik(q: np.ndarray, q_offset: np.ndarray):
+def test_ik(q: npt.NDArray[np.float64], q_offset: npt.NDArray[np.float64]) -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
     pose = robot.fk(q)
@@ -209,22 +229,24 @@ def test_ik(q: np.ndarray, q_offset: np.ndarray):
 
     # test the matrix with lower accuracy
     # rotation components are hard to achieve when x0 isn't good
-    np.testing.assert_allclose(actual_pose, pose, atol=1)
+    np.testing.assert_allclose(actual_pose, pose, atol=1)  # type: ignore
 
     # test the position with higher accuracy
     desired_position = pose[:-1, -1]
     actual_position = actual_pose[:-1, -1]
-    np.testing.assert_allclose(actual_position, desired_position, atol=1e-1)
+    np.testing.assert_allclose(  # type: ignore
+        actual_position, desired_position, atol=1e-1
+    )
 
 
-def test_random_joints():
+def test_random_joints() -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
     robot.random_joints()
     robot.random_joints(in_place=True)
 
 
-def test_to_json():
+def test_to_json() -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
     robot.to_json()

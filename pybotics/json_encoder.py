@@ -2,7 +2,7 @@
 import json
 from typing import Any
 
-import numpy as np  # type: ignore
+import numpy as np
 
 
 class JSONEncoder(json.JSONEncoder):

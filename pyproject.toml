@@ -56,9 +56,10 @@ python = "^3.7"
 attrs = ">=19.0"
 numpy = "^1.20"
 scipy = "^1"
+typing-extensions = { version = "^4", python = "~3.7" }
 
 [tool.poetry.dev-dependencies]
-black = ">=22.1"
+black = {extras = ["jupyter"], version = "^22.6.0"}
 coverage = ">=6"
 flake8 = ">=4"
 flake8-bugbear = "*"
@@ -88,7 +89,6 @@ line-length = 88
 target_version = ['py37']
 include = '\.pyi?$'
 exclude = '''
-
 (
   /(
       \.eggs         # exclude a few common directories in the
@@ -106,6 +106,9 @@ exclude = '''
                      # the root of the project
 )
 '''
+
+[tool.isort]
+profile = "black"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]

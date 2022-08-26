@@ -3,10 +3,11 @@
 These models correspond to the Modified Denavit–Hartenberg parameters:
 https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters
 """
-import numpy as np  # type: ignore
+import numpy as np
+import numpy.typing as npt
 
 
-def kuka_lbr_iiwa_7() -> np.ndarray:  # pragma: no cover
+def kuka_lbr_iiwa_7() -> npt.NDArray[np.float64]:  # pragma: no cover
     """Get KUKA LBR iiwa 7 MDH model."""
     return np.array(
         [
@@ -21,7 +22,7 @@ def kuka_lbr_iiwa_7() -> np.ndarray:  # pragma: no cover
     )
 
 
-def mecademic_meca500() -> np.ndarray:  # pragma: no cover
+def mecademic_meca500() -> npt.NDArray[np.float64]:  # pragma: no cover
     """Get Meca500 MDH model."""
     return np.array(
         [
@@ -35,7 +36,7 @@ def mecademic_meca500() -> np.ndarray:  # pragma: no cover
     )
 
 
-def puma560() -> np.ndarray:  # pragma: no cover
+def puma560() -> npt.NDArray[np.float64]:  # pragma: no cover
     """Get PUMA560 MDH model."""
     return np.array(
         [
@@ -49,7 +50,7 @@ def puma560() -> np.ndarray:  # pragma: no cover
     )
 
 
-def ur10() -> np.ndarray:  # pragma: no cover
+def ur10() -> npt.NDArray[np.float64]:  # pragma: no cover
     """Get UR10 MDH model."""
     return np.array(
         [
@@ -63,7 +64,7 @@ def ur10() -> np.ndarray:  # pragma: no cover
     )
 
 
-def abb_irb120() -> np.ndarray:  # pragma: no cover
+def abb_irb120() -> npt.NDArray[np.float64]:  # pragma: no cover
     """Get ABB irb120 MDH model."""
     return np.array(
         [

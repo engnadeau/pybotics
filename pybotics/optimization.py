@@ -1,22 +1,20 @@
-"""Optimization module.
-
-isort:skip_file
-"""
+"""Optimization module."""
 from copy import deepcopy
 from itertools import repeat
-from typing import Sequence, Union
+from typing import MutableSequence, Sequence
 
 import attr
-import numpy as np  # type: ignore
+import numpy as np
+import numpy.typing as npt
 
-from pybotics.robot import Robot
 from pybotics.errors import PyboticsError
 from pybotics.geometry import matrix_2_vector, position_from_matrix, vector_2_matrix
+from pybotics.robot import Robot
 
 
 def _validate_transform_mask(
-    mask: Union[bool, Sequence[bool]], name: str, size: int
-) -> Sequence[bool]:
+    mask: MutableSequence[bool], name: str, size: int
+) -> MutableSequence[bool]:
     """Validate mask arguments."""
     # validate input
     if isinstance(mask, bool):
@@ -32,9 +30,9 @@ class OptimizationHandler:
     """Handler for optimization tasks."""
 
     robot = attr.ib(type=Robot)
-    kinematic_chain_mask = attr.ib(False, type=Union[bool, Sequence[bool]])
-    tool_mask = attr.ib(False, type=Union[bool, Sequence[bool]])
-    world_mask = attr.ib(False, type=Union[bool, Sequence[bool]])
+    kinematic_chain_mask = attr.ib(False, type=MutableSequence[bool])
+    tool_mask = attr.ib(False, type=MutableSequence[bool])
+    world_mask = attr.ib(False, type=MutableSequence[bool])
 
     def __attrs_post_init__(self) -> None:
         """Post-init handler."""
@@ -51,14 +49,14 @@ class OptimizationHandler:
             size=self.robot.kinematic_chain.num_parameters,
         )
 
-    def apply_optimization_vector(self, vector: np.ndarray) -> None:
+    def apply_optimization_vector(self, vector: npt.NDArray[np.float64]) -> None:
         """Apply vector."""
         # get number of parameters
         num_kc_parameters = np.sum(self.kinematic_chain_mask)
         num_tool_parameters = np.sum(self.tool_mask)
 
         # extract vector segments
-        segments = np.split(
+        segments = np.split(  # type: ignore
             vector, [num_kc_parameters, num_kc_parameters + num_tool_parameters]
         )
         kc_segment = segments[0]
@@ -78,7 +76,7 @@ class OptimizationHandler:
         world_vector[self.world_mask] = world_segment
         self.robot.world_frame = vector_2_matrix(world_vector)
 
-    def generate_optimization_vector(self) -> np.ndarray:
+    def generate_optimization_vector(self) -> npt.NDArray[np.float64]:
         """Generate vector."""
         kc_vector = np.compress(
             self.kinematic_chain_mask, self.robot.kinematic_chain.vector
@@ -91,28 +89,33 @@ class OptimizationHandler:
 
 
 def optimize_accuracy(
-    optimization_vector: np.ndarray,
+    optimization_vector: npt.NDArray[np.float64],
     handler: OptimizationHandler,
-    qs: Sequence[Sequence[float]],
-    positions: Sequence[Sequence[float]],
-) -> np.ndarray:
+    qs: Sequence[npt.NDArray[np.float64]],
+    positions: Sequence[npt.NDArray[np.float64]],
+) -> npt.NDArray[np.float64]:
     """Fitness function for accuracy optimization."""
     handler.apply_optimization_vector(optimization_vector)
     errors = compute_absolute_errors(qs=qs, positions=positions, robot=handler.robot)
     return errors
 
 
-def compute_absolute_error(q: np.ndarray, position: np.ndarray, robot: Robot) -> float:
+def compute_absolute_error(
+    q: npt.NDArray[np.float64], position: npt.NDArray[np.float64], robot: Robot
+) -> float:
     """Compute the absolute error of a given position."""
     pose = robot.fk(q)
     actual_position = position_from_matrix(pose)
-    error = position - actual_position
-    return float(np.linalg.norm(error))
+    error = position - actual_position  # type: npt.NDArray[np.float64]
+    result = float(np.linalg.norm(error))  # type: ignore
+    return result
 
 
 def compute_absolute_errors(
-    qs: np.ndarray, positions: np.ndarray, robot: Robot
-) -> np.ndarray:
+    qs: Sequence[npt.NDArray[np.float64]],
+    positions: Sequence[npt.NDArray[np.float64]],
+    robot: Robot,
+) -> npt.NDArray[np.float64]:
     """
     Compute the absolute errors of a given set of positions.
 
@@ -120,11 +123,16 @@ def compute_absolute_errors(
     :param positions: Array of Cartesian positions, shape=(n-poses, 3)
     :param robot: Robot model
     """
-    return list(map(compute_absolute_error, qs, positions, repeat(robot)))
+    return np.fromiter(  # type: ignore
+        map(compute_absolute_error, qs, positions, repeat(robot)), dtype=np.float64
+    )
 
 
 def compute_relative_error(
-    q_a: np.ndarray, q_b: np.ndarray, distance: float, robot: Robot
+    q_a: npt.NDArray[np.float64],
+    q_b: npt.NDArray[np.float64],
+    distance: float,
+    robot: Robot,
 ) -> float:
     """Compute the relative error of a given position combination."""
     pose_a = robot.fk(q_a)
@@ -133,16 +141,22 @@ def compute_relative_error(
     actual_position_a = position_from_matrix(pose_a)
     actual_position_b = position_from_matrix(pose_b)
 
-    actual_distance = actual_position_a - actual_position_b
-    actual_distance = np.linalg.norm(actual_distance)
+    actual_distance = actual_position_a - actual_position_b  # type: float
+    actual_distance = np.linalg.norm(actual_distance)  # type: ignore
 
-    error = float(np.linalg.norm(distance - actual_distance))
+    error = float(np.linalg.norm(distance - actual_distance))  # type: ignore
 
     return error
 
 
 def compute_relative_errors(
-    qs_a: np.ndarray, qs_b: np.ndarray, distances: np.ndarray, robot: Robot
-) -> np.array:
+    qs_a: npt.NDArray[np.float64],
+    qs_b: npt.NDArray[np.float64],
+    distances: npt.NDArray[np.float64],
+    robot: Robot,
+) -> npt.NDArray[np.float64]:
     """Compute the relative errors of a given set of position combinations."""
-    return list(map(compute_relative_error, qs_a, qs_b, distances, repeat(robot)))
+    return np.fromiter(  # type: ignore
+        map(compute_relative_error, qs_a, qs_b, distances, repeat(robot)),
+        dtype=np.float64,
+    )

@@ -1,8 +1,9 @@
 """Geometry functions and utilities."""
 from enum import Enum
-from typing import Sequence, Union
+from typing import Union
 
-import numpy as np  # type: ignore
+import numpy as np
+import numpy.typing as npt
 
 from pybotics.errors import PyboticsError
 
@@ -38,9 +39,9 @@ class OrientationConvention(Enum):
 
 
 def vector_2_matrix(
-    vector: Sequence[float],
+    vector: npt.NDArray[np.float64],
     convention: Union[OrientationConvention, str] = OrientationConvention.EULER_ZYX,
-) -> np.ndarray:
+) -> npt.NDArray[np.float64]:
     """
     Calculate the pose from the position and euler angles.
 
@@ -63,9 +64,9 @@ def vector_2_matrix(
     # iterate through rotation order
     # build rotation matrix
     transform_matrix = np.eye(4)
-    for axis, value in zip(convention, rotation_component):  # type: ignore
+    for axis, value in zip(convention, rotation_component):
         current_rotation = globals()[f"rotation_matrix_{axis}"](value)
-        transform_matrix = np.dot(transform_matrix, current_rotation)
+        transform_matrix = np.dot(transform_matrix, current_rotation)  # type: ignore
 
     # add translation component
     transform_matrix[:-1, -1] = translation_component
@@ -73,24 +74,28 @@ def vector_2_matrix(
     return transform_matrix
 
 
-def position_from_matrix(matrix: np.ndarray) -> np.ndarray:
+def position_from_matrix(matrix: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """Get the position values from a 4x4 transform matrix."""
-    return matrix[:-1, -1]
+    position = matrix[:-1, -1]  # type: npt.NDArray[np.float64]
+    return position
 
 
 def matrix_2_vector(
-    matrix: np.ndarray,
+    matrix: npt.NDArray[np.float64],
     convention: OrientationConvention = OrientationConvention.EULER_ZYX,
-) -> np.ndarray:
+) -> npt.NDArray[np.float64]:
     """Convert 4x4 matrix to a vector."""
     # call function
     try:
-        return globals()[f"_matrix_2_{convention.name.lower()}"](matrix)
+        vector = globals()[f"_matrix_2_{convention.name.lower()}"](
+            matrix
+        )  # type: npt.NDArray[np.float64]
+        return vector
     except KeyError:  # pragma: no cover
         raise NotImplementedError
 
 
-def _matrix_2_euler_zyx(matrix: np.ndarray) -> np.ndarray:
+def _matrix_2_euler_zyx(matrix: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """
     Calculate the equivalent position and euler angles of the given pose.
 
@@ -136,7 +141,7 @@ def wrap_2_pi(angle: float) -> float:
     return result
 
 
-def rotation_matrix_x(angle: float) -> np.ndarray:
+def rotation_matrix_x(angle: float) -> npt.NDArray[np.float64]:
     """Generate a basic 4x4 rotation matrix about the X axis."""
     s = np.sin(angle)
     c = np.cos(angle)
@@ -146,7 +151,7 @@ def rotation_matrix_x(angle: float) -> np.ndarray:
     return matrix
 
 
-def rotation_matrix_y(angle: float) -> np.ndarray:
+def rotation_matrix_y(angle: float) -> npt.NDArray[np.float64]:
     """Generate a basic 4x4 rotation matrix about the Y axis."""
     s = np.sin(angle)
     c = np.cos(angle)
@@ -156,7 +161,7 @@ def rotation_matrix_y(angle: float) -> np.ndarray:
     return matrix
 
 
-def rotation_matrix_z(angle: float) -> np.ndarray:
+def rotation_matrix_z(angle: float) -> npt.NDArray[np.float64]:
     """Generate a basic 4x4 rotation matrix about the Z axis."""
     s = np.sin(angle)
     c = np.cos(angle)
@@ -166,7 +171,7 @@ def rotation_matrix_z(angle: float) -> np.ndarray:
     return matrix
 
 
-def translation_matrix(xyz: Sequence[float]) -> np.ndarray:
+def translation_matrix(xyz: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """Generate a basic 4x4 translation matrix."""
     # validate
     if len(xyz) != 3:
