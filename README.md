@@ -33,6 +33,7 @@ Social | ![Twitter Follow](https://img.shields.io/twitter/follow/engnadeau?style
   - [Citing](#citing)
   - [Development and Community Guidelines](#development-and-community-guidelines)
     - [Local Development](#local-development)
+    - [Docker Development](#docker-development)
     - [Dependency Management](#dependency-management)
     - [Submit an Issue](#submit-an-issue)
     - [Contributing](#contributing)
@@ -133,6 +134,23 @@ Please cite the following articles if you use `pybotics` in your research:
 
 ```bash
 poetry install
+```
+
+### Docker Development
+
+- Docker is a great tool to test the package in an isolated environment
+- It is especially useful for debugging issues between python versions
+
+```bash
+# launch container attached to current directory
+docker run -v $(pwd):/$(basename $(pwd)) -w /$(basename $(pwd)) -it python:3 bash
+
+# install deps
+pip install poetry
+poetry install
+
+# run tests
+make test
 ```
 
 ### Dependency Management
