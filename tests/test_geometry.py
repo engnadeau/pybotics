@@ -1,15 +1,16 @@
 """Test geometry."""
 import typing
 from collections import Counter
-from typing import Sequence
+from pathlib import Path
+from typing import Dict, List, Sequence, Union
 
 import hypothesis.strategies as st
 import numpy as np
 import numpy.typing as npt
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
-from pytest import raises
-from scipy.spatial.transform import Rotation as R
+from pytest import fixture, raises
+from scipy.spatial.transform import Rotation  # type: ignore
 
 import pybotics.geometry
 from pybotics.errors import PyboticsError
@@ -101,7 +102,7 @@ def test_rotation_matrix_x(angle: float) -> None:
 
     # check 3x3 rotation component
     actual_rotation = actual_matrix[:3, :3]
-    expected_rotation = R.from_rotvec(angle * axis_vector).as_matrix()
+    expected_rotation = Rotation.from_rotvec(angle * axis_vector).as_matrix()
     np.testing.assert_allclose(
         actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
     )  # type: ignore
@@ -139,7 +140,7 @@ def test_rotation_matrix_y(angle: float) -> None:
 
     # check 3x3 rotation component
     actual_rotation = actual_matrix[:3, :3]
-    expected_rotation = R.from_rotvec(angle * axis_vector).as_matrix()
+    expected_rotation = Rotation.from_rotvec(angle * axis_vector).as_matrix()
     np.testing.assert_allclose(
         actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
     )  # type: ignore
@@ -177,7 +178,7 @@ def test_rotation_matrix_z(angle: float) -> None:
 
     # check 3x3 rotation component
     actual_rotation = actual_matrix[:3, :3]
-    expected_rotation = R.from_rotvec(angle * axis_vector).as_matrix()
+    expected_rotation = Rotation.from_rotvec(angle * axis_vector).as_matrix()
     np.testing.assert_allclose(
         actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
     )  # type: ignore
