@@ -123,10 +123,9 @@ def compute_absolute_errors(
     :param positions: Array of Cartesian positions, shape=(n-poses, 3)
     :param robot: Robot model
     """
-    result = np.fromiter(
+    return np.fromiter(  # type: ignore
         map(compute_absolute_error, qs, positions, repeat(robot)), dtype=np.float64
     )
-    return result
 
 
 def compute_relative_error(
@@ -157,7 +156,7 @@ def compute_relative_errors(
     robot: Robot,
 ) -> npt.NDArray[np.float64]:
     """Compute the relative errors of a given set of position combinations."""
-    return np.fromiter(
+    return np.fromiter(  # type: ignore
         map(compute_relative_error, qs_a, qs_b, distances, repeat(robot)),
         dtype=np.float64,
     )
