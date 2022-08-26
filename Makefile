@@ -1,5 +1,8 @@
 .DEFAULT_GOAL := build
 
+.PHONY: check
+check: lint
+
 .PHONY: lint
 lint:
 	poetry check -v
