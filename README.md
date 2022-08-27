@@ -162,6 +162,7 @@ make test
 | Change                    | Commit Type |
 | ------------------------- | ----------- |
 | Bumped dependency version | `build`     |
+| Bumped Python requirement | `feat`      |
 
 ### Dependency Management
 
