@@ -88,6 +88,8 @@ jobs:
           make test-examples
 
   test-unit:
+    needs:
+      - test-examxples
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -111,6 +113,9 @@ jobs:
           make test
 
   test-notebooks:
+    needs:
+      - test-unit
+      - test-examples
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
