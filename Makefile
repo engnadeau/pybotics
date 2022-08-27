@@ -22,6 +22,9 @@ format:
 	poetry run black .
 	poetry run isort .
 
+.PHONY: test-all
+test-all: test test-examples test-notebooks
+
 .PHONY: test
 test:
 	PYTHONPATH=. \
