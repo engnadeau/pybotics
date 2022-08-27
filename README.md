@@ -153,6 +153,16 @@ poetry install
 make test
 ```
 
+### Commits
+
+- The repo abides by [SemVer](https://semver.org/), [`semantic-release`](https://github.com/semantic-release/semantic-release), and [Angular commit message syntax](https://github.com/angular/angular/blob/main/CONTRIBUTING.md)
+- It is highly recommended to use the [`commitizen` CLI](https://github.com/commitizen/cz-cli)
+- See commit examples below:
+
+| Change                    | Commit Type |
+| ------------------------- | ----------- |
+| Bumped dependency version | `build`     |
+
 ### Dependency Management
 
 ```bash
