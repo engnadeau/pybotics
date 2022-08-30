@@ -68,7 +68,6 @@ isort = ">=5.5"
 matplotlib = "*"
 mccabe = "*"
 mypy = ">=0.960"
-notebook = "*"
 pandas = "*"
 pep8-naming = "*"
 pydocstyle = ">=6"
@@ -86,6 +85,7 @@ vulture = ">=2.0"
 
 [tool.poetry.group.dev.dependencies]
 Pillow = ">=9.0.0"
+notebook = ">=6.4.12"
 
 [tool.black]
 line-length = 88
