@@ -22,6 +22,9 @@ format:
 	poetry run black .
 	poetry run isort .
 
+.PHONY: test-all
+test-all: test test-examples test-notebooks
+
 .PHONY: test
 test:
 	PYTHONPATH=. \
@@ -45,6 +48,8 @@ test-examples: examples/*.py
 
 .PHONY: build
 build:
+	# bump local package version to match git tag and build package
+	poetry version $(shell git describe --tags --abbrev=0)
 	poetry build
 
 .PHONY: paper
