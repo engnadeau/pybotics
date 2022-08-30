@@ -68,8 +68,11 @@ isort = ">=5.5"
 matplotlib = "*"
 mccabe = "*"
 mypy = ">=0.960"
+nbconvert = ">=6.5.1"
+notebook = ">=6.4.12"
 pandas = "*"
 pep8-naming = "*"
+Pillow = ">=9.0.1"
 pydocstyle = ">=6"
 pytest = ">=7"
 pytest-cov = "*"
@@ -82,11 +85,6 @@ sphinx-autobuild = "*"
 sphinx-rtd-theme = "*"
 sphinxcontrib-apidoc = "*"
 vulture = ">=2.0"
-
-[tool.poetry.group.dev.dependencies]
-Pillow = ">=9.0.1"
-notebook = ">=6.4.12"
-nbconvert = ">=6.5.1"
 
 [tool.black]
 line-length = 88
