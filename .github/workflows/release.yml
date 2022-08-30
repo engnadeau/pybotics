@@ -1,12 +1,14 @@
-name: Release
+name: GitHub Release
+
 on:
   push:
     branches:
       - master
+
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
