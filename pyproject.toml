@@ -84,7 +84,7 @@ sphinxcontrib-apidoc = "*"
 vulture = ">=2.0"
 
 [tool.poetry.group.dev.dependencies]
-Pillow = ">=9.0.0"
+Pillow = ">=9.0.1"
 notebook = ">=6.4.12"
 nbconvert = ">=6.5.1"
 
