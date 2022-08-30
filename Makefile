@@ -34,7 +34,7 @@ test:
 .PHONY: test-notebooks
 test-notebooks: examples/*.ipynb
 	for file in $^; do \
-		poetry run jupyter nbconvert --execute $${file}; \
+		poetry run jupyter nbconvert --to=html --execute $${file}; \
 	done
 
 .PHONY: test-examples

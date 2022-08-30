@@ -2,44 +2,43 @@ name: Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: [3.7, 3.8, 3.9]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install system dependencies
-      run: |
-        sudo apt-get install gcc gfortran libopenblas-dev liblapack-dev cython
-        python -m pip install --upgrade pip
-        pip install poetry
-    - name: Install core dependencies
-      run: |
-        poetry install --no-dev
-    - name: Test example
-      run: |
-        poetry run python examples/basic_usage.py
-    - name: Install dev dependencies
-      run: |
-        poetry install
-    - name: Run linting checks
-      run: |
-        make check
-    - name: Run unit tests
-      run: |
-        make test
-    - name: Run notebook tests
-      run: |
-        make test-notebooks
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install system dependencies
+        run: |
+          sudo apt-get install gcc gfortran libopenblas-dev liblapack-dev cython
+          python -m pip install --upgrade pip
+          pip install poetry
+      - name: Install core dependencies
+        run: |
+          poetry install --no-dev
+      - name: Test example
+        run: |
+          poetry run python examples/basic_usage.py
+      - name: Install dev dependencies
+        run: |
+          poetry install
+      - name: Run linting checks
+        run: |
+          make check
+      - name: Run unit tests
+        run: |
+          make test
+      - name: Run notebook tests
+        run: |
+          make test-notebooks
