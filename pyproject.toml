@@ -84,6 +84,9 @@ sphinx-rtd-theme = "*"
 sphinxcontrib-apidoc = "*"
 vulture = ">=2.0"
 
+[tool.poetry.group.dev.dependencies]
+Pillow = ">=9.0.0"
+
 [tool.black]
 line-length = 88
 target_version = ['py37']
