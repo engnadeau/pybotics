@@ -54,7 +54,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.8,<3.11"
 attrs = ">=19.0"
-numpy = "^1.21"
+numpy = "^1.22"
 scipy = "^1.6"
 typing-extensions = { version = "^4", python = "~3.7" }
 
