@@ -28,7 +28,7 @@ def vector_transforms() -> List[Dict[str, Union[npt.NDArray[np.float64], str]]]:
     data_path = (
         Path(__file__).parent / "resources"
     ).resolve() / "vector-transforms.csv"
-    data = np.genfromtxt(fname=data_path, delimiter=",", dtype=str)  # type: ignore
+    data = np.genfromtxt(fname=data_path, delimiter=",", dtype=str)
 
     result = [
         {
@@ -62,12 +62,12 @@ def test_wrap_2_pi(angle: float) -> None:
     actual_angles = np.array(list(map(pybotics.geometry.wrap_2_pi, test_angles)))
     assert len(test_angles) == len(expected_angles)
     assert len(actual_angles) == len(expected_angles)
-    np.testing.assert_allclose(actual_angles, expected_angles)  # type: ignore
+    np.testing.assert_allclose(actual_angles, expected_angles)
 
     # test single elements
     for i, _ in enumerate(expected_angles):
         actual_angle = pybotics.geometry.wrap_2_pi(test_angles[i])
-        np.testing.assert_allclose([actual_angle], expected_angles[i])  # type: ignore
+        np.testing.assert_allclose([actual_angle], expected_angles[i])
 
 
 @given(
@@ -86,24 +86,24 @@ def test_rotation_matrix_x(angle: float) -> None:
 
     # check orthogonality
     for row in actual_matrix:
-        np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
+        np.testing.assert_allclose(np.linalg.norm(row), 1)
 
     for column in actual_matrix.T:
-        np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
+        np.testing.assert_allclose(np.linalg.norm(column), 1)
 
     # check no translation
-    np.testing.assert_allclose(actual_matrix[:-1, -1], 0)  # type: ignore
+    np.testing.assert_allclose(actual_matrix[:-1, -1], 0)
 
     # check homogeneous matrix
-    np.testing.assert_allclose(actual_matrix[-1, :-1], 0)  # type: ignore
+    np.testing.assert_allclose(actual_matrix[-1, :-1], 0)
 
     # check unit vector location
-    np.testing.assert_allclose(actual_matrix[axis_idx, axis_idx], 1)  # type: ignore
+    np.testing.assert_allclose(actual_matrix[axis_idx, axis_idx], 1)
 
     # check 3x3 rotation component
     actual_rotation = actual_matrix[:3, :3]
     expected_rotation = Rotation.from_rotvec(angle * axis_vector).as_matrix()
-    np.testing.assert_allclose(  # type: ignore
+    np.testing.assert_allclose(
         actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
     )
 
@@ -124,24 +124,24 @@ def test_rotation_matrix_y(angle: float) -> None:
 
     # check orthogonality
     for row in actual_matrix:
-        np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
+        np.testing.assert_allclose(np.linalg.norm(row), 1)
 
     for column in actual_matrix.T:
-        np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
+        np.testing.assert_allclose(np.linalg.norm(column), 1)
 
     # check no translation
-    np.testing.assert_allclose(actual_matrix[:-1, -1], 0)  # type: ignore
+    np.testing.assert_allclose(actual_matrix[:-1, -1], 0)
 
     # check homogeneous matrix
-    np.testing.assert_allclose(actual_matrix[-1, :-1], 0)  # type: ignore
+    np.testing.assert_allclose(actual_matrix[-1, :-1], 0)
 
     # check unit vector location
-    np.testing.assert_allclose(actual_matrix[axis_idx, axis_idx], 1)  # type: ignore
+    np.testing.assert_allclose(actual_matrix[axis_idx, axis_idx], 1)
 
     # check 3x3 rotation component
     actual_rotation = actual_matrix[:3, :3]
     expected_rotation = Rotation.from_rotvec(angle * axis_vector).as_matrix()
-    np.testing.assert_allclose(  # type: ignore
+    np.testing.assert_allclose(
         actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
     )
 
@@ -162,24 +162,24 @@ def test_rotation_matrix_z(angle: float) -> None:
 
     # check orthogonality
     for row in actual_matrix:
-        np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
+        np.testing.assert_allclose(np.linalg.norm(row), 1)
 
     for column in actual_matrix.T:
-        np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
+        np.testing.assert_allclose(np.linalg.norm(column), 1)
 
     # check no translation
-    np.testing.assert_allclose(actual_matrix[:-1, -1], 0)  # type: ignore
+    np.testing.assert_allclose(actual_matrix[:-1, -1], 0)
 
     # check homogeneous matrix
-    np.testing.assert_allclose(actual_matrix[-1, :-1], 0)  # type: ignore
+    np.testing.assert_allclose(actual_matrix[-1, :-1], 0)
 
     # check unit vector location
-    np.testing.assert_allclose(actual_matrix[axis_idx, axis_idx], 1)  # type: ignore
+    np.testing.assert_allclose(actual_matrix[axis_idx, axis_idx], 1)
 
     # check 3x3 rotation component
     actual_rotation = actual_matrix[:3, :3]
     expected_rotation = Rotation.from_rotvec(angle * axis_vector).as_matrix()
-    np.testing.assert_allclose(  # type: ignore
+    np.testing.assert_allclose(
         actual=actual_rotation, desired=expected_rotation, rtol=1e-05, atol=1e-08
     )
 
@@ -198,19 +198,19 @@ def test_translation_matrix(xyz: npt.NDArray[np.float64]) -> None:
     # check orthogonality
     for row in matrix[:-1, :-1]:
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(np.linalg.norm(row), 1)  # type: ignore
+        np.testing.assert_allclose(np.linalg.norm(row), 1)
 
     for column in matrix[:, :-1].T:
         # noinspection PyTypeChecker
-        np.testing.assert_allclose(np.linalg.norm(column), 1)  # type: ignore
+        np.testing.assert_allclose(np.linalg.norm(column), 1)
 
     # check translation
     # noinspection PyTypeChecker
-    np.testing.assert_allclose(matrix[:-1, -1], xyz)  # type: ignore
+    np.testing.assert_allclose(matrix[:-1, -1], xyz)
 
     # check homogeneous matrix
     # noinspection PyTypeChecker
-    np.testing.assert_allclose(matrix[-1, :-1], 0)  # type: ignore
+    np.testing.assert_allclose(matrix[-1, :-1], 0)
 
     # test exception
     with raises(PyboticsError):
@@ -252,7 +252,7 @@ def test_matrix_2_vector(
                 # TODO: implement other conversions
                 # don't fail for NotImplementedError
                 continue
-            np.testing.assert_allclose(  # type: ignore
+            np.testing.assert_allclose(
                 actual=actual_vector, desired=d["vector"], atol=1e-6
             )
 
