@@ -11,11 +11,9 @@ def test_tool() -> None:
 
     cg = np.array([1, 2, 3])
     tool.cg = cg
-    np.testing.assert_allclose(tool.cg, cg)  # type: ignore
+    np.testing.assert_allclose(tool.cg, cg)
 
     p = np.array([1, 2, 3])
     tool.position = p
-    np.testing.assert_allclose(tool.position, p)  # type: ignore
-    np.testing.assert_allclose(  # type: ignore
-        tool.vector, matrix_2_vector(tool.matrix)
-    )
+    np.testing.assert_allclose(tool.position, p)
+    np.testing.assert_allclose(tool.vector, matrix_2_vector(tool.matrix))

@@ -38,16 +38,16 @@ def test_compute_absolute_errors(q: npt.NDArray[np.float64]) -> None:
 
     # test 1D input; i.e., only one pose
     actual_error = compute_absolute_error(q=q, position=position_vector, robot=robot)
-    np.testing.assert_allclose(actual_error, 0)  # type: ignore
+    np.testing.assert_allclose(actual_error, 0)
 
     # test 2D input; i.e., many poses
     num_repeats = 10
-    actual_error = compute_absolute_errors(  # type: ignore
-        qs=np.tile(q, (num_repeats, 1)),  # type: ignore
-        positions=np.tile(position_vector, (num_repeats, 1)),  # type: ignore
+    actual_error = compute_absolute_errors( # type: ignore
+        qs=np.tile(q, (num_repeats, 1)),
+        positions=np.tile(position_vector, (num_repeats, 1)),
         robot=robot,
     )
-    np.testing.assert_allclose(actual_error, 0)  # type: ignore
+    np.testing.assert_allclose(actual_error, 0)
 
 
 @given(
@@ -70,23 +70,23 @@ def test_compute_relative_errors(
 
     p_a = robot.fk(q_a)[:-1, -1]
     p_b = robot.fk(q_b)[:-1, -1]
-    distance = np.linalg.norm(p_a - p_b)  # type: ignore
+    distance = np.linalg.norm(p_a - p_b)
 
     # test 1D input; i.e., only one pose
     actual_error = compute_relative_error(
         q_a=q_a, q_b=q_b, distance=distance, robot=robot
     )
-    np.testing.assert_allclose(actual_error, 0)  # type: ignore
+    np.testing.assert_allclose(actual_error, 0)
 
     # test 2D input; i.e., many poses
     num_repeats = 10
-    actual_error = compute_relative_errors(  # type: ignore
-        qs_a=np.tile(q_a, (num_repeats, 1)),  # type: ignore
-        qs_b=np.tile(q_b, (num_repeats, 1)),  # type: ignore
-        distances=np.tile(distance, (num_repeats, 1)),  # type: ignore
+    actual_error = compute_relative_errors(
+        qs_a=np.tile(q_a, (num_repeats, 1)),
+        qs_b=np.tile(q_b, (num_repeats, 1)),
+        distances=np.tile(distance, (num_repeats, 1)),
         robot=robot,
     )
-    np.testing.assert_allclose(actual_error, 0)  # type: ignore
+    np.testing.assert_allclose(actual_error, 0)
 
 
 def test_optimization() -> None:
@@ -96,10 +96,10 @@ def test_optimization() -> None:
     actual_robot.tool.position = np.array([0.1, 0, 0])
     # FIXME: "Link" has no attribute "a"
     # TODO: review abstract inheritance
-    actual_robot.kinematic_chain.links[0].a += 0.1  # type: ignore
+    actual_robot.kinematic_chain.links[0].a += 0.1
 
     # calculate fk
-    qs = np.tile(  # type: ignore
+    qs = np.tile(
         np.linspace(start=-np.pi, stop=np.pi, num=100), (len(ur10()), 1)
     ).transpose()
 
@@ -121,18 +121,18 @@ def test_optimization() -> None:
 
     # validate
     atol = 1e-2
-    np.testing.assert_allclose(  # type: ignore
+    np.testing.assert_allclose(
         actual=result.x, desired=handler.generate_optimization_vector(), atol=atol
     )
-    np.testing.assert_allclose(  # type: ignore
+    np.testing.assert_allclose(
         actual=handler.robot.kinematic_chain.vector,
         desired=actual_robot.kinematic_chain.vector,
         atol=atol,
     )
-    np.testing.assert_allclose(  # type: ignore
+    np.testing.assert_allclose(
         actual=handler.robot.tool.vector, desired=actual_robot.tool.vector, atol=atol
     )
-    np.testing.assert_allclose(  # type: ignore
+    np.testing.assert_allclose(
         actual=handler.robot.world_frame, desired=actual_robot.world_frame, atol=atol
     )
 

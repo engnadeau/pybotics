@@ -56,7 +56,7 @@ class OptimizationHandler:
         num_tool_parameters = np.sum(self.tool_mask)
 
         # extract vector segments
-        segments = np.split(  # type: ignore
+        segments = np.split(
             vector, [num_kc_parameters, num_kc_parameters + num_tool_parameters]
         )
         kc_segment = segments[0]
@@ -107,7 +107,7 @@ def compute_absolute_error(
     pose = robot.fk(q)
     actual_position = position_from_matrix(pose)
     error = position - actual_position  # type: npt.NDArray[np.float64]
-    result = float(np.linalg.norm(error))  # type: ignore
+    result = float(np.linalg.norm(error))
     return result
 
 
@@ -123,7 +123,7 @@ def compute_absolute_errors(
     :param positions: Array of Cartesian positions, shape=(n-poses, 3)
     :param robot: Robot model
     """
-    return np.fromiter(  # type: ignore
+    return np.fromiter(
         map(compute_absolute_error, qs, positions, repeat(robot)), dtype=np.float64
     )
 
@@ -141,10 +141,10 @@ def compute_relative_error(
     actual_position_a = position_from_matrix(pose_a)
     actual_position_b = position_from_matrix(pose_b)
 
-    actual_distance = actual_position_a - actual_position_b  # type: float
-    actual_distance = np.linalg.norm(actual_distance)  # type: ignore
+    actual_distance = actual_position_a - actual_position_b
+    scalar_distance = np.linalg.norm(actual_distance)
 
-    error = float(np.linalg.norm(distance - actual_distance))  # type: ignore
+    error = float(np.linalg.norm(distance - scalar_distance))
 
     return error
 
@@ -156,7 +156,7 @@ def compute_relative_errors(
     robot: Robot,
 ) -> npt.NDArray[np.float64]:
     """Compute the relative errors of a given set of position combinations."""
-    return np.fromiter(  # type: ignore
+    return np.fromiter(
         map(compute_relative_error, qs_a, qs_b, distances, repeat(robot)),
         dtype=np.float64,
     )
