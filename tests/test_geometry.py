@@ -222,18 +222,25 @@ def test_vector_2_matrix(
 ) -> None:
     """Test."""
     # test regular usage
-    for d in vector_transforms:
-        for c in [d["order"], OrientationConvention(d["order"])]:
+    for transform_data in vector_transforms:
+        for convention in [
+            transform_data["order"],
+            OrientationConvention(transform_data["order"]),
+        ]:
             actual = pybotics.geometry.vector_2_matrix(
-                d["vector"], convention=c  # type: ignore
+                transform_data["vector"], convention=str(convention)
             )
-            np.testing.assert_allclose(  # type: ignore
-                actual=actual, desired=d["transform"].reshape((4, 4)), atol=1e-6
+            np.testing.assert_allclose(
+                actual=actual,
+                desired=transform_data["transform"].reshape((4, 4)),
+                atol=1e-6,
             )
 
         # test exception
         with raises(PyboticsError):
-            pybotics.geometry.vector_2_matrix(d["vector"], convention="foobar")
+            pybotics.geometry.vector_2_matrix(
+                transform_data["vector"], convention="foobar"
+            )
 
 
 def test_matrix_2_vector(
