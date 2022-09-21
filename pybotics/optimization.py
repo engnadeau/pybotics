@@ -91,8 +91,8 @@ class OptimizationHandler:
 def optimize_accuracy(
     optimization_vector: npt.NDArray[np.float64],
     handler: OptimizationHandler,
-    qs: Sequence[npt.NDArray[np.float64]],
-    positions: Sequence[npt.NDArray[np.float64]],
+    qs: npt.NDArray[np.float64],
+    positions: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """Fitness function for accuracy optimization."""
     handler.apply_optimization_vector(optimization_vector)
@@ -112,8 +112,8 @@ def compute_absolute_error(
 
 
 def compute_absolute_errors(
-    qs: Sequence[npt.NDArray[np.float64]],
-    positions: Sequence[npt.NDArray[np.float64]],
+    qs: npt.NDArray[np.float64],
+    positions: npt.NDArray[np.float64],
     robot: Robot,
 ) -> npt.NDArray[np.float64]:
     """
