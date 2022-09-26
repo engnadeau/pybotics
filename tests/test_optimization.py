@@ -9,7 +9,6 @@ import scipy.optimize  # type: ignore
 from hypothesis import given
 from hypothesis.extra.numpy import arrays
 from pytest import raises
-
 from pybotics.errors import PyboticsError
 from pybotics.optimization import (
     OptimizationHandler,
@@ -30,19 +29,29 @@ from pybotics.robot import Robot
         elements=st.floats(allow_nan=False, allow_infinity=False),
     )
 )
-def test_compute_absolute_errors(q: npt.NDArray[np.float64]) -> None:
+def test_compute_absolute_errors_1d(q: npt.NDArray[np.float64]) -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
     pose = robot.fk(q)
     position_vector = pose[:-1, -1]
-
-    # test 1D input; i.e., only one pose
     actual_error = compute_absolute_error(q=q, position=position_vector, robot=robot)
     np.testing.assert_allclose(actual_error, 0)
 
-    # test 2D input; i.e., many poses
+
+@given(
+    q=arrays(
+        shape=(len(ur10()),),
+        dtype=float,
+        elements=st.floats(allow_nan=False, allow_infinity=False),
+    )
+)
+def test_compute_absolute_errors_2d(q: npt.NDArray[np.float64]) -> None:
+    """Test."""
+    robot = Robot.from_parameters(ur10())
+    pose = robot.fk(q)
+    position_vector = pose[:-1, -1]
     num_repeats = 10
-    actual_error = compute_absolute_errors( # type: ignore
+    actual_error = compute_absolute_errors(
         qs=np.tile(q, (num_repeats, 1)),
         positions=np.tile(position_vector, (num_repeats, 1)),
         robot=robot,
@@ -62,23 +71,40 @@ def test_compute_absolute_errors(q: npt.NDArray[np.float64]) -> None:
         elements=st.floats(allow_nan=False, allow_infinity=False),
     ),
 )
-def test_compute_relative_errors(
+def test_compute_relative_errors_1d(
     q_a: npt.NDArray[np.float64], q_b: npt.NDArray[np.float64]
 ) -> None:
     """Test."""
     robot = Robot.from_parameters(ur10())
-
     p_a = robot.fk(q_a)[:-1, -1]
     p_b = robot.fk(q_b)[:-1, -1]
-    distance = np.linalg.norm(p_a - p_b)
-
-    # test 1D input; i.e., only one pose
+    distance = float(np.linalg.norm(p_a - p_b))
     actual_error = compute_relative_error(
         q_a=q_a, q_b=q_b, distance=distance, robot=robot
     )
     np.testing.assert_allclose(actual_error, 0)
 
-    # test 2D input; i.e., many poses
+
+@given(
+    q_a=arrays(
+        shape=(len(ur10()),),
+        dtype=float,
+        elements=st.floats(allow_nan=False, allow_infinity=False),
+    ),
+    q_b=arrays(
+        shape=(len(ur10()),),
+        dtype=float,
+        elements=st.floats(allow_nan=False, allow_infinity=False),
+    ),
+)
+def test_compute_relative_errors_2d(
+    q_a: npt.NDArray[np.float64], q_b: npt.NDArray[np.float64]
+) -> None:
+    """Test."""
+    robot = Robot.from_parameters(ur10())
+    p_a = robot.fk(q_a)[:-1, -1]
+    p_b = robot.fk(q_b)[:-1, -1]
+    distance = np.linalg.norm(p_a - p_b)
     num_repeats = 10
     actual_error = compute_relative_errors(
         qs_a=np.tile(q_a, (num_repeats, 1)),
