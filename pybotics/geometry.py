@@ -66,7 +66,7 @@ def vector_2_matrix(
     transform_matrix = np.eye(4)
     for axis, value in zip(convention, rotation_component):
         current_rotation = globals()[f"rotation_matrix_{axis}"](value)
-        transform_matrix = np.dot(transform_matrix, current_rotation)  # type: ignore
+        transform_matrix = np.dot(transform_matrix, current_rotation)
 
     # add translation component
     transform_matrix[:-1, -1] = translation_component

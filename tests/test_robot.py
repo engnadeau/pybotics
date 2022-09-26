@@ -36,7 +36,7 @@ def test_fk() -> None:
     data_path = (
         Path(__file__).parent / "resources"
     ).resolve() / "ur10-joints-poses.csv"
-    data = np.loadtxt(str(data_path), delimiter=",")  # type: ignore
+    data = np.loadtxt(str(data_path), delimiter=",")
 
     # load robot
     robot = Robot.from_parameters(ur10())
@@ -51,12 +51,12 @@ def test_fk() -> None:
 
         # test with position argument
         actual_pose = robot.fk(q=joints)
-        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)  # type: ignore
+        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
 
         # test with internal position attribute
         robot.joints = joints
         actual_pose = robot.fk()
-        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)  # type: ignore
+        np.testing.assert_allclose(actual_pose, desired_pose, atol=atol)
 
 
 def test_home_position() -> None:
@@ -64,7 +64,7 @@ def test_home_position() -> None:
     robot = Robot.from_parameters(ur10())
     x = np.ones(len(robot))
     robot.home_position = x
-    np.testing.assert_allclose(robot.home_position, x)  # type: ignore
+    np.testing.assert_allclose(robot.home_position, x)
 
 
 def test_joint_limits() -> None:
@@ -115,11 +115,11 @@ def test_compute_joint_torques(planar_robot: Robot) -> None:
 
     # test
     actual_torques = planar_robot.compute_joint_torques(q=joint_angles, wrench=wrench)
-    np.testing.assert_allclose(actual_torques, expected_torques)  # type: ignore
+    np.testing.assert_allclose(actual_torques, expected_torques)
 
     planar_robot.joints = joint_angles
     actual_torques = planar_robot.compute_joint_torques(wrench=wrench)
-    np.testing.assert_allclose(actual_torques, expected_torques)  # type: ignore
+    np.testing.assert_allclose(actual_torques, expected_torques)
 
 
 @given(
@@ -158,7 +158,7 @@ def test_jacobian_world(q: npt.NDArray[np.float64], planar_robot: Robot) -> None
     expected[-1, :] = 1
 
     actual = planar_robot.jacobian_world(q)
-    np.testing.assert_allclose(actual, expected, atol=1e-3)  # type: ignore
+    np.testing.assert_allclose(actual, expected, atol=1e-3)
 
 
 @given(
@@ -189,7 +189,7 @@ def test_jacobian_flange(q: npt.NDArray[np.float64], planar_robot: Robot) -> Non
     expected[-1, :] = 1
 
     actual = planar_robot.jacobian_flange(q)
-    np.testing.assert_allclose(actual, expected, atol=1e-6)  # type: ignore
+    np.testing.assert_allclose(actual, expected, atol=1e-6)
 
 
 @given(
@@ -229,14 +229,12 @@ def test_ik(q: npt.NDArray[np.float64], q_offset: npt.NDArray[np.float64]) -> No
 
     # test the matrix with lower accuracy
     # rotation components are hard to achieve when x0 isn't good
-    np.testing.assert_allclose(actual_pose, pose, atol=1)  # type: ignore
+    np.testing.assert_allclose(actual_pose, pose, atol=1)
 
     # test the position with higher accuracy
     desired_position = pose[:-1, -1]
     actual_position = actual_pose[:-1, -1]
-    np.testing.assert_allclose(  # type: ignore
-        actual_position, desired_position, atol=1e-1
-    )
+    np.testing.assert_allclose(actual_position, desired_position, atol=1e-1)
 
 
 def test_random_joints() -> None:
