@@ -28,12 +28,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
-          # TODO: use linting dev group? #798
-          # TODO: use ` --dev-only` from next poetry release?
-          poetry install
+          poetry install --with lint,test
       - name: Run linting checks
-        run: |
-          make lint
+        run: make lint
 
   test-build-and-installs:
     runs-on: ubuntu-latest
@@ -49,20 +46,16 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Test local install
+        run: pip install --no-deps --force-reinstall .
       - name: Install dependencies
-        run: |
-          pip install poetry
+        run: pip install poetry
       - name: Run build
-        run: |
-          make build
-      - name: Run installs
-        run: |
-          # test local install
-          pip install --no-deps --force-reinstall .
-          # test wheel
-          pip install --no-deps --force-reinstall dist/*.whl
-          # test tarball
-          pip install --no-deps --force-reinstall dist/*.tar.gz
+        run: make build
+      - name: Test wheel
+        run: pip install --no-deps --force-reinstall dist/*.whl
+      - name: Test tarball
+        run: pip install --no-deps --force-reinstall dist/*.tar.gz
 
   test-examples:
     runs-on: ubuntu-latest
@@ -81,10 +74,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
-          poetry install --no-dev
+          poetry install --no-dev --with examples
       - name: Test example
-        run: |
-          make test-examples
+        run: make test-examples
 
   test-unit:
     runs-on: ubuntu-latest
@@ -103,10 +95,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
-          poetry install
+          poetry install --with test
       - name: Unit testing
-        run: |
-          make test
+        run: make test
 
   test-notebooks:
     runs-on: ubuntu-latest
@@ -119,7 +110,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
-          poetry install
+          poetry install --with examples
       - name: Test notebooks
-        run: |
-          make test-notebooks
+        run: make test-notebooks
