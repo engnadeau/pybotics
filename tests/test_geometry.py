@@ -228,7 +228,7 @@ def test_vector_2_matrix(
             OrientationConvention(transform_data["order"]),
         ]:
             actual = pybotics.geometry.vector_2_matrix(
-                transform_data["vector"], convention=str(convention)
+                transform_data["vector"], convention=convention  # type: ignore
             )
             np.testing.assert_allclose(
                 actual=actual,
