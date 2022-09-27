@@ -1,7 +1,7 @@
 """Basic usage of the pybotics package."""
 import numpy as np
 
-from pybotics.geometry import vector_2_matrix
+from pybotics.geometry import transformation_matrix
 from pybotics.predefined_models import ur10
 from pybotics.robot import Robot
 from pybotics.tool import Tool
@@ -22,7 +22,7 @@ def main() -> None:
     robot.tool = tool
 
     # set world frame
-    world_frame = vector_2_matrix(np.array([100, 200, 300, 0, 0, 0]))
+    world_frame = transformation_matrix(translation=np.array([100, 200, 300]))
     robot.world_frame = world_frame
 
     print(f"Robot: {robot}")

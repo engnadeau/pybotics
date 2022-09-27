@@ -38,6 +38,32 @@ class OrientationConvention(Enum):
     FIXED_ZYZ = "zyz"
 
 
+def transformation_matrix(
+    rotation: npt.NDArray[np.float64] = None,
+    translation: npt.NDArray[np.float64] = None,
+):
+    """Generate a 4x4 transformation matrix from rotation and translation components
+
+    Args:
+        rotation (npt.NDArray[np.float64], optional): 3x3 rotation matrix. Defaults to None.
+        translation (npt.NDArray[np.float64], optional): XYZ translation vector. Defaults to None.
+
+    Returns:
+        _type_: _description_
+    """
+    # create base transformation
+    matrix = np.eye(4)
+
+    # copy components to output
+    if rotation is not None:
+        matrix[:3, :3] = rotation
+
+    if translation is not None:
+        matrix[:3, -1] = translation
+
+    return matrix
+
+
 def vector_2_matrix(
     vector: npt.NDArray[np.float64],
     convention: Union[OrientationConvention, str] = OrientationConvention.EULER_ZYX,
