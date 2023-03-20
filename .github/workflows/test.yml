@@ -11,20 +11,12 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version:
-          - "3.8"
-          - "3.9"
-          # TODO: remove pinned minor version when mypy >0.971 is released
-          # https://github.com/python/mypy/issues/13627#issuecomment-1240907370
-          - "3.10.6"
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10"
       - name: Install dependencies
         run: |
           pip install poetry
