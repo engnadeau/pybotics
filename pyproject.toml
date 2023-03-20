@@ -122,6 +122,9 @@ exclude = '''
 )
 '''
 
+[tool.mypy]
+warn_unused_ignores = false
+
 [tool.isort]
 profile = "black"
 
