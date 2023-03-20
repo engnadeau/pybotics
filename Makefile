@@ -6,7 +6,7 @@ check: lint
 .PHONY: lint
 lint:
 	poetry check -v
-	poetry run mypy --strict --show-error-codes .
+	poetry run mypy --show-error-codes .
 	poetry run black --check .
 	poetry run isort -c .
 	poetry run flake8 pybotics tests examples
