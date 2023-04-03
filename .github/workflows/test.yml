@@ -66,7 +66,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
-          poetry install --no-dev --with examples
+          poetry install --no-dev
       - name: Test example
         run: make test-examples
 
@@ -102,6 +102,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
-          poetry install --with examples
+          poetry install --no-dev --with examples
       - name: Test notebooks
         run: make test-notebooks
