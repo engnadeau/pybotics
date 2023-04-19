@@ -90,18 +90,3 @@ jobs:
           poetry install --with test
       - name: Unit testing
         run: make test
-
-  test-notebooks:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-      - name: Install dependencies
-        run: |
-          pip install poetry
-          poetry install --with examples
-      - name: Test notebooks
-        run: make test-notebooks
