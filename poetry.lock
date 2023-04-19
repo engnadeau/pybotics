@@ -1659,14 +1659,14 @@ test = ["ipykernel", "ipython", "ipywidgets", "nbconvert (>=7.0.0)", "pytest (>=
 
 [[package]]
 name = "nbconvert"
-version = "7.3.0"
+version = "7.3.1"
 description = "Converting Jupyter Notebooks"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "nbconvert-7.3.0-py3-none-any.whl", hash = "sha256:8983a83d0b083d56b076019f0a319f63bc16af70c9372892b86a0aab0a264b1d"},
-    {file = "nbconvert-7.3.0.tar.gz", hash = "sha256:b970a13aba97529c223d805dd0706c2fe04dfc05e250ad4e6f7ae33daf6fede1"},
+    {file = "nbconvert-7.3.1-py3-none-any.whl", hash = "sha256:d2e95904666f1ff77d36105b9de4e0801726f93b862d5b28f69e93d99ad3b19c"},
+    {file = "nbconvert-7.3.1.tar.gz", hash = "sha256:78685362b11d2e8058e70196fe83b09abed8df22d3e599cf271f4d39fdc48b9e"},
 ]
 
 [package.dependencies]
