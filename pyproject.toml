@@ -29,7 +29,6 @@ classifiers = [
   "Operating System :: POSIX",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: Implementation :: CPython",
@@ -51,10 +50,10 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9,<3.13"
 attrs = ">=19.0"
 numpy = "^1.22"
-scipy = "^1.6"
+scipy = "^1.10"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^23.0.0" }
