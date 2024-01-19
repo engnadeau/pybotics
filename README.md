@@ -1,6 +1,6 @@
 # Pybotics
 
-![Robot arm logo](media/robotic-arm.png)
+![Robot arm logo](media/python-robot.png)
 
 The Python Toolbox for Robotics
 
