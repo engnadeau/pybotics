@@ -56,7 +56,7 @@ numpy = "^1.22"
 scipy = "^1.10"
 
 [tool.poetry.group.dev.dependencies]
-black = { extras = ["jupyter"], version = "^23.0.0" }
+black = { extras = ["jupyter"], version = ">=23,<25" }
 isort = ">=5.5"
 rope = ">=1"
 
