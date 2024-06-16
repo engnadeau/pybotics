@@ -52,11 +52,11 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.9,<3.13"
 attrs = ">=19.0"
-numpy = "^1.22"
+numpy = "^2.0"
 scipy = "^1.10"
 
 [tool.poetry.group.dev.dependencies]
-black = { extras = ["jupyter"], version = "^23.0.0" }
+black = { extras = ["jupyter"], version = "^24.0.0" }
 isort = ">=5.5"
 rope = ">=1"
 
