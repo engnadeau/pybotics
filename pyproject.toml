@@ -50,9 +50,9 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9,<3.13"
+python = "<3.14"
 attrs = ">=19.0"
-numpy = "^1.22"
+numpy = "^2.1"
 scipy = "^1.10"
 
 [tool.poetry.group.dev.dependencies]
